@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "image-compress",
+    "name": "画像仕分け圧縮くん",
+    "tagline": "画像の役割ごとに最適な圧縮を当てる。ブラウザ内で完結＝画像を送信しない。",
+    "description": "背景・写真・イラスト・アイコン・スクショなど、画像の種別ごとに最適な圧縮方針（フォーマット・品質・リサイズ）を当てる画像圧縮ツール。WebP / AVIF 出力、Before/After 比較、一括ZIPダウンロードに対応。すべてブラウザ内（WASM）で処理するため画像をサーバーに送信しません。",
+    "url": "/tools/image-compress/",
+    "category": "画像",
+    "status": "published",
+    "tags": ["画像圧縮", "webp", "avif"]
+  }
+]

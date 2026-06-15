@@ -1,0 +1,157 @@
+:root {
+  --color-bg: #0f1115;
+  --color-surface: #1a1d24;
+  --color-border: #2a2f3a;
+  --color-text: #e7e9ee;
+  --color-muted: #9aa3b2;
+  --color-accent: #5b9dff;
+  --radius: 12px;
+  --max: 1080px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  line-height: 1.7;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.l-inner {
+  width: min(100% - 2rem, var(--max));
+  margin-inline: auto;
+}
+
+/* header */
+.p-header {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.p-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+
+.p-header__brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.p-header__nav-list {
+  display: flex;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+/* hero */
+.p-hero {
+  padding-block: 3rem 1.5rem;
+}
+
+.p-hero__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.p-hero__lead {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+/* tool cards */
+.p-tools {
+  padding-block: 1.5rem 3rem;
+}
+
+.p-tools__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-tool-card {
+  display: block;
+  height: 100%;
+  padding: 1.25rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease;
+}
+
+.c-tool-card:hover {
+  text-decoration: none;
+  border-color: var(--color-accent);
+}
+
+.c-tool-card__category {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.c-tool-card__name {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.c-tool-card__tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.p-tools__empty {
+  color: var(--color-muted);
+}
+
+/* footer */
+.p-footer {
+  padding-block: 2rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+}
+
+.p-footer__back {
+  margin: 0 0 0.75rem;
+}
+
+.p-footer__copyright {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+/* breadcrumb (tool pages) */
+.c-breadcrumb {
+  padding-block: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
