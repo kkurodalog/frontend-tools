@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kuroda-tools デザイン概念モック（Haru / Fd Phase6 フッター3BP・アバター拡大・CTAリード復活）</title>
+    <!-- 設計言語の正本トークンを読み込む。本ファイルは「ビジュアルリファレンス」であり本番CSSではない。 -->
+    <link rel="stylesheet" href="./tokens.css" />
+    <style>
+      /* =========================================================
+         ⚠ このCSSはモック専用（Haruのビジュアルリファレンス）。
+         本番CSSはCodyが実HTMLを見て書く。値はすべて tokens.css 経由。
+         本体の実装値（_p-header.scss / _c-color-toggle.scss / _c-breadcrumb.scss /
+         _p-cta.scss）を実ファイルから抽出して再現している（推測なし）。
+         ========================================================= */
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        font-weight: var(--fw-regular);
+        line-height: var(--lh-base);
+        color: var(--color-text-base);
+        background: var(--color-bg-base);
+        transition: background var(--transition-base), color var(--transition-base);
+      }
+      .l-container {
+        width: 100%;
+        max-width: var(--container-base);
+        padding-inline: var(--container-padding-sp);
+        margin-inline: auto;
+      }
+      .l-container--wide { max-width: var(--container-wide); }
+      .l-container--max { max-width: var(--container-max); }
+      @media (width >= 768px) { .l-container { padding-inline: var(--container-padding-pc); } }
+
+      /* ---- モック操作バー（本番には無い・ライト/ダーク確認用） ---- */
+      .mock-bar {
+        position: sticky; top: 0; z-index: 999;
+        display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap;
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--fs-sm);
+        background: var(--color-bg-alt);
+        border-bottom: var(--border-width-thin) solid var(--color-border);
+      }
+      .mock-bar strong { font-family: var(--font-heading); }
+      .mock-bar button {
+        font: inherit; cursor: pointer;
+        padding: var(--space-2) var(--space-4);
+        color: var(--color-text-base);
+        background: var(--color-bg-elevated);
+        border: var(--border-width-thin) solid var(--color-border);
+        border-radius: var(--radius-pill);
+      }
+      .mock-note {
+        max-width: var(--container-base); margin: var(--space-8) auto 0; padding-inline: var(--container-padding-sp);
+        font-size: var(--fs-sm); color: var(--color-text-muted);
+      }
+      .mock-label {
+        max-width: var(--container-base); margin: var(--space-16) auto var(--space-4); padding-inline: var(--container-padding-sp);
+        font-family: var(--font-heading); font-size: var(--fs-xl); color: var(--color-accent);
+        border-block-end: var(--border-width-base) solid var(--color-accent); padding-block-end: var(--space-2);
+      }
+
+      /* ============ 共通: ヘッダー（本体 _p-header.scss 実値準拠） ============
+         本体の実装: ロゴ2行とも fw-bold + fs-lg(SP)/fs-xl(PC)、line2 のみ accent 色。
+         ナビは本体では本体ページへ張るが、Tools では「案B確定」により自立シンプル
+         （tools 内の一覧/カテゴリ）＋ ダーク切替トグル ＋ お問い合わせCTA に変更。 */
+      .p-header {
+        position: sticky; top: 0; z-index: var(--z-header);
+        background-color: rgb(255 255 255 / 92%);
+        backdrop-filter: blur(8px);
+        border-block-end: var(--border-width-thin) solid var(--color-border);
+        transition: background-color var(--transition-base), border-color var(--transition-base);
+      }
+      :root[data-color-scheme="dark"] .p-header { background-color: rgb(15 22 32 / 92%); }
+
+      .p-header__inner {
+        display: flex; align-items: center; gap: var(--space-2);
+        max-width: var(--container-max); margin-inline: auto;
+        padding: 0 var(--container-padding-sp);
+        min-height: var(--header-height);
+      }
+      @media (width >= 768px) { .p-header__inner { gap: var(--space-4); } }
+
+      /* ---- ロゴ（本体準拠: 2行とも fw-bold + fs-lg、line2 のみ accent / ホバー opacity .7） ---- */
+      .p-header__logo { margin: 0; }
+      .p-header__logo a {
+        display: inline-flex; flex-direction: column; gap: 0;
+        font-family: var(--font-heading); line-height: 1.15;
+        color: var(--color-text-base); letter-spacing: var(--ls-base);
+        text-decoration: none; transition: opacity var(--transition-base);
+      }
+      .p-header__logo a:hover { opacity: 0.7; }
+      /* ★修正1: 2行目「Tools」を細く見せていた fs-xs/uppercase/muted を撤回。
+         本体ロゴ実値に合わせ、両行とも fw-bold + fs-lg(SP)/fs-xl(PC)。差は色のみ（line2=accent）。 */
+      .p-header__logo-line { font-size: var(--fs-lg); font-weight: var(--fw-bold); letter-spacing: var(--ls-base); }
+      .p-header__logo-line--2 { color: var(--color-accent); }
+      @media (width >= 1024px) { .p-header__logo-line { font-size: var(--fs-xl); } }
+
+      /* ---- ナビ（案B確定: tools内 自立シンプル。本体Works/Portfolio項目は出さない） ---- */
+      .p-header__nav { display: none; }
+      @media (width >= 1024px) {
+        .p-header__nav { display: flex; gap: var(--space-6); align-items: center; margin-inline: auto var(--space-4); }
+        .p-header__nav a {
+          display: inline-flex; align-items: center; padding-block: var(--space-2); margin-block-start: 2px;
+          font-size: var(--fs-base); font-weight: var(--fw-medium); line-height: 1;
+          color: var(--color-text-base); text-decoration: none; white-space: nowrap;
+          border-block-end: 2px solid transparent;
+          transition: color var(--transition-base), border-color var(--transition-base);
+        }
+        .p-header__nav a:hover,
+        .p-header__nav a[aria-current="page"] { color: var(--color-accent); border-block-end-color: var(--color-accent); }
+      }
+
+      /* ---- ダーク切替トグル（本体 _c-color-toggle.scss 実値: 64×32 トラック / 22 サム / 16 アイコン） ---- */
+      .c-color-toggle {
+        position: relative; display: inline-flex; align-items: center; justify-content: space-between;
+        width: var(--toggle-track-w); height: var(--toggle-track-h);
+        padding-inline: var(--toggle-pad-inline);
+        color: var(--color-text-muted); cursor: pointer;
+        background-color: var(--color-bg-alt);
+        border: var(--border-width-thin) solid var(--color-border); border-radius: var(--radius-pill);
+        margin-inline-start: auto; /* SP: トグル+Contact を右へ */
+        transition: background-color var(--transition-base), border-color var(--transition-base);
+      }
+      @media (width >= 1024px) { .c-color-toggle { margin-inline-start: 0; } }
+      .c-color-toggle:hover { border-color: var(--color-accent); }
+      .c-color-toggle::before {
+        content: ""; position: absolute; top: 50%; left: var(--toggle-thumb-offset); z-index: 1;
+        width: var(--toggle-thumb-size); height: var(--toggle-thumb-size);
+        background-color: var(--color-accent); border-radius: var(--radius-pill); box-shadow: var(--shadow-sm);
+        transform: translateY(-50%); transition: left var(--transition-base), background-color var(--transition-base);
+      }
+      :root[data-color-scheme="dark"] .c-color-toggle::before {
+        left: calc(100% - var(--toggle-thumb-offset) - var(--toggle-thumb-size));
+      }
+      .c-color-toggle__icon {
+        position: relative; z-index: 2; width: var(--toggle-icon-size); height: var(--toggle-icon-size);
+        pointer-events: none; transition: color var(--transition-base);
+      }
+      .c-color-toggle__icon--sun { color: var(--color-text-inverse); }
+      .c-color-toggle__icon--moon { color: var(--color-text-muted); }
+      :root[data-color-scheme="dark"] .c-color-toggle__icon--sun { color: var(--color-text-muted); }
+      :root[data-color-scheme="dark"] .c-color-toggle__icon--moon { color: var(--color-text-inverse); }
+
+      /* ---- Contact CTA（本体 p-header__contact: accent 地・白文字・ダーク時も固定） ---- */
+      .p-header__contact {
+        display: inline-flex; align-items: center; min-height: var(--touch-target-min);
+        padding-inline: var(--space-4); font-size: var(--fs-sm); font-weight: var(--fw-bold);
+        color: var(--color-text-inverse); white-space: nowrap; text-decoration: none;
+        background-color: var(--color-accent); border-radius: var(--radius-card);
+        transition: background-color var(--transition-base);
+      }
+      .p-header__contact:hover { background-color: var(--color-accent-hover); }
+      :root[data-color-scheme="dark"] .p-header__contact { color: #fff; background-color: #2ba89c; }
+      :root[data-color-scheme="dark"] .p-header__contact:hover { background-color: #239084; }
+      @media (width >= 1024px) { .p-header__contact { font-size: var(--fs-base); } }
+
+      /* 汎用 primary ボタン（CTA/カード内で使用 / 本体 c-btn--primary・large） */
+      .c-btn--primary {
+        display: inline-flex; align-items: center; min-height: var(--touch-target-min);
+        padding: var(--space-3) var(--space-6); font-weight: var(--fw-bold); font-size: var(--fs-base);
+        color: var(--color-fixed-white); text-decoration: none;
+        background: var(--color-accent-fixed); border-radius: var(--radius-card);
+        transition: background var(--transition-base);
+      }
+      .c-btn--primary:hover { background: var(--color-accent-fixed-hover); }
+      .c-btn--large { min-height: 56px; padding: var(--space-4) var(--space-8); font-size: var(--fs-lg); }
+      .c-btn--outline {
+        display: inline-flex; align-items: center; min-height: var(--touch-target-min);
+        padding: var(--space-3) var(--space-6); font-weight: var(--fw-bold); font-size: var(--fs-base);
+        color: var(--color-primary); text-decoration: none;
+        background: transparent; border: var(--border-width-thin) solid var(--color-primary); border-radius: var(--radius-card);
+        transition: color var(--transition-base), background var(--transition-base);
+      }
+      .c-btn--outline:hover { color: var(--color-text-inverse); background: var(--color-primary); }
+
+      /* ---- c-link-arrow（本体 _c-link-arrow.scss 実値: 「→」付きリンクの共通ホバー）----
+         ★修正5: モック内のリンクの色・ホバーをこの1系統に統一（リンク色の不統一を解消）。
+         本体実値: color=accent / fw-medium / gap=space-1 / ::after "→"。
+         hover・focus-visible で color=accent-hover ＋ 矢印 translateX(3px)。色はテーマ追従
+         （ライト #2ba89c→#239084 / ダーク #5dd9cb→#7ae3d7 ＝ tokens の --color-accent(-hover)）。
+         本体は矢印「→」をテキスト末尾に置くので、HTML側のラベルから手書きの「→」は外す。 */
+      .c-link-arrow {
+        position: relative; display: inline-flex; gap: var(--link-arrow-gap); align-items: center;
+        font-weight: var(--fw-medium); color: var(--color-accent); text-decoration: none;
+        transition: color var(--transition-base);
+      }
+      .c-link-arrow::after {
+        display: inline-block; content: "→";
+        transition: transform var(--transition-base), color var(--transition-base);
+      }
+      .c-link-arrow:hover,
+      .c-link-arrow:focus-visible { color: var(--color-accent-hover); }
+      .c-link-arrow:hover::after,
+      .c-link-arrow:focus-visible::after { color: var(--color-accent-hover); transform: translateX(var(--link-arrow-shift)); }
+
+      /* ============ ① ポータルトップ ============ */
+      .p-hero { padding-block: var(--space-12) var(--space-8); text-align: center; }
+      @media (width >= 768px) { .p-hero { text-align: left; } }
+      .p-hero__title { margin: 0 0 var(--space-3); font-family: var(--font-heading); font-size: clamp(var(--fs-2xl), 5vw, var(--fs-4xl)); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); }
+      .p-hero__lead { margin: 0; font-size: var(--fs-lg); color: var(--color-text-muted); }
+      /* ★Fd Phase7: 旧 .p-hero__intro（About的ひとこと）は廃止。
+         認知→信頼→行動はポータルトップでもツール個別ページと同一の「制作者カード → CTA」に一本化（下部 ③ ブロックへ集約）。 */
+      /* ★修正5: リンクは c-link-arrow に統一（独自の text-link 色指定は撤回） */
+
+      .p-tools { padding-block: var(--space-4) var(--space-16); }
+      .p-tools__list {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-5); margin: 0; padding: 0; list-style: none;
+      }
+      .c-tool-card {
+        display: flex; flex-direction: column; gap: var(--space-3); height: 100%;
+        padding: var(--space-5); color: var(--color-text-base); text-decoration: none;
+        background: var(--color-bg-elevated);
+        border: var(--border-width-thin) solid var(--color-border); border-radius: var(--radius-md);
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
+      }
+      /* ★修正6: 本体 c-work-card と同値。初期=影なし / hover=translateY(-2px)+shadow-md /
+         active(クリック中)=移動なし(translateY 0)+影なし。transition-zero で押下を即反応に。 */
+      .c-tool-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+      .c-tool-card:active { transform: translateY(0); box-shadow: var(--shadow-none); transition: transform var(--transition-zero); }
+      .c-tool-card__category {
+        align-self: flex-start; padding: var(--space-1) var(--space-3); font-size: var(--fs-xs);
+        color: var(--color-text-muted); border: var(--border-width-thin) solid var(--color-border); border-radius: var(--radius-pill);
+      }
+      .c-tool-card__category--accent { color: var(--color-accent); background: var(--color-accent-bg); border-color: transparent; }
+      .c-tool-card__name { margin: 0; font-family: var(--font-heading); font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+      .c-tool-card__tagline { margin: 0; font-size: var(--fs-sm); color: var(--color-text-muted); }
+
+      /* ============ ② ツールページの器 ============ */
+      /* パンくず（本体 _c-breadcrumb.scss 実値: ol / › 区切り / muted→accent hover） */
+      .c-breadcrumb { padding-block: var(--space-4); font-size: var(--fs-sm); color: var(--color-text-muted); }
+      .c-breadcrumb__list {
+        display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center;
+        margin: 0; padding: 0; list-style: none;
+      }
+      .c-breadcrumb__list a { color: var(--color-text-muted); text-decoration: none; }
+      .c-breadcrumb__list a:hover { color: var(--color-accent); }
+      .c-breadcrumb__sep { color: var(--color-border-strong); }
+      .c-breadcrumb [aria-current="page"] { color: var(--color-text-muted); }
+
+      .p-tool-head { padding-block: var(--space-4) var(--tool-section-gap); }
+      .p-tool-head__title { margin: 0 0 var(--space-3); font-family: var(--font-heading); font-size: var(--fs-3xl); line-height: var(--lh-tight); }
+      .p-tool-head__lead { margin: 0; font-size: var(--fs-base); color: var(--color-text-muted); }
+
+      .p-tool-body { padding-block-end: var(--tool-section-gap); }
+      .c-tool-panel {
+        padding: var(--tool-panel-padding); background: var(--color-bg-elevated);
+        border: var(--border-width-thin) solid var(--color-border); border-radius: var(--tool-panel-radius);
+      }
+      .c-dropzone {
+        display: grid; place-items: center; min-height: 200px; padding: var(--space-8);
+        text-align: center; color: var(--color-text-muted);
+        background: var(--dropzone-bg); border: var(--dropzone-border); border-radius: var(--radius-md);
+      }
+      .c-dropzone strong { display: block; font-family: var(--font-heading); font-size: var(--fs-lg); color: var(--color-text-base); margin-block-end: var(--space-2); }
+      .c-field-row { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-block-start: var(--space-5); }
+      .c-field { flex: 1 1 200px; }
+      .c-field label { display: block; margin-block-end: var(--space-2); font-size: var(--fs-sm); color: var(--color-text-muted); }
+      .c-field select, .c-field input {
+        width: 100%; padding: var(--space-3); font: inherit; font-size: var(--field-min-size);
+        color: var(--color-text-base); background: var(--field-bg); border: var(--field-border); border-radius: var(--field-radius);
+      }
+      .c-field select:focus, .c-field input:focus { outline: var(--focus-outline-width) solid var(--color-focus-outline); outline-offset: var(--focus-outline-offset); border: var(--field-border-focus); }
+
+      /* ============ ③ 下部ファネル: 制作者カード → CTA セクション（★整理） ============
+         重複感の解消＝デザインで階層差をつける:
+           ① 制作者カード = 通常面（bg-alt 地・枠線・カード調 / 認知→信頼に専念 / 顔写真+Works+Skills / お問い合わせは抜き下部CTAに一本化）
+           ② CTA セクション = full-bleed の背景写真+overlay の「面」（行動 / 本体 p-cta と同一）
+         ①は読み物的に静か、②は写真で強く打つ。視覚レイヤーが違うので連続しても重複に見えない。 */
+
+      /* ① 制作者カード（partial想定 / 認知→信頼 / 全ツールページ＋ポータルトップ下部に常設）
+         ★Fd Phase7: ポータルトップにも同一partialを配置（About的ひとことを廃止し制作者カードに一本化）。 */
+      .p-maker { padding-block: var(--tool-section-gap) 0; }
+      .c-maker-card {
+        display: grid; gap: var(--space-5); justify-items: center; text-align: center;
+        padding: var(--maker-card-padding);
+        background: var(--maker-card-bg);
+        border: var(--border-width-thin) solid var(--color-border); border-radius: var(--maker-card-radius);
+      }
+      /* スマホ(768未満)はカード内を中央寄せ。768以上で左寄せ・横並びに戻す。 */
+      @media (width >= 768px) { .c-maker-card { grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-8); justify-items: stretch; text-align: start; } }
+      /* ★修正1: アバターをイニシャル円「K」→ 本体 profile.webp（顔写真）に変更。
+         本体 src の実画像を相対参照（tokens の --maker-avatar-image）。
+         ★Phase6 修正2: サイズを本体トップ「私について」の丸画像（160px→PC 200px）に拡大。
+         旧 72px は本体の自己紹介円より明らかに小さかったので本体実値に揃える。 */
+      .c-maker-card__avatar {
+        width: var(--maker-avatar-size); height: var(--maker-avatar-size);
+        background-image: var(--maker-avatar-image); background-size: cover; background-position: center;
+        background-color: var(--color-bg-elevated); border-radius: var(--radius-pill);
+      }
+      @media (width >= 1024px) {
+        .c-maker-card__avatar { width: var(--maker-avatar-size-pc); height: var(--maker-avatar-size-pc); }
+      }
+      .c-maker-card__name { margin: 0 0 var(--space-1); font-family: var(--font-heading); font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+      .c-maker-card__role { margin: 0 0 var(--space-3); font-size: var(--fs-sm); color: var(--color-text-muted); }
+      .c-maker-card__desc { margin: 0 0 var(--space-4); font-size: var(--fs-base); color: var(--color-text-base); }
+      /* ★修正2+5: リンクは Works / Skills の認知・信頼導線のみ（お問い合わせは抜いて下部CTAに一本化）。
+         リンクは c-link-arrow に統一（色・ホバー＝accent→accent-hover＋矢印移動）。 */
+      .c-maker-card__links { display: flex; flex-wrap: wrap; gap: var(--space-5); justify-content: center; }
+      @media (width >= 768px) { .c-maker-card__links { justify-content: flex-start; } }
+
+      /* ② CTA お問い合わせセクション（本体 _p-cta.scss 実値: 背景画像+overlay・白文字・中央）
+         ★修正3: 横幅画面いっぱい（full-bleed）。本体同様 .l-container の外（main 直下）に置き、
+         背景は viewport 全幅 / テキストのみ内側 .p-cta__inner（= l-container--wide）で制約。
+         背景色フォールバック → overlay 階調 → cta-bg 画像 を重ねる（本体と同じ重ね順）。 */
+      .p-cta {
+        position: relative; padding-block: var(--space-20); margin-block-start: var(--tool-section-gap);
+        color: var(--color-text-inverse); text-align: center;
+        background-color: var(--color-primary); /* フォールバック */
+        background-image: linear-gradient(var(--color-cta-overlay-light), var(--color-cta-overlay-light)), var(--bg-cta-image);
+        background-repeat: no-repeat; background-position: center; background-size: cover;
+        isolation: isolate;
+      }
+      :root[data-color-scheme="dark"] .p-cta {
+        background-image: linear-gradient(var(--color-cta-overlay-dark), var(--color-cta-overlay-dark)), var(--bg-cta-image);
+      }
+      /* テキストは内側コンテナで中央・幅制約（背景は全幅のまま） */
+      .p-cta__inner {
+        position: relative; z-index: 1;
+        max-width: var(--container-wide); margin-inline: auto;
+        padding-inline: var(--container-padding-sp);
+      }
+      @media (width >= 768px) { .p-cta__inner { padding-inline: var(--container-padding-pc); } }
+      /* ★Phase6 修正3: リード文を復活（黒田さん指示）。見出し＋リード＋ボタンの3点構成に戻す。
+         Phase4 でリード削除に伴い見出しを最大 fs-4xl まで上げ・見出し下 space-8 を取っていたが、
+         リード復活で「見出しが大きすぎてリードが負ける」状態を避けるため再調整:
+           - 見出しの最大値を fs-4xl→fs-3xl に落とし（clamp 下限は fs-2xl 維持）、リードと共存する重さに戻す
+           - 見出し下の余白を space-8→space-4 に詰め、見出し→リードを「ひとまとまり」に見せる
+           - リード（本体 p-cta__lead 準拠: 白文字 88% / fs-lg）を挟み、リード下 space-8 でボタンまで間を取る */
+      .p-cta__title {
+        margin: 0 auto var(--space-4); max-width: 24ch;
+        font-family: var(--font-heading); font-size: clamp(var(--fs-2xl), 4vw, var(--fs-3xl));
+        line-height: var(--lh-tight); letter-spacing: var(--ls-tight); color: #fff;
+      }
+      /* リード（本体 _p-cta.scss 準拠: 白 88% 透過・fs-lg・中央・読み幅を 56ch で制約） */
+      .p-cta__lead {
+        margin: 0 auto var(--space-8); max-width: 56ch;
+        font-size: var(--fs-lg); line-height: var(--lh-base);
+        color: rgb(255 255 255 / 88%);
+      }
+      .p-cta__action { display: flex; justify-content: center; }
+
+      /* ============ 共通: フッター（本体 _p-footer.scss 実値準拠 / 3カラム + SNS + ©） ============
+         ★Phase4 修正4: 本体に寄せる。本体フッターは「常時ダーク固定面」（ライト/ダーク問わず濃色）＋
+         PC=3カラム均等（ロゴ左 / ナビ中央 / SNS右）＋ 最下部に独立した © 行。
+         実値出典: projects/_self/kurodafolio/.../assets/styles/projects/_p-footer.scss + components/p-footer.html。
+         色・余白・区切りは tokens.css §6（本体派生・テーマ非依存固定）を使用。 */
+      .p-footer {
+        padding-block: var(--footer-pad-top) 0;
+        color: var(--footer-text);
+        background-color: var(--footer-bg); /* 本体準拠で常時ダーク固定（ライトでも濃色面） */
+      }
+      .p-footer__inner {
+        display: grid; gap: var(--footer-inner-gap);
+        max-width: var(--container-max); margin-inline: auto;
+        padding-inline: var(--container-padding-sp);
+        padding-block-end: var(--footer-inner-pad-bottom);
+      }
+      @media (width >= 768px) { .p-footer__inner { padding-inline: var(--container-padding-pc); } }
+
+      /* ---- 左: ロゴ「Frontend Tools」（ヘッダーロゴと整合 / line2=accent。本体は line2=#5dd9cb 固定） ---- */
+      .p-footer__logo { margin: 0; font-family: var(--font-heading); line-height: 1.15; letter-spacing: var(--ls-base); }
+      .p-footer__logo a {
+        display: inline-flex; flex-direction: column; gap: 0;
+        color: var(--footer-text); text-decoration: none; transition: opacity var(--transition-base);
+      }
+      .p-footer__logo a:hover { opacity: 0.7; }
+      .p-footer__logo-line { display: block; font-size: var(--fs-lg); font-weight: var(--fw-bold); letter-spacing: var(--ls-base); }
+      .p-footer__logo-line--2 { color: var(--footer-logo-accent); } /* 本体 F17: Portfolio 相当の accent 固定 */
+
+      /* ---- 中央: ナビ（Mado §8-4 最終確定: 2グループ分離。G1=ツール集 / G2=制作・運営）----
+         ★Phase5 修正: 旧フラット1列（ツールトップ/Home/制作実績/スキル/お問い合わせ）を撤回。
+         2系統を「グループ見出し＋リンク列」で物理分離する（トップ2枚・内部語「本体」問題を解消）。
+         G1=「このツール集について」（カテゴリ「画像」のみ / ロゴが /tools/ を独占するためトップ語は載せない）、
+         G2=「制作・運営」（制作実績/スキル/プロフィール/制作のご相談＝本体送客）。
+         見出し・グループ区切りは mock 専用の簡易表現（本番の具体CSSは Cody が本体トーンで実装）。 */
+      .p-footer__nav { display: flex; flex-wrap: wrap; gap: var(--space-6) var(--space-12); }
+      .p-footer__nav-group { display: flex; flex-direction: column; gap: var(--space-2); }
+      /* ★Phase5 微調整: 見出しを「タイトル」として成立させる。
+         (1) font-size をリスト項目(fs-sm)より大きく fs-base に上げる。
+         (2) opacity の減光を外し（リンクと差別化）、見出しを明確に立たせる。
+         視覚階層: 見出し(fs-base・不透明) ＞ リスト項目(fs-sm・opacity減光)。 */
+      .p-footer__nav-heading {
+        margin: 0 0 var(--space-2); font-family: var(--font-heading);
+        font-size: var(--fs-base); font-weight: var(--fw-bold);
+        color: var(--footer-text);
+        letter-spacing: var(--ls-wide);
+      }
+      /* ★Phase5 微調整: タイトル配下であることを示すため、リストを段落下げ（左インデント）。
+         見出しを左・リスト項目を右にずらし、見出し＞リストの従属関係を視覚化する。 */
+      .p-footer__nav-list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0 0 0 var(--space-3); list-style: none; }
+      .p-footer__nav a {
+        font-size: var(--fs-sm); color: var(--footer-text); white-space: nowrap;
+        text-decoration: none; opacity: var(--footer-link-opacity);
+        transition: color var(--transition-base), opacity var(--transition-base);
+      }
+      .p-footer__nav a:hover { color: var(--color-accent); opacity: 1; }
+
+      /* ---- 右: SNS リンク集（本体踏襲: X / GitHub / frontend-note） ---- */
+      .p-footer__sns { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); margin: 0; padding: 0; list-style: none; }
+      .p-footer__sns a {
+        display: inline-flex; gap: var(--space-2); align-items: center; min-height: var(--touch-target-min);
+        padding-inline: var(--space-2); font-size: var(--fs-sm); color: var(--footer-text);
+        text-decoration: none; opacity: var(--footer-link-opacity);
+        transition: color var(--transition-base), opacity var(--transition-base);
+      }
+      .p-footer__sns a:hover { color: var(--color-accent); opacity: 1; }
+      .p-footer__sns-icon { flex-shrink: 0; width: var(--icon-size-base); height: var(--icon-size-base); }
+
+      /* ---- 最下部: © 行（独立・中央・上に区切り線 / 本体 .p-footer__bottom） ---- */
+      .p-footer__bottom {
+        padding-block: var(--footer-bottom-pad); text-align: center;
+        border-block-start: var(--border-width-thin) solid var(--footer-divider-color);
+      }
+      .p-footer__copyright { margin: 0; font-family: var(--font-family-en); font-size: var(--fs-sm); color: var(--footer-copyright-color); letter-spacing: var(--ls-wide); }
+
+      /* ★Phase6 修正1: フッターを3ブレークポイントで配置し分ける（黒田さん指示）。
+         - 768px未満: 現状維持（grid 縦積み = 上から ロゴ → ナビ → SNS）。変更しない。
+         - 768〜1023px: ★Phase7 修正で PC 寄せに変更。3要素（ロゴ／ナビ／SNS）を上揃えで横並び
+           （1024+ と同じ並び方）。ただし幅が狭いためナビは改行させず（flex-wrap: nowrap）、
+           列幅・gap・フォントをこの BP 内で詰めてはみ出しを防ぐ。
+         - 1024px以上: 3要素横並び・全て上揃え。ロゴ=fit-content（中身幅 = grid の auto 列）、
+           ナビ=左寄せ（justify-self: start・中身も左揃え）、SNS=右寄せ（justify-self: end）。 */
+
+      /* 768〜1023px: 3要素横並び・全て上揃え（PC 寄せ）。ナビは改行禁止で幅内に収める。 */
+      @media (width >= 768px) and (width <= 1023px) {
+        /* ロゴ列は 1024+ の minmax(max-content,16rem) に倣い、このBP幅に合った値で幅を担保 / ナビ=1fr / SNS=auto を右端に */
+        .p-footer__inner {
+          grid-template-columns: minmax(max-content, 8rem) 1fr auto;
+          align-items: start;
+          column-gap: var(--space-6); /* 1024+ より gap を詰めて 3 列を収める */
+        }
+        .p-footer__brand { justify-self: start; }
+        /* ナビ: 2グループを改行させない（nowrap）＋ グループ間 gap を詰める */
+        .p-footer__nav { justify-self: start; flex-wrap: nowrap; gap: var(--space-6); }
+        .p-footer__nav-list { padding-inline-start: var(--space-2); } /* インデントも微縮 */
+        .p-footer__nav a { font-size: var(--fs-xs); } /* リンクをワンサイズ下げて横幅を圧縮 */
+        /* SNS: 右端・上揃え・横並びで折り返さない */
+        .p-footer__sns { justify-self: end; align-self: start; flex-wrap: nowrap; gap: var(--space-4); }
+        /* SNS 各項目: 1024+ と同様にアイコン＋テキストを縦並びに（SNS列が細くなり横幅に余裕が出る） */
+        .p-footer__sns a { flex-direction: column; gap: var(--space-1); min-height: auto; padding-block: var(--space-1); font-size: var(--fs-xs); line-height: 1.2; text-align: center; }
+      }
+
+      /* 1024px以上: ロゴ(fit-content) | ナビ(左寄せ) | SNS(右寄せ)・全て上揃え＋ SNS 縦並び（本体 mq(xl)） */
+      @media (width >= 1024px) {
+        .p-footer__logo-line { font-size: var(--fs-xl); }
+        /* ロゴ=auto（中身幅=fit-content）/ ナビ=1fr で左寄せ可 / SNS=auto を右端に */
+        .p-footer__inner { grid-template-columns: minmax(max-content, 12rem) 1fr auto; align-items: start; }
+        .p-footer__brand { width: fit-content; justify-self: start; } /* ロゴ要素は中身幅と同一（列幅は minmax で確保しロゴ-ナビ間を広げる） */
+        .p-footer__nav { justify-self: start; flex-wrap: nowrap; } /* 中央寄せ→左寄せに変更（中身も左揃え） */
+        .p-footer__sns { justify-self: end; flex-wrap: nowrap; gap: var(--space-4); }
+        .p-footer__sns a { flex-direction: column; gap: var(--space-1); min-height: auto; padding-block: var(--space-1); font-size: var(--fs-xs); line-height: 1.2; text-align: center; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mock-bar">
+      <strong>kuroda-tools 概念モック（Phase7 / ポータルトップ下部を制作者カード＋CTAに統一）</strong>
+      <span>— tokens.css を読み込んだビジュアルリファレンス（本番CSSではない / Cody実装の方向提示用）</span>
+      <button type="button" id="toggleTheme">ライト / ダーク切替</button>
+    </div>
+
+    <p class="mock-note">
+      <strong>Phase7 更新（黒田さん指示）</strong>：ポータルトップ（/tools/）下部の構成を変更。<strong>(1) About的ひとこと（p-hero__intro「作っているのは…制作実績はこちら」）を削除</strong>。<strong>(2) 代わりにツール個別ページと同一の「制作者カード（c-maker-card）→ CTAセクション（p-cta）」をポータルトップ下部にも配置</strong>＝両ページの下部構成を「ツール一覧/本体エリア → 制作者カード → CTA」で統一（同じマークアップ/クラス/コピー/リンク・共通partial想定）。ツール一覧カード群・ヘッダー・フッターは不変更。<br />
+      ——（以下 Phase6 までの確定）——
+      <strong>Phase6 更新（黒田さん修正3点）</strong>：
+      <strong>(1) フッターを3ブレークポイント配置</strong>＝768px未満は現状維持／768〜1023pxは左[ロゴ＋ナビ縦]・右[SNS]の2カラム＋上端揃え（align-items: start）／1024px以上はロゴ(fit-content)｜ナビ(左寄せ)｜SNS(右寄せ)を全て上揃え（grid `auto 1fr auto`・areasで領域割当・共通クラスなので両ページ自動反映）。
+      <strong>(2) 制作者カードのアバターを拡大</strong>＝本体トップ「私について」の丸画像実値（160px→PC 200px / 出典 `_p-about-excerpt.scss` L25・L74）に合わせ、旧72pxから引き上げ。
+      <strong>(3) CTAにリード復活</strong>＝見出し「制作のご依頼・ご相談も承っています」の下に「Web制作・業務委託のご相談はこちらから。3営業日以内に返信いたします。」を再追加。Phase4で大きくした見出しをリード共存用に再調整（見出しfs-3xl・リードfs-lg白88%）。<br />
+      ——（以下 Phase5 までの確定）——
+      <strong>Phase5 更新（フッターナビ最終確定 / 黒田さん＋Mado §8-4）</strong>：フッター中央ナビを<strong>2グループ</strong>に差し替え。
+      G1「このツール集について」＝カテゴリ「画像」のみ（ヘッダーナビ「カテゴリ」と整合・今後カテゴリ増設前提。<strong>お問い合わせ／トップ・Home 語は置かない</strong>＝ロゴが /tools/ を独占）。
+      G2「制作・運営」＝制作実績（/works/）／スキル・対応範囲（/skills/）／プロフィール（/about/）／制作のご相談（/contact/）。
+      旧フラット1列（ツールトップ/Home（本体）/制作実績/スキル/お問い合わせ）は撤回し「トップ2枚・内部語『本体』」問題を解消。
+      <strong>★D ラベル文脈使い分け（確定）</strong>：ヘッダーCTA＝「お問い合わせ」（汎用窓口）／制作者カード・CTAセクション・フッターG2＝「制作のご相談」（営業文脈）で全箇所整合。
+      カテゴリ「画像」のリンク先URL（カテゴリページ）は未確定のため仮リンク（#）＝Cody 実装時に確定（design-concept §8 申し送り）。<br />
+      ——（以下 Phase4 までの確定）——
+      黒田さん 第3次レビュー（Phase4）反映版。
+      <strong>(1) CTAコピー確定＋リード削除</strong>：見出し「制作のご依頼・ご相談も承っています」／ボタン「制作のご相談」。リード文は削除し、見出し＋ボタンだけで full-bleed 背景画像セクションが成立するよう見出しの存在感を上げた。
+      <strong>(2) 制作者カードの名前を「黒田 こうすけ」（ひらがな）</strong>に修正（肩書等は維持）。
+      <strong>(3) フッターを本体 p-footer に寄せた3カラム</strong>（左=ロゴ「Frontend Tools」／中央=ナビ／右=SNS集 ＝ X・GitHub・frontend-note を本体アイコンSVG/URLで踏襲）＋ © 行「© 2026 Kosuke Kuroda」。本体準拠で常時ダーク固定面。
+      <strong>(4) パンくずのホバー transition</strong>は今回モックでは変更せず、design-concept.md に Cody 実装時の申し送り（本体 `_c-breadcrumb.scss` 実値併記）を明記。
+      ロゴ/トグル/パンくず/CTA/c-link-arrow/カード挙動/フッターは本体の実ファイルから実値抽出して再現しています。
+    </p>
+
+    <!-- ============ ① ポータルトップ ============ -->
+    <p class="mock-label">① ポータルトップ /tools/</p>
+
+    <header class="p-header">
+      <div class="p-header__inner">
+        <p class="p-header__logo">
+          <a href="#" aria-label="Frontend Tools トップへ">
+            <span class="p-header__logo-line p-header__logo-line--1">Frontend</span>
+            <span class="p-header__logo-line p-header__logo-line--2">Tools</span>
+          </a>
+        </p>
+        <nav class="p-header__nav" aria-label="ツールナビゲーション">
+          <a href="#" aria-current="page">ツール一覧</a>
+          <a href="#">カテゴリ</a>
+        </nav>
+        <button type="button" class="c-color-toggle" aria-label="ダークモードに切替" aria-pressed="false">
+          <svg class="c-color-toggle__icon c-color-toggle__icon--sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <svg class="c-color-toggle__icon c-color-toggle__icon--moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+        <a class="p-header__contact" href="#">お問い合わせ</a>
+      </div>
+    </header>
+
+    <main class="l-container">
+      <section class="p-hero">
+        <h1 class="p-hero__title">フロントエンド制作ツール集</h1>
+        <p class="p-hero__lead">Web制作の実作業で毎日使う道具を一箇所に。すべてブラウザ内で完結し、登録もインストールも不要です。</p>
+      </section>
+
+      <section class="p-tools" aria-label="公開ツール一覧">
+        <ul class="p-tools__list">
+          <li>
+            <a class="c-tool-card" href="#">
+              <span class="c-tool-card__category">画像</span>
+              <h2 class="c-tool-card__name">画像仕分け圧縮くん</h2>
+              <p class="c-tool-card__tagline">画像の役割ごとに最適な圧縮を当てる。ブラウザ内で完結＝画像を送信しない。</p>
+            </a>
+          </li>
+          <li>
+            <a class="c-tool-card" href="#">
+              <span class="c-tool-card__category c-tool-card__category--accent">CSS</span>
+              <h2 class="c-tool-card__name">clamp メーカー（例）</h2>
+              <p class="c-tool-card__tagline">★要確認: accentバッジ比較用。レスポンシブのclamp値とトークンを出力。</p>
+            </a>
+          </li>
+          <li>
+            <a class="c-tool-card" href="#">
+              <span class="c-tool-card__category">配色</span>
+              <h2 class="c-tool-card__name">配色＆コントラスト（例）</h2>
+              <p class="c-tool-card__tagline">WCAGコントラストを検証しながら配色。CSS変数で出力。</p>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ③-① 制作者カード（ポータルトップにもツール個別ページと同一partialを配置 / 認知→信頼 / Works+Skills のみ）
+           ★Fd Phase7: 旧「About的ひとこと（p-hero__intro）」を廃止し、ツール個別ページと同じ制作者カード＋CTAに一本化。
+           マークアップ/クラス/コピー/リンクはツール個別ページ（③-①）と完全同一（共通partial想定）。 -->
+      <section class="p-maker" aria-labelledby="maker-name-top">
+        <div class="c-maker-card">
+          <div class="c-maker-card__avatar" role="img" aria-label="制作者 黒田こうすけの顔写真"></div>
+          <div>
+            <p class="c-maker-card__name" id="maker-name-top">黒田 こうすけ</p>
+            <p class="c-maker-card__role">フロントエンドエンジニア / Web制作（LP・WordPress・静的サイト）</p>
+            <p class="c-maker-card__desc">このツールは kurodafolio.com が制作・運営しています。実案件で使っている道具をそのまま公開しています。</p>
+            <div class="c-maker-card__links">
+              <a class="c-link-arrow" href="#">制作実績を見る</a>
+              <a class="c-link-arrow" href="#">対応できること（スキル）</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ③-② CTA お問い合わせセクション（ポータルトップにもツール個別ページと同一partialを配置 / 行動 / 本体 p-cta と同一・背景画像+overlay）
+         full-bleed（横幅画面いっぱい）。本体同様 .l-container（main）の外に出し、背景を viewport 全幅に。
+         見出し・リード・ボタン文言はツール個別ページ（③-②）と完全同一。 -->
+    <section class="p-cta" aria-labelledby="cta-title-top">
+      <div class="p-cta__inner">
+        <h2 id="cta-title-top" class="p-cta__title">制作のご依頼・ご相談も承っています</h2>
+        <p class="p-cta__lead">Web制作・業務委託のご相談はこちらから。3営業日以内に返信いたします。</p>
+        <div class="p-cta__action">
+          <a class="c-btn--primary c-btn--large" href="#">制作のご相談</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ポータルトップのフッター（★Phase4 修正4: 本体 p-footer に寄せた3カラム / ロゴ左・ナビ中央・SNS右 + © 行） -->
+    <footer class="p-footer" role="contentinfo">
+      <div class="p-footer__inner">
+        <div class="p-footer__brand">
+          <p class="p-footer__logo">
+            <a href="#" aria-label="Frontend Tools トップへ">
+              <span class="p-footer__logo-line p-footer__logo-line--1">Frontend</span>
+              <span class="p-footer__logo-line p-footer__logo-line--2">Tools</span>
+            </a>
+          </p>
+        </div>
+        <!-- ★Phase5 修正: Mado §8-4 最終確定の2グループ構成に差し替え。
+             G1「このツール集について」＝カテゴリ「画像」のみ（ヘッダーナビ「カテゴリ」と整合・今後カテゴリ増設前提 /
+             お問い合わせ・トップ語は置かない）。G2「制作・運営」＝制作実績/スキル/プロフィール/制作のご相談（本体送客）。
+             カテゴリのリンク先URLは未確定のため仮リンク（#）＝Cody 実装時に確定（design-concept §8 申し送り）。 -->
+        <nav class="p-footer__nav" aria-label="フッターナビゲーション">
+          <div class="p-footer__nav-group">
+            <p class="p-footer__nav-heading">このツール集について</p>
+            <ul class="p-footer__nav-list">
+              <li><a href="#">画像</a></li>
+            </ul>
+          </div>
+          <div class="p-footer__nav-group">
+            <p class="p-footer__nav-heading">制作・運営</p>
+            <ul class="p-footer__nav-list">
+              <li><a href="#">制作実績</a></li>
+              <li><a href="#">スキル・対応範囲</a></li>
+              <li><a href="#">プロフィール</a></li>
+              <li><a href="#">制作のご相談</a></li>
+            </ul>
+          </div>
+        </nav>
+        <!-- SNS リンク集（本体 p-footer.html L19-60 のアイコンSVG/URLを踏襲。Tech Blog は frontend-note 実体） -->
+        <ul class="p-footer__sns" aria-label="SNS リンク">
+          <li>
+            <a href="https://x.com/kurodalog" target="_blank" rel="noopener noreferrer" aria-label="X (旧Twitter) @kurodalog">
+              <svg class="p-footer__sns-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              <span>X</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/kkurodalog" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <svg class="p-footer__sns-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.5 11.5 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+              </svg>
+              <span>GitHub</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://frontend-note.blog" target="_blank" rel="noopener noreferrer" aria-label="Tech Blog frontend-note.blog">
+              <svg class="p-footer__sns-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 7v14" />
+                <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
+              </svg>
+              <span>Tech Blog</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="p-footer__bottom">
+        <p class="p-footer__copyright">© 2026 Kosuke Kuroda</p>
+      </div>
+    </footer>
+
+    <!-- ============ ② ツールページの器 ============ -->
+    <p class="mock-label">② ツールページの器 /tools/image-compress/（中身はF2/F3 / ここは枠＋下部ファネルブロック）</p>
+
+    <header class="p-header">
+      <div class="p-header__inner">
+        <p class="p-header__logo">
+          <a href="#" aria-label="Frontend Tools トップへ">
+            <span class="p-header__logo-line p-header__logo-line--1">Frontend</span>
+            <span class="p-header__logo-line p-header__logo-line--2">Tools</span>
+          </a>
+        </p>
+        <nav class="p-header__nav" aria-label="ツールナビゲーション">
+          <a href="#">ツール一覧</a>
+          <a href="#">カテゴリ</a>
+        </nav>
+        <button type="button" class="c-color-toggle" aria-label="ダークモードに切替" aria-pressed="false">
+          <svg class="c-color-toggle__icon c-color-toggle__icon--sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <svg class="c-color-toggle__icon c-color-toggle__icon--moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+        <a class="p-header__contact" href="#">お問い合わせ</a>
+      </div>
+    </header>
+
+    <main class="l-container">
+      <!-- パンくず（本体 works 詳細と同一: ol / › 区切り / Home > Tools > {ツール名}） -->
+      <nav class="c-breadcrumb" aria-label="パンくず">
+        <ol class="c-breadcrumb__list">
+          <li><a href="#">Home</a></li>
+          <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
+          <li><a href="#">Tools</a></li>
+          <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
+          <li><span aria-current="page">画像仕分け圧縮くん</span></li>
+        </ol>
+      </nav>
+
+      <section class="p-tool-head">
+        <h1 class="p-tool-head__title">画像仕分け圧縮くん</h1>
+        <p class="p-tool-head__lead">Web表示用に画像を種別ごとに最適化。WebP / AVIF 対応・ブラウザ内完結で画像を送信しません。</p>
+      </section>
+
+      <section class="p-tool-body" aria-label="ツール本体エリア（器）">
+        <div class="c-tool-panel">
+          <div class="c-dropzone">
+            <div>
+              <strong>ここに画像をドロップ</strong>
+              またはクリックして選択（ドラッグオーバーで枠が accent に変わる想定）
+            </div>
+          </div>
+          <div class="c-field-row">
+            <div class="c-field">
+              <label for="m-preset">種別プリセット</label>
+              <select id="m-preset"><option>背景・装飾（強圧縮）</option><option>重要な写真（画質優先）</option><option>一般写真（中圧縮）</option></select>
+            </div>
+            <div class="c-field">
+              <label for="m-format">出力フォーマット</label>
+              <select id="m-format"><option>WebP</option><option>AVIF</option></select>
+            </div>
+          </div>
+          <p style="margin: var(--space-5) 0 0; font-size: var(--fs-xs); color: var(--color-text-muted);">
+            ※ プリセット・Before/After比較・ZIP DL 等の中身は F2/F3 で設計。本モックは「器（パネル/ドロップゾーン/フォームのトーン）」のみ。
+          </p>
+        </div>
+      </section>
+
+      <!-- ③-① 制作者カード（認知→信頼に専念 / Works+Skills のみ / 全ツールページ下部に常設）
+           ★修正1: アバター＝本体 profile.webp（顔写真）。★修正2: お問い合わせは抜き、行動は下部CTAに一本化。 -->
+      <section class="p-maker" aria-labelledby="maker-name">
+        <div class="c-maker-card">
+          <div class="c-maker-card__avatar" role="img" aria-label="制作者 黒田こうすけの顔写真"></div>
+          <div>
+            <p class="c-maker-card__name" id="maker-name">黒田 こうすけ</p>
+            <p class="c-maker-card__role">フロントエンドエンジニア / Web制作（LP・WordPress・静的サイト）</p>
+            <p class="c-maker-card__desc">このツールは kurodafolio.com が制作・運営しています。実案件で使っている道具をそのまま公開しています。</p>
+            <div class="c-maker-card__links">
+              <a class="c-link-arrow" href="#">制作実績を見る</a>
+              <a class="c-link-arrow" href="#">対応できること（スキル）</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ③-② CTA お問い合わせセクション（行動 / 本体 p-cta と同一・背景画像+overlay）
+         full-bleed（横幅画面いっぱい）。本体同様 .l-container（main）の外に出し、背景を viewport 全幅に。
+                 テキストのみ .p-cta__inner（= container-wide）で中央・幅制約。
+         ★Phase6 修正3（黒田さん指示でリード復活）:
+           - 見出し =「制作のご依頼・ご相談も承っています」（現状維持）
+           - リード =「Web制作・業務委託のご相談はこちらから。3営業日以内に返信いたします。」を見出し下に復活
+           - ボタン =「制作のご相談」（現状維持）
+           - Phase4 でリード削除に伴い見出しを最大 fs-4xl まで上げていたレイアウトを、
+             リード付きで自然に成立するよう再調整（見出し fs-3xl・見出し下 space-4／リード fs-lg 白88%・リード下 space-8）。 -->
+    <section class="p-cta" aria-labelledby="cta-title">
+      <div class="p-cta__inner">
+        <h2 id="cta-title" class="p-cta__title">制作のご依頼・ご相談も承っています</h2>
+        <p class="p-cta__lead">Web制作・業務委託のご相談はこちらから。3営業日以内に返信いたします。</p>
+        <div class="p-cta__action">
+          <a class="c-btn--primary c-btn--large" href="#">制作のご相談</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ツールページのフッター（★Phase4 修正4: 本体 p-footer 3カラム / ロゴ左・ナビ中央・SNS右 + © 行） -->
+    <footer class="p-footer" role="contentinfo">
+      <div class="p-footer__inner">
+        <div class="p-footer__brand">
+          <p class="p-footer__logo">
+            <a href="#" aria-label="Frontend Tools トップへ">
+              <span class="p-footer__logo-line p-footer__logo-line--1">Frontend</span>
+              <span class="p-footer__logo-line p-footer__logo-line--2">Tools</span>
+            </a>
+          </p>
+        </div>
+        <!-- ★Phase5 修正: ポータルトップと同一の2グループ構成（Mado §8-4 最終確定） -->
+        <nav class="p-footer__nav" aria-label="フッターナビゲーション">
+          <div class="p-footer__nav-group">
+            <p class="p-footer__nav-heading">このツール集について</p>
+            <ul class="p-footer__nav-list">
+              <li><a href="#">画像</a></li>
+            </ul>
+          </div>
+          <div class="p-footer__nav-group">
+            <p class="p-footer__nav-heading">制作・運営</p>
+            <ul class="p-footer__nav-list">
+              <li><a href="#">制作実績</a></li>
+              <li><a href="#">スキル・対応範囲</a></li>
+              <li><a href="#">プロフィール</a></li>
+              <li><a href="#">制作のご相談</a></li>
+            </ul>
+          </div>
+        </nav>
+        <ul class="p-footer__sns" aria-label="SNS リンク">
+          <li>
+            <a href="https://x.com/kurodalog" target="_blank" rel="noopener noreferrer" aria-label="X (旧Twitter) @kurodalog">
+              <svg class="p-footer__sns-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              <span>X</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/kkurodalog" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <svg class="p-footer__sns-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.5 11.5 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+              </svg>
+              <span>GitHub</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://frontend-note.blog" target="_blank" rel="noopener noreferrer" aria-label="Tech Blog frontend-note.blog">
+              <svg class="p-footer__sns-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 7v14" />
+                <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
+              </svg>
+              <span>Tech Blog</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="p-footer__bottom">
+        <p class="p-footer__copyright">© 2026 Kosuke Kuroda</p>
+      </div>
+    </footer>
+
+    <script>
+      // モック専用: data-color-scheme を手動トグル（本番は本体同等の切替トグル＋localStorage）
+      document.getElementById('toggleTheme').addEventListener('click', function () {
+        var r = document.documentElement;
+        r.setAttribute('data-color-scheme', r.getAttribute('data-color-scheme') === 'dark' ? 'light' : 'dark');
+      });
+      // ヘッダーの本物のトグルもクリックで効くように（モックの利便性）
+      document.querySelectorAll('.c-color-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var r = document.documentElement;
+          r.setAttribute('data-color-scheme', r.getAttribute('data-color-scheme') === 'dark' ? 'light' : 'dark');
+        });
+      });
+    </script>
+  </body>
+</html>

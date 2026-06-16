@@ -1,1 +1,322 @@
-<!-- PLAN移管予定: 正本 plan は plans/kuroda-tools-setup.md。F1 完了後に Mane がここへ移管する。 -->
+# kuroda-tools セットアップ plan — フロント実用ツール公開構想 正本
+
+担当: Mane（制作部 / 案件管理・見積もり・進捗管理）
+作成日: 2026-06-12 ／ PLAN.md 移管日: 2026-06-15
+ステータス: **F1 完了（プロジェクト初期化）／ Fd 完了（ポータル/ツール デザイン設計・Mado条件付き合格）／ F2 着手可**
+配置: `projects/_self/kuroda-tools/PLAN.md`（案件単位 plan・案件フォルダ配下 / plans/CLAUDE.md 区分準拠）
+> ★本ファイルは旧正本 `plans/kuroda-tools-setup.md` の移管先（mane-file-structure.md §3-2 確定方針）。移管完了に伴い旧正本は削除済み。以後の進捗管理は本 PLAN.md で行う。
+
+---
+
+## 1. 背景・目的
+
+### 1-1. 起点
+2026-06-12 の壁打ちで、黒田さん自身がフロント制作で日常的に使う実用ツールを順次作り、`kurodafolio.com/tools/` に公開していく構想が固まった。第1弾は本人が明言した唯一の鋭い痛点（TinyPNGで圧縮率・方式を画像種別ごとに選べない）に応える「画像仕分け圧縮くん」。Mado（候補選定・公開フォーマット・本体導線設計）と Mane（ファイル配置設計）の分析を経て、黒田さんが全方針を承認した。
+
+### 1-2. 全体像
+- **何を作るか**: 黒田さんのスタック（Vite + Handlebars + FLOCSS + clamp + デザイントークン + WCAG）に固有の、毎案件で使うフロント実用ツール群。第1弾=画像圧縮、以後 clamp / 配色 / FLOCSS スキャフォルダ / スクロール演出… と増やす。
+- **どこに公開するか**: ポータル型。`kurodafolio.com/tools/`（トップ＝一覧）＋ 各ツール `/tools/{slug}/`。1ドメインに評価・回遊・被リンクを複利で集約。
+- **どこで管理するか**: `projects/_self/kuroda-tools/`（独立プロジェクト・独立gitリポ・パターンA公開成果物）。kurodafolio 本体は触らない（導線追加という最小変更を除く）。
+- **目的**: ①黒田さん自身の作業効率化（ドッグフーディング）②集客＋営業の傍証（ツール流入→人物認知→案件相談のファネル）。
+
+### 1-3. なぜこの plan を作るか
+3体以上のエージェントを跨ぐ中〜大型タスク（Cody実装 / Reid評価 / Haru-Madoデザイン・導線 / Sara-SEO）で、フェーズ進行・合意事項・未決定事項・工数見積りを1箇所に統括し、コンテキストリセット／セッション中断からの復帰を可能にするため。壁打ちログ全文ではなく確定済み合意事項のみを正本化する（plan-file-protocol.md 準拠）。
+
+---
+
+## 2. 合意事項（黒田さん承認済み・正本）
+
+### 2-1. 第1弾ツール: 画像仕分け圧縮くん（slug=`image-compress`）
+
+| 項目 | 内容 |
+|---|---|
+| コンセプト | TinyPNG の不満「全部おまかせで圧縮率も方式も選べない」を、**画像の役割（種別）ごとに最適な圧縮方針を当てる**ツールに作り替える |
+| 技術土俵 | **ブラウザ内 WASM 完結**（`@jsquash/webp` `@jsquash/avif` `@jsquash/oxipng` 等）。サーバー・DB不要。**画像を送信しない＝プライバシー訴求**（TinyPNGのアップロード型との差別化） |
+| 種別プリセット（6種別案） | ①背景・装飾＝強圧縮 ②写真（重要）＝画質優先 ③写真（一般）＝中圧縮 ④イラスト・図版 ⑤アイコン・ロゴ（SVG推奨警告）⑥スクショ・UI（可逆優先）。各プリセットは「目標フォーマット／品質／リサイズ上限／設計意図」を持つ |
+| 操作 | D&D → 全体一括の種別選択 ＋ 各画像で**個別に種別変更・手動オーバーライド可**（quality/フォーマット/リサイズ）。痛点の本質は「選べない」ことなので「選べる自由＋おまかせの両立」が設計の肝 |
+| 出力 | Before/After 容量・削減率・劣化確認ルーペ・フォーマット別容量比較・一括ZIP DL |
+| 詳細設計の出典 | `docs/_portal/mado-selfuse-dev-tools.md` §E-1（6種別プリセット表・WASMスタック・UX） |
+| v1スコープ | **✅確定（U-01 / 2026-06-12）＝案②フル**（6種別＋AVIF＋SVG助言＋可逆/減色＋自動種別推測）。Mane推奨は案①ミニマル先行だったが、黒田さんが「どうせ作るなら完成形で出したい」と案②を選択。工数=実働2〜3週（M上振れ〜L入口）。詳細は§3 |
+
+#### v1 仕様確定（モジュールB 要件定義・壁打ち / 2026-06-12）
+
+`docs/image-compress/mado-image-tool-spec-proposal.md` をたたき台に黒田さんと壁打ちして確定。スコープ宣言（やる/やらない）＋機能要素の必須/任意/将来/不要分類を確定。DECISION LIST（D1〜D10）の確定結果:
+
+| # | 論点 | 確定 |
+|---|---|---|
+| D1 | HEIC入力 | **v1非対応**（ブラウザデコード不可・バンドル増／「事前JPEG化を」案内で代替／将来は遅延import検討） |
+| D2 | 自動種別推測 | **入れる＋ON/OFFトグル**（推測がうざい時に切れる）。推測は初期値・手動で直せる・根拠表示・精度は追わない・実装は最後に積む |
+| D3 | EXIF/メタデータ削除 | **デフォルトON**（容量＋GPS等プライバシー）。Orientation正立焼き込みとセット必須 |
+| D4 | AVIF出力 | **含む**（フル決定）。Web Worker＋逐次＋「重い」注記が連動必須 |
+| D5 | ⑥スクショ種別（可逆PNG/oxipng） | **入れる**（④イラスト・⑤アイコンもフル採用） |
+| D6 | 劣化確認UI | 並置=必須／ルーペ=任意／スライダー比較=将来 |
+| D7 | 元形式維持（JPEG）出力 | **含む＝穏やかなJPEG最適化**（リサイズ＋メタ削除＋高品質~82で1回エンコード＝ほぼ無劣化）。native Canvas出力で低コスト／MozJPEG極限圧縮は将来オプション（フロント特化＝Web表示用なら不要）。`<picture>`フォールバック・WordPress手動アップ用途に直結 |
+| D8 | 入力枚数/サイズ上限 | 一度に20〜30枚・〜25MB目安でガード（★数値は実機調整） |
+| D9 | フォルダ一括/クリップボード | フォルダ一括=任意／クリップボード貼付=不要 |
+| D10 | 出力ファイル名 | 元名維持＋拡張子のみ変換追従（連番は任意） |
+
+スコープ外（やらない）= 画像編集・生成AI・アップロード保存・アカウント・アニメGIF/動画・URL逆引き。詳細仕様（種別⇄パラメータ確定表・UI設計）は F2 で `docs/image-compress/01_spec.md` に落とす。
+
+### 2-2. 公開フォーマット
+- **ツールポータル型を採用**。トップ `kurodafolio.com/tools/`（ツール一覧カード）＋ 各ツール `/tools/{slug}/`（個別最適ページ）。
+- **1アプリ束ね型（案C）は不採用**（各ツールは別検索意図を持ち、束ねると検索カバレッジを自ら潰す）。
+- 各ツールは別ページで個別最適しつつ、1ドメインに評価・回遊・被リンクを集約。第1弾は「ポータルの最初の1ツール」として公開（単独先行しない）。出典: `docs/_portal/mado-publish-format.md`。
+
+### 2-3. URL構造
+- **`kurodafolio.com/tools/`（本体サブディレクトリ・ポータル）で確定**。第1弾=`/tools/image-compress/`。
+  > 注: 壁打ち初期は `tools.kurodafolio.com` サブドメイン案もあったが、**本体ドメインパワー完全継承を取り `kurodafolio.com/tools/` サブディレクトリに確定**（旧サブドメイン案は破棄）。詳細根拠＝`docs/_portal/mado-url-structure-detail.md`。
+- **DB要のツール**: UIはポータル配下 `/tools/{slug}/` に残し、バックエンドのみ別オリジン（`api.kurodafolio.com` or Cloudflare Workers）へ逃がす。
+- **スクロール演出ツール**: 旧 `motion.kurodafolio.com` サブドメイン案を破棄し、`/tools/motion/` に吸収。
+- スラッグ＝URL資産。**確定後は動かさない**（301・被リンク毀損回避）。
+
+### 2-4. ポートフォリオ側導線（works には混ぜない）
+
+| # | 配置 | 中身 | 優先 |
+|---|---|---|---|
+| 1 | グローバルナビ | 「Tools」独立項目 → `/tools/`（works と並ぶ第3カテゴリ／全ページから張る最強の内部リンク） | **必須・最優先** |
+| 2 | トップページ | 「公開ツール」**独立セクション**（実績の下にぶら下げず対等並列）＋最新Nカード＋一覧CTA | **必須** |
+| 3 | フッター | サイトマップ的リンクに `/tools/` 追加（面の補強） | 推奨 |
+| 4 | 各ツールページ | 本体（About/Works/Contact）への**逆方向営業導線**＋パンくず（Home>Tools>{ツール名}）。partial化で全ツール自動適用 | **必須** |
+| 5 | works 一覧 | 外側に「ツールも公開しています →」小導線（**works に混ぜない**） | 推奨（小） |
+| 6 | ブログ frontend-note | 関連記事↔ツールの相互送客（別ドメイン＝評価集約に数えず送客のみ） | 推奨（送客のみ） |
+
+- **works 混在は不採用**（works=クライアントワークの証拠棚 / tools=自社プロダクトの destination。混ぜると営業文脈が濁る）。
+- **フェーズ追従**: ナビ項目とURLは1個から立て、見せ方だけ進化（URL不変）。出典: `docs/_portal/mado-portfolio-link-design.md`。
+
+### 2-5. ファイル配置（mane-file-structure.md 確定・承認済み / 2026-06-15 Cody 是正反映）
+
+| 項目 | 内容 |
+|---|---|
+| 新設場所 | `projects/_self/kuroda-tools/`（リポ名・フォルダ名＝**kuroda-tools** で確定） |
+| Git運用 | **パターンA**（独立gitリポ・**GitHub Public**・my-virtual-team除外）。`projects/_self/.gitignore` の `*` ルールで自動除外。例外指定は足さない |
+| ビルド | **案イ＝独立 Vite プロジェクト**（`vite.config` の `base:"/tools/"`）→ `dist/` を XServer `public_html/tools/` へデプロイ。kurodafolio 本体ビルドとは完全分離 |
+| 構成 | `kuroda-tools/PLAN.md` ／ `docs/{_portal/, {slug}/}`（軽量4点 = 00_overview / 01_spec / 02_qa / 03_seo）／ `dev/src/{slug}/`（1ツール=1サブフォルダ・**src直下にスラッグ名**） |
+| 一覧データ | `dev/src/data/tools.json`（1ツール1エントリ。トップ・新着セクションが参照して自動生成） |
+| 命名規則 | スラッグ＝URL・ソースフォルダ・docsフォルダで**完全一致**（小文字英字＋ハイフン・検索意図語・**確定後不変**） |
+| kurodafolio | **触らない**（本体ナビ/トップ/フッターへの導線追加という最小変更を除く） |
+
+> **★Cody 是正（2026-06-15）**: 当初 plan §2-5 の構成図はツールソースを `dev/src/tools/{slug}/` と表記していたが、これだと `dist/tools/{slug}/` → デプロイ後 `/tools/tools/{slug}/` と **`tools/` が二重**になる。Cody が実機検証の上 **`dev/src/{slug}/`（src 直下にスラッグ名・フラット）** ＋ `dist/` を `public_html/tools/` へ配置する構成に是正。`base:"/tools/"` は URL 解決のためだけに効かせ、ディレクトリの `tools/` は「デプロイ先フォルダ名」で表現する。詳細＝`docs/_portal/00_tech-verification.md` §1 / ③。
+
+```
+projects/_self/kuroda-tools/        独立gitリポ・パターンA・GitHub Public（リポ作成・push は後日）
+├── PLAN.md                         ツール群全体の plan（本ファイル＝旧 plans/kuroda-tools-setup.md の移管先）
+├── README.md
+├── docs/
+│   ├── _portal/                    ポータル自体（トップ一覧・ナビ・positioning・マネタイズ・URL設計・技術検証）の設計
+│   ├── image-compress/             第1弾の軽量4点（00_overview / 01_spec / 02_qa / 03_seo）
+│   └── motion/                     温存ツール（スクロール演出ジェネレーター）の素材
+└── dev/                            独立Viteプロジェクト
+    ├── vite.config.js              base:"/tools/"
+    └── src/
+        ├── index.html              ポータルトップ（/tools/）
+        ├── components/             共通partial（head/header/footer = 本体への逆導線・コピー運用＝独立所有）
+        ├── data/tools.json         ツール一覧データ
+        ├── assets/styles/portal.css
+        └── {slug}/index.html       /tools/{slug}/（★src 直下にスラッグ名＝フラット。tools/ を挟まない）
+```
+
+### 2-6. 温存ツール: スクロール演出ジェネレーター
+- 仕様は `docs/motion/mado-scroll-gen-spec.md` に完成済み。v1=3プリセット＋AIプロンプト出力。
+- 看板＝スクロール特化（SEO・分かりやすさ最強）／内部設計＝カテゴリ追加で育つ汎用器／URL＝`/tools/motion/`（旧 motion. サブドメイン案を吸収）。**第1弾の後の有力候補**。
+
+### 2-7. 今後の候補（第2・3弾）
+clamp メーカー（slug=`clamp`）／ 配色＆コントラスト（`color-palette`）／ FLOCSS スキャフォルダ（`flocss-generator`）等。出典: `docs/_portal/mado-selfuse-dev-tools.md` D-1/A-5/D-2、候補カタログ＝`docs/_portal/mado-candidates.md`。優先順は U-04 で決定。
+
+### 2-8. コレクション positioning（フロントエンド特化 / 2026-06-12 確定）
+
+ツール集全体を「**フロントエンド制作者向けツール集**」として positioning する（黒田さんの壁打ち中の戦略的気づきを正式化）。正式版＝`docs/_portal/mado-collection-positioning.md`。
+
+- **ステートメント**: フロント制作者が毎案件・毎日の実作業で使う道具を一箇所に揃えた destination。**主＝フロント制作者**（スコープを決める物差し）／**従＝学習者・ブロガー**（検索流入の間口）。
+- **プロダクト整合の判断ヒューリスティック（全ツールに適用）**: 「**この機能はフロント/Web制作の用途に必要か?**」でYES/NO判定し、NO（一般用途では要るがフロント制作では本命でない）はスコープ外 or 将来オプションへ降格。例: 画像ツール＝Web表示用に絞るから MozJPEG極限圧縮は将来送りが正当化される（D7）。
+- **重要バランス（看板は特化・中身は個別最適）**: 特化は文脈・コピー・回遊・destination で効かせる。各ツールページの検索リーチ（"画像圧縮 webp"等の広い意図）は縮めず素直に狙う。
+
+### 2-9. マネタイズ方針（(d) 分離型ハイブリッド・シンプル版 / 2026-06-12 確定）
+
+集金方法と配置を多角分析（`docs/_portal/mado-monetization-placement.md` ＋ `docs/_portal/mado-placement-c-vs-d.md`＝(c)WP集約 vs (d) を技術論抜きで公平比較）した上で、**(d) 分離型ハイブリッド（シンプル版）**で確定。技術論ではなく事業の本質（リード≫広告／若い営業の顔を育てる）で(d)を選択。
+
+- **ツール本体（`kurodafolio.com/tools/`）= 完全に広告フリー**。役割＝**リード獲得（本命・1案件 数万〜数十万 ≫ 広告 月数千円）＋スキル証明＋若い kurodafolio ドメインの育成＋SEO destination**。広告動画・端AdSense・寄付リンクは**載せない**。
+- **直接収益 = frontend-note の「使い方／作成の裏側」記事の既存AdSense枠**（fn-ad-postend / fn-ad-sidebar）＋文脈アフィリエイト（任意）。素のツールUIはthin contentで広告に不向き＝コンテンツリッチな記事が広告の本来の器。
+- **接続 = 記事⇄ツールの相互送客リンクのみ**（別ドメイン）。frontend-note記事へのツール埋め込み/ミラーは**不採用**＝canonical運用の複雑さを避けシンプルに。
+- 収益の現実認識: 広告は月数百〜数千円＝事業の柱にならない小遣い。本命はリード。ツールは「マネタイズ」より「**営業資産・スキル証明への投資**」と捉える。
+- 既存確定（URL `kurodafolio.com/tools/`・独立Viteプロジェクト・フロント特化positioning）は**一切変更なし**。マネタイズは記事側に分離して足すだけ。
+
+---
+
+## 3. 第1弾「画像仕分け圧縮くん」工数見積り（v1スコープ2案）
+
+> S=〜3日 / M=1〜2週 / L=2週超。山場＝複数WASMエンコーダ組込み・種別プリセット⇄パラメータのマッピング・Web Worker化（大量一括でブラウザが固まる懸念のケア）・劣化確認UI。
+
+### 3-1. 2案の比較表
+
+| 項目 | **案①ミニマル（主要3種別＋WebP）** | **案②フル（6種別＋AVIF）** |
+|---|---|---|
+| 種別プリセット | 3種別（背景=強圧縮 / 重要写真=画質優先 / 一般写真=中圧縮） | 6種別（＋イラスト図版 / アイコンロゴ / スクショUI） |
+| 出力フォーマット | WebP のみ | WebP ＋ AVIF（フォーマット別容量比較も） |
+| アイコンSVG助言 | 入れない | 入れる（「SVGにできませんか?」助言） |
+| 可逆圧縮（PNG/oxipng・減色） | 入れない（WebP非可逆中心） | 入れる（スクショ=可逆 / イラスト=減色量子化） |
+| 自動種別推測 | 入れない（手動割当のみ） | 入れる（解像度・透過・色数からデフォルト割当を推測。ユーザー修正可） |
+| 手動オーバーライド | あり（quality/リサイズ） | あり（全パラメータ） |
+| Before/After・劣化ルーペ・ZIP | あり | あり |
+| WASMエンコーダ数 | 1（webp） | 3〜4（webp / avif / oxipng / imagequant） |
+| Web Worker化 | 推奨（WebPでも大量時に必要） | **必須**（AVIFは重い） |
+| **工数感** | **M下振れ〜S上振れ（実働 4〜7日目安）** | **M上振れ〜L入口（実働 2〜3週目安）** |
+| 工数根拠 | WASMエンコーダ1本＋プリセット3種のマッピング＋基本UI。AVIF/減色/推測ロジックの作り込みが無い分、検証も軽い | エンコーダ3〜4本の組込み＋6種別マッピング＋AVIFの速度/品質チューニング＋自動推測ヒューリスティック＋減色量子化＋Web Worker逐次処理が積み上がる |
+
+### 3-2. 何が入り何が落ちるか
+- **案①で落ちるもの**: AVIF出力 / アイコン・ロゴ・スクショ・イラストの専用最適化（可逆・減色・SVG助言）/ 自動種別推測。→ ただし**黒田さん本人の主痛点（背景は強圧縮・顔写真は画質優先・一般写真は中圧縮）は3種別で完全にカバーされる**。
+- **案②で乗るもの**: 上記すべて。種別の網羅性と次世代フォーマット（AVIF）対応で「公開時の刺さり」が最大化。ただしAVIFのブラウザ固まり対策・自動推測の精度調整という不確実性が工数を押し上げる。
+
+### 3-3. Mane推奨（参考） → 黒田さんは案②フルを選択
+Mane 推奨は「案①ミニマルで v1 を出し、案②を段階追加」（痛点解消は案①で達成済み／早期リリースでフィードバック／ポータル第1枚目を早く立てる複利／WASM1本で技術検証を先に通す）だったが、
+
+> ✅ 決定（U-01 / 2026-06-12）: 黒田さんは **案②フル（完成形）を選択**（「どうせ作るなら最初から完成形で出したい」）。v1から 6種別＋AVIF＋SVG助言＋可逆/減色＋自動種別推測 を実装する。工数=実働2〜3週（M上振れ〜L入口）。**AVIFのブラウザ固まり対策（Web Worker逐次処理必須）・自動種別推測の精度調整が F3 実装の重点リスク**。
+
+---
+
+## 4. 未決定事項
+
+| ID | 項目 | 内容 | 決定タイミング | 決定者 |
+|---|---|---|---|---|
+| ~~U-01~~ | 第1弾v1スコープ | **✅決定（2026-06-12）＝案②フル**（6種別＋AVIF＋SVG助言＋可逆/減色＋自動種別推測）。Mane推奨の案①ミニマルではなく完成形を選択 | ~~フェーズ2前~~ **決定済み** | 黒田さん |
+| ~~U-02~~ | ★Cody検証3点 | **✅決定済み（検証結果記録 / 2026-06-15）**。①`base:"/tools/"` パス解決＝問題なし（実機確認）②XServer .htaccess/fallback 干渉＝想定干渉5件＋対処方針を文書化（実デプロイ F6 で最終確認）③共通partial同期＝**コピー運用（独立所有）推奨**。詳細＝`docs/_portal/00_tech-verification.md` | ~~フェーズ1~~ **記録済み** | Cody（技術検証） |
+| U-03 | ★Haru/Mado ナビ方針 | ツール用ナビ/フッターを本体と同一にするか、ツール用に軽量化するか（partial 所有方式＝コピー運用は確定。**見た目をどこまで本体に寄せる/軽量化するか**が U-03 の領域） | フェーズ5 デザイン着手前 | Haru/Mado |
+| U-04 | 今後ツールの優先順 | clamp / color-palette / flocss-generator / motion の着手順 | 第1弾公開後 | 黒田さん＋Mado |
+
+---
+
+## 5. フェーズ構成
+
+| フェーズ | 目的 | 主担当 | 成果物 |
+|---|---|---|---|
+| **F1 プロジェクト初期化** | `kuroda-tools/` 新設・git init（GitHub Public）・独立Viteセットアップ（`base:"/tools/"`）・ポータル骨格（トップ index + tools.json + 共通partial）・★Cody検証3点（U-02）の確認。`tmp/tool-ideation/` の素材を `docs/` へ移管（§10）。本 plan を `PLAN.md` へ移管 | Cody（実装）／Mane（フォルダ・docs整備） | 初期リポジトリ／ビルド通過確認／検証結果メモ／移管済みdocs |
+| **Fd ポータル/ツール デザイン設計**（F1 と F2 の間に挿入 / 2026-06-16） | F1 後、黒田さんが画面を見て「デザインを大きく修正したい」と判断したため挿入。ポータルトップ＋ツール個別ページの世界観を本体 kurodafolio（b-tech-cool）と統一し、デザインコンセプト・デザイントークン・概念モックを確定。導線・ファネル（認知→信頼→行動）をビジュアル化。**詳細仕様は `docs/_portal/design/design-concept.md` が正本**（PLAN には重複コピーせずポインタで参照） | Haru（コンセプト・tokens・概念モック）→ Mado（評価ゲート） | `docs/_portal/design/`（design-concept.md＝決定正本 / concept-mock.html / tokens.css）＋ 評価レポート `docs/_portal/design/02_mado-design-review.md`。導線設計の拠り所＝`docs/_portal/01_navigation-funnel-design.md` |
+| **F2 第1弾 設計** | U-01確定後、画像仕分け圧縮くんの `docs/image-compress/`（overview/spec/qa/seo）作成。種別プリセット⇄パラメータ仕様・UI設計・WASM選定の確定 | Mado（要件・UX）／Mane（スコープ・工数管理）／Sara（03_seo: meta/OG/構造化） | `docs/image-compress/` 4点 |
+| **F3 第1弾 実装** | 仕様に沿って `dev/src/image-compress/` を実装（WASMエンコーダ組込み・種別マッピング・Web Worker化・劣化確認UI・ZIP出力） | Cody（実装） | 動作するツール本体 |
+| **F4 第1弾 QA・評価** | Reid によるコードレビュー（規範準拠・A11y・レスポンシブ・パフォーマンス）。02_qa チェックリスト消化（ブラウザ対応・大量画像時の固まり確認） | Reid（評価）／Cody（修正） | QA合格・修正反映 |
+| **F5 本体側導線追加** | kurodafolio 本体にナビ「Tools」項目・トップ「公開ツール」セクション・フッターリンクを追加（最小変更）。各ツールページの逆方向営業導線・パンくず partial 設計（U-03確定後） | Haru/Mado（導線・デザイン）／Cody（本体実装） | 本体導線反映 |
+| **F6 デプロイ・公開** | ツール `dist/` を XServer `public_html/tools/` へデプロイ。本体導線も反映。公開後の動作確認（実機・パス解決・干渉） | Cody（デプロイ）／Mane（公開チェック） | 公開完了 |
+
+> 各フェーズは新規起動でコンテキストリセット（中間成果物＝docs/ ファイルを次フェーズが読む）。F2→F3、F3→F4 は context-reset.md 準拠で別コンテキスト。
+
+---
+
+## 6. エージェント起動計画
+
+| フェーズ | エージェント | 役割 | 起動方式 |
+|---|---|---|---|
+| F1 | Cody | Vite初期化・`base:"/tools/"`・★検証3点（U-02） | 新規 |
+| F1 | Mane | フォルダ構成・docs雛形・素材移管・plan移管 | 新規 or fork |
+| F2 | Mado | 第1弾 要件・UX・種別プリセット仕様 | 新規 |
+| F2 | Sara | 03_seo（meta/OG/タイトル/構造化・本体逆導線のSEO観点） | 新規 |
+| F3 | Cody | 実装（WASM・Web Worker・UI） | 新規（F2成果物を読む） |
+| F4 | Reid | コード評価（規範/A11y/レスポンシブ/パフォーマンス）＝**生成に関与しないクリーンコンテキスト** | 新規（必須） |
+| F4 | Cody | 評価反映の修正 | 新規（F4とは別コンテキスト） |
+| F5 | Haru → Mado | ツール用ナビ/フッター方針（U-03）→ Mado が戦略整合を評価 | 新規 |
+| F5 | Cody | 本体導線の実装（最小変更） | 新規 |
+| F6 | Cody | デプロイ | 新規 |
+
+評価ゲート: コード（Cody生成）→ **Reid評価**（evaluation-gate.md 必須）。導線・デザイン（Haru生成）→ **Mado評価**。SEO・対外公開メタ（Sara）→ 公開コンテンツのため自己検証＋代表確認。
+
+---
+
+## 7. 検証基準（フェーズ完了基準・評価ゲート）
+
+| フェーズ | 完了基準（Definition of Done） | 評価ゲート |
+|---|---|---|
+| F1 | `kuroda-tools/` がローカル初期化済み（git init 済・GitHub Public リポ作成/push は後日）／`yarn dev` でポータルトップが起動／`base:"/tools/"` ビルドでパス解決OK／XServer干渉は対処方針文書化（実デプロイは F6）／docs雛形＋素材移管完了／plan移管完了 | ★Cody検証3点（U-02）が「問題なし」または「対処方針あり」で確定＝**達成（docs/_portal/00_tech-verification.md 記録）** |
+| Fd | デザインコンセプト・tokens.css・概念モックが揃い、本体 kurodafolio と世界観統一／導線・ファネル（認知→信頼→行動）がビジュアル化／ナビ案B・制作者カード・CTA・フッター3カラム等が確定（`docs/_portal/design/design-concept.md`） | **Mado評価通過**（戦略/ターゲット/情報設計/世界観統一/品質/抜け漏れの6観点）＝**条件付き合格**（Haru差し戻し不要・残はCody実装時対応／`docs/_portal/design/02_mado-design-review.md`） |
+| F2 | overview/spec/qa/seo の4点が揃い、種別プリセット⇄パラメータ仕様が確定／v1スコープ（U-01）が黒田さん承認済み | Mane が工数・実現可能性を整合確認 |
+| F3 | 仕様どおりツールが動作（種別選択・オーバーライド・Before/After・ルーペ・ZIP） | — |
+| F4 | Reid レビュー合格（規範・A11y・レスポンシブ・パフォーマンス）／02_qa チェックリスト消化／大量画像で固まらない | **Reid評価（必須）** |
+| F5 | 本体ナビ/トップ/フッター導線追加・各ツールページ逆導線/パンくず partial 反映／本体ビルド通過 | **Mado評価**（戦略・情報設計整合） |
+| F6 | XServer `/tools/` で公開・実機動作確認・本体`/`との干渉なし | Mane が公開チェック＋代表確認 |
+
+---
+
+## 8. 進捗状態
+
+| フェーズ | 状態 | 備考 |
+|---|---|---|
+| F1 プロジェクト初期化 | ✅ 完了 | ローカルまで完了（git init 済）。**GitHub Public リポ作成・push は後日**。技術検証3点は `docs/_portal/00_tech-verification.md` に記録＝①パス解決問題なし②.htaccess干渉は方針文書化（F6で最終確認）③partialはコピー運用推奨。docs雛形＋素材移管＋plan移管 完了（2026-06-15 Mane）。`src/{slug}/` フラット是正反映済み |
+| Fd ポータル/ツール デザイン設計 | ✅ 完了 | **Mado条件付き合格**（2026-06-16・Haru差し戻し不要）。Haru→Mado評価で世界観統一・導線ファネル確定。成果物＝`docs/_portal/design/`（design-concept.md＝決定正本 / concept-mock.html / tokens.css）＋評価レポート `02_mado-design-review.md`。**残はCody本番CSS実装時対応（§Fd申し送り 1〜4）**。本番CSSは Haru 成果物ではなく Cody が `dev/src/` に実装。★黒田さん判断1点＝パンくず transition は (B) `--transition-base` 200ms 統一で確定済み |
+| F2 第1弾 設計 | ⬜ 未着手 | U-01 決定済み（案②フル）。スコープ確定済みで着手可。`docs/image-compress/` 雛形（4点）配置済み |
+| F3 第1弾 実装 | ⬜ 未着手 | F2 仕様確定後。AVIF固まり対策・自動推測精度が重点リスク |
+| F4 第1弾 QA・評価 | ⬜ 未着手 | Reid評価必須 |
+| F5 本体側導線追加 | ⬜ 未着手 | 着手前に U-03 を確定 |
+| F6 デプロイ・公開 | ⬜ 未着手 | XServer .htaccess の F6 必須チェック3項目＝`docs/_portal/00_tech-verification.md` §② |
+
+> フェーズ完了ごとに本テーブルを更新する。
+
+---
+
+## 8-Fd. Fd デザイン設計の確定と Cody 本番CSS実装への申し送り（2026-06-16 Mane 反映）
+
+Fd で確定したデザイン仕様の**詳細は `docs/_portal/design/design-concept.md` が正本**（世界観・ロゴ・ナビ案B・制作者カード・CTA・リンク/カード挙動・フッター3カラム＋レスポンシブ・ラベル文脈使い分け 等）。Mado 評価レポート＝`docs/_portal/design/02_mado-design-review.md`。導線・ファネル・フッター設計の拠り所＝`docs/_portal/01_navigation-funnel-design.md`。**本 PLAN には重複コピーせずポインタで参照する**（正本一元化）。
+
+### Fd 関連ファイル インデックス
+
+| ファイル | 役割 |
+|---|---|
+| `docs/_portal/design/design-concept.md` | **デザイン決定の正本**（Haru / 本体抽出・実値・全確定仕様）。本番CSS実装の参照元 |
+| `docs/_portal/design/concept-mock.html` | 概念モック（2画面・ライト/ダーク・3BP）。本番HTML/CSSの方向提示用 |
+| `docs/_portal/design/tokens.css` | デザイントークン（本体トークン1:1継承・出典パス＋行番号付き） |
+| `docs/_portal/design/02_mado-design-review.md` | Mado 評価レポート（条件付き合格・指摘1〜5） |
+| `docs/_portal/01_navigation-funnel-design.md` | 導線・ファネル・フッター2グループ設計（評価の拠り所） |
+
+### Cody 本番CSS実装への申し送り（Mado条件付き合格の残＝実装で閉じる）
+
+> 本番CSSは `docs/_portal/design/`（concept-mock.html・tokens.css）を基に **Cody が `dev/src/` に実装**する。Haru 成果物（モック/tokens）は本番CSSではない。詳細は上記 design-concept.md / 02_mado-design-review.md を参照。
+
+| # | 申し送り | 内容 | 出典 |
+|---|---|---|---|
+| 1 | パンくず transition | 本体 `a` タグ共通の `transition: color var(--transition-base)`（200ms ease-out）を踏襲（★黒田さん判断＝(B) Tools内統一で確定）。直書きOK・共通部品化はCody判断 | design-concept.md §7-3 / 02_mado-design-review.md 指摘2 |
+| 2 | カテゴリページ URL構造の確定 | ヘッダー「カテゴリ」・フッターG1「画像」の仮 `#` を実URLに（例 `/tools/category/{slug}/`）。slug＝URL整合で確定し、ヘッダー/フッターG1を揃える | design-concept.md §8-4 / 02_mado-design-review.md 指摘4 |
+| 3 | フッター 768–1023px 実測 | ナビ＋SNS縦並び＋nowrap の3列押し込みを実ラベルで 768/820/1023px の3点実測。窮屈なら2カラム（左[ロゴ+ナビ]／右[SNS]）に戻す判断を残す | 02_mado-design-review.md 指摘1（Madoの品質指摘） |
+| 4 | 本番CSSの実装元 | `docs/_portal/design/`（concept-mock.html・tokens.css）を基に Cody が `dev/src/` に実装。Haru 成果物は本番CSSではない | design-concept.md / 02_mado-design-review.md |
+
+> 補足（評価レポート由来・★要確認）: CTAコピー（指摘5「制作のご依頼・ご相談も承っています」＋リード）は対外公開コピーのため、未確定なら Cody 着手前に Sara→黒田さんの順でレビューを通す（既に黒田さん確定済みなら省略可）。
+
+---
+
+## 9. 関連メモリ
+
+| メモリファイル | 関係 | 更新要否 |
+|---|---|---|
+| `project_workspace_structure.md` | パターンA公開成果物に `kuroda-tools/` を新規追加（配置・ビルド分離・本体最小変更）。`projects/CLAUDE.md` のパターンA例示にも追記済み | 反映済み（チーフ） |
+| `project_portfolio_and_tools_plan_static.md` | J申し送りでツールに言及。ツール配置・公開フォーマット確定を反映 | **要更新**（チーフ） |
+| `feedback_past_policy_mechanical_application.md` | kurodafolio（パターンB案件構造）の方針を機械的にツール群へ適用しない判断の実例。ツール群=パターンA で別管理にした根拠 | 参照（実例として有効） |
+| `project_local_dev_server_setup.md` | Vite系案件は `yarn dev` 単独運用。kuroda-tools も同方針 | 参照 |
+
+---
+
+## 10. ソース資料の扱い（移管完了 / 2026-06-15 Mane）
+
+`tmp/tool-ideation/` 配下の各分析ファイルを `docs/` 配下へ**移管（コピー・原本残置）**した。移管時、旧 `tools.kurodafolio.com` / `{tool}.kurodafolio.com` / `motion.kurodafolio.com` サブドメイン記述を確定方針 `kurodafolio.com/tools/`（サブディレクトリ）へ読み替える注記を各ファイル冒頭（H1直下）に付与済み。
+
+| ソースファイル | 移管先 | 状態 |
+|---|---|---|
+| `mado-selfuse-dev-tools.md` | `docs/_portal/`（今後候補ロードマップ・第1弾元素材） | ✅移管・注記付与 |
+| `mado-publish-format.md` | `docs/_portal/`（ポータル設計） | ✅移管・注記付与 |
+| `mado-portfolio-link-design.md` | `docs/_portal/`（本体導線設計） | ✅移管・注記付与 |
+| `mane-file-structure.md` | `docs/_portal/`（配置設計の確定根拠） | ✅移管・注記付与 |
+| `mado-scope-decision.md` ＋ `mado-scroll-gen-spec.md` | `docs/motion/`（温存ツール） | ✅移管・注記付与 |
+| `mado-image-tool-spec-proposal.md` | `docs/image-compress/`（要件定義 D1〜D10 元素材） | ✅移管・注記付与 |
+| `mado-collection-positioning.md` | `docs/_portal/`（コレクション positioning） | ✅移管・注記付与 |
+| `mado-monetization-placement.md` ＋ `mado-placement-c-vs-d.md` | `docs/_portal/`（マネタイズ方針） | ✅移管・注記付与 |
+
+### 移管表に無い3点の扱い（Mane 判断 / 2026-06-15）
+| ファイル | 判断 | 理由 |
+|---|---|---|
+| `mado-candidates.md` | **`docs/_portal/` へ移管**（参考素材） | 公開ツール推奨カタログ。第2・3弾の候補ロードマップ（§2-7・U-04）の一次資料として価値が高い |
+| `mado-url-structure-detail.md` | **`docs/_portal/` へ移管**（参考素材） | サブドメイン vs サブディレクトリの精密判断。`/tools/` 確定（§2-3）の詳細根拠＝後から「なぜサブドメインにしなかったか」を辿る資料 |
+| `mado-pokemon-sleep-tools.md` | **tmp 残置（移管しない）** | ポケモンスリープ連動＝キャリア外・種まきの side ブレスト。フロント特化 positioning（§2-8）のスコープ外で、kuroda-tools の確定ロードマップに含まれない。将来キャリア外ツールに着手するときに tmp から拾えばよい |
+
+> 原本（`tmp/tool-ideation/`）は全件残置（移管＝コピー）。`docs/_portal/00_tech-verification.md`（Cody）は移管対象外の正本＝触らない。
+
+---
+
+## 検証済み
+
+- **検証済み: PLAN.md 移管完了** — 旧正本 `plans/kuroda-tools-setup.md` の全内容を本 PLAN.md へ移管。§2-5 に Cody 是正（`src/{slug}/` フラット）を構成図・記述・補足注記で反映。§8 F1 を✅完了に更新（ローカルまで完了・GitHub後日・検証3点記録・移管完了）。U-02 を決定済み（検証結果記録）に更新。§10 を移管完了状態に更新。
+- **検証済み: slug 完全一致** — `image-compress`（URL `/tools/image-compress/`・ソース `dev/src/image-compress/`・docs `docs/image-compress/`）が plan §2-5 命名規則と整合。
+- **検証済み: 素材移管8系統＋表外2点の docs 配置・旧サブドメイン読み替え注記付与・原本残置** — §10 のとおり。`docs/_portal/00_tech-verification.md` は未改変。
