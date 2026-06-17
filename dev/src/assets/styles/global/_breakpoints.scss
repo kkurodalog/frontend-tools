@@ -1,0 +1,47 @@
+@use "sass:map";
+
+// sp first or pc first
+$start-from: sp;
+
+// デフォルト値を設定
+$mediaqueries: (
+  xs: "screen",
+  sm: "screen",
+  md: "screen",
+  lg: "screen",
+  xl: "screen",
+  xxl: "screen",
+);
+$breakpoints: (
+  xs: 375,
+  sm: 600,
+  md: 768,
+  lg: 900,
+  xl: 1024,
+  xxl: 1440,
+);
+
+@if $start-from == sp {
+  // スマホファースト
+  $mediaqueries: (
+    xs: "screen and (min-width: #{map.get($breakpoints, 'xs')}px)",
+    sm: "screen and (min-width: #{map.get($breakpoints, 'sm')}px)",
+    md: "screen and (min-width: #{map.get($breakpoints, 'md')}px)",
+    lg: "screen and (min-width: #{map.get($breakpoints, 'lg')}px)",
+    xl: "screen and (min-width: #{map.get($breakpoints, 'xl')}px)",
+    xxl: "screen and (min-width: #{map.get($breakpoints, 'xxl')}px)",
+  );
+} @else {
+  // PCファースト
+  $mediaqueries: (
+    xs: "screen and (max-width: #{map.get($breakpoints, 'xs') - 1}px)",
+    sm: "screen and (max-width: #{map.get($breakpoints, 'sm') - 1}px)",
+    md: "screen and (max-width: #{map.get($breakpoints, 'md') - 1}px)",
+    lg: "screen and (max-width: #{map.get($breakpoints, 'lg') - 1}px)",
+    xl: "screen and (max-width: #{map.get($breakpoints, 'xl') - 1}px)",
+    xxl: "screen and (min-width: #{map.get($breakpoints, 'xxl')}px)",
+  );
+}
+
+// 注: mq() mixin の本体定義は _mixins.scss に集約（coding-rule §5-1 / §5-2-4 / §16-9）。
+//     本ファイルは $breakpoints / $mediaqueries map のみを保持する。

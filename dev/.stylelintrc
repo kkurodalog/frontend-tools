@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-recess-order"
+  ],
+  "ignoreFiles": [
+    "public/**/*",
+    "dist/**/*"
+  ],
+  "rules": {
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "no-descending-specificity": null,
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": [
+          "details-content"
+        ]
+      }
+    ],
+    "property-no-unknown": [
+      true,
+      {
+        "ignoreProperties": [
+          "field-sizing"
+        ]
+      }
+    ],
+    "scss/load-no-partial-leading-underscore": null,
+    "scss/load-partial-extension": null,
+    "font-family-no-duplicate-names": null,
+    "no-duplicate-selectors": null,
+    "scss/no-global-function-names": null,
+    "scss/comment-no-empty": null,
+    "scss/double-slash-comment-empty-line-before": null
+  }
+}

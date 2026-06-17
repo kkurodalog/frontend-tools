@@ -1,0 +1,78 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-maker-card（制作者カード / 認知→信頼ブロック）
+//   通常面（bg-alt 地・1px 枠・radius-lg）で読み物的に静かに置く。
+//   SP（768未満）は中央寄せ縦積み / 768以上で 2 カラム（アバター + テキスト）左寄せ。
+//   アバター = 本体 profile.webp（160px → PC 200px）。本文幅（p-hero/p-tools と同一）に揃える
+//   （セクション枠 p-maker が l-container 内に置かれ、l-container 二重ネストはしない）。
+//   導線は Works / Skills のみ（c-link-arrow）。お問い合わせは下部 CTA に一本化。
+// =====================================================================
+.c-maker-card {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: center;
+  padding: var(--maker-card-padding);
+  text-align: center;
+  background-color: var(--maker-card-bg);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--maker-card-radius);
+}
+
+@include mq(md) {
+  .c-maker-card {
+    grid-template-columns: auto 1fr;
+    column-gap: var(--space-8);
+    place-items: center stretch;
+    text-align: start;
+  }
+}
+
+.c-maker-card__avatar {
+  inline-size: var(--maker-avatar-size);
+  block-size: var(--maker-avatar-size);
+  background-color: var(--color-bg-elevated);
+  background-image: var(--maker-avatar-image);
+  background-position: center;
+  background-size: cover;
+  border-radius: var(--radius-pill);
+}
+
+@include mq(xl) {
+  .c-maker-card__avatar {
+    inline-size: var(--maker-avatar-size-pc);
+    block-size: var(--maker-avatar-size-pc);
+  }
+}
+
+.c-maker-card__name {
+  margin-block-end: var(--space-1);
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+}
+
+.c-maker-card__role {
+  margin-block-end: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.c-maker-card__desc {
+  margin-block-end: var(--space-4);
+  font-size: var(--fs-base);
+  color: var(--color-text-base);
+}
+
+.c-maker-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  justify-content: center;
+}
+
+@include mq(md) {
+  .c-maker-card__links {
+    justify-content: flex-start;
+  }
+}

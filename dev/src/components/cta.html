@@ -1,0 +1,12 @@
+<!-- CTA お問い合わせセクション（行動 / full-bleed・背景画像 + overlay・白文字中央）
+     本体 p-cta と同一。main の外（full-bleed）に置くこと。
+     呼び出し側で ctaId を渡す（aria-labelledby のユニーク化）。 -->
+<section class="p-cta" aria-labelledby="{{ ctaId }}">
+  <div class="p-cta__inner">
+    <h2 id="{{ ctaId }}" class="p-cta__title">制作のご依頼・ご相談も承っています</h2>
+    <p class="p-cta__lead">Web制作・業務委託のご相談はこちらから。3営業日以内に返信いたします。</p>
+    <div class="p-cta__action">
+      <a class="c-btn--primary c-btn--large" href="{{ site.contact }}">制作のご相談</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,245 @@
+@use "../global" as *;
+
+// =====================================================================
+// Project: p-footer（共通フッター / 本体 _p-footer.scss 実値継承）
+//   ★本体最重要特性 = 常時ダーク固定面（ライト/ダーク問わず濃色固定）。
+//     色トークン（--footer-*）はテーマ非依存の固定値（global/_variables.scss §6）。
+//
+//   3 要素: ① ロゴ「Frontend Tools」/ ② 中央ナビ（2 グループ）/ ③ SNS リンク集 + © 行。
+//
+//   3 ブレークポイント配置（黒田さん確定 / concept-mock.html Phase7 踏襲）:
+//     - 768未満     : grid 縦積み（ロゴ → ナビ → SNS）
+//     - 768〜1023px : 3 列横並び・全て上揃え（minmax(max-content,8rem) 1fr auto / align-items:start）。
+//                     ナビ nowrap+gap詰め+fs-xs / SNS 右端上揃え縦並び
+//     - 1024px以上  : ロゴ(fit-content) | ナビ(左寄せ) | SNS(右寄せ)・全て上揃え + SNS 縦並び
+//                     （minmax(max-content,12rem) 1fr auto）
+// =====================================================================
+.p-footer {
+  padding-block: var(--footer-pad-top) 0;
+  color: var(--footer-text);
+  background-color: var(--footer-bg); // 常時ダーク固定（ライトでも濃色面）
+}
+
+.p-footer__inner {
+  display: grid;
+  gap: var(--footer-inner-gap);
+  max-inline-size: var(--container-max);
+  padding-block-end: var(--footer-inner-pad-bottom);
+  padding-inline: var(--container-padding-sp);
+  margin-inline: auto;
+}
+
+@include mq(md) {
+  .p-footer__inner {
+    padding-inline: var(--container-padding-pc);
+  }
+}
+
+// ---- ① 左: ロゴ「Frontend Tools」（ヘッダーロゴと整合 / line2=accent 固定） ----
+.p-footer__logo {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  letter-spacing: var(--ls-base);
+}
+
+.p-footer__logo a {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0;
+  color: var(--footer-text);
+  text-decoration: none;
+  transition: opacity var(--transition-base);
+
+  @include hover {
+    opacity: 0.7;
+  }
+}
+
+.p-footer__logo-line {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-base);
+}
+
+.p-footer__logo-line--2 {
+  color: var(--footer-logo-accent);
+}
+
+// ---- ② 中央: ナビ（2 グループ / G1 ツール集・G2 制作運営） ----
+.p-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-12);
+}
+
+.p-footer__nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.p-footer__nav-heading {
+  margin-block-end: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--footer-text);
+  letter-spacing: var(--ls-wide);
+}
+
+.p-footer__nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-inline-start: var(--space-3); // 見出し配下を段落下げ（見出し > リストの従属を可視化）
+}
+
+.p-footer__nav a {
+  font-size: var(--fs-sm);
+  color: var(--footer-text);
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: var(--footer-link-opacity);
+  transition:
+    color var(--transition-base),
+    opacity var(--transition-base);
+
+  @include hover {
+    color: var(--color-accent);
+    opacity: 1;
+  }
+}
+
+// ---- ③ 右: SNS リンク集（X / GitHub / frontend-note） ----
+.p-footer__sns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+}
+
+.p-footer__sns a {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-block-size: var(--touch-target-min);
+  padding-inline: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--footer-text);
+  text-decoration: none;
+  opacity: var(--footer-link-opacity);
+  transition:
+    color var(--transition-base),
+    opacity var(--transition-base);
+
+  @include hover {
+    color: var(--color-accent);
+    opacity: 1;
+  }
+}
+
+.p-footer__sns-icon {
+  flex-shrink: 0;
+  inline-size: var(--icon-size-base);
+  block-size: var(--icon-size-base);
+}
+
+// ---- 最下部: © 行（独立・中央・上に区切り線） ----
+.p-footer__bottom {
+  padding-block: var(--footer-bottom-pad);
+  text-align: center;
+  border-block-start: var(--border-width-thin) solid var(--footer-divider-color);
+}
+
+.p-footer__copyright {
+  font-family: var(--font-family-en);
+  font-size: var(--fs-sm);
+  color: var(--footer-copyright-color);
+  letter-spacing: var(--ls-wide);
+}
+
+// ===== レスポンシブ 3BP =====
+
+// 768〜1023px: 3 列横並び・全て上揃え（concept-mock.html Phase7 踏襲）。
+// ナビは改行禁止で幅内に収め、ロゴ列・gap・ナビ font をこの BP 内で詰める。
+// mq() は min-width 専用のため、上限付きレンジは生クエリで記述（768=md と整合）。
+@media screen and (width >= 768px) and (width <= 1023px) {
+  .p-footer__inner {
+    grid-template-columns: minmax(max-content, 8rem) 1fr auto;
+    column-gap: var(--space-6); // 1024+ より gap を詰めて 3 列を収める
+    align-items: start;
+  }
+
+  .p-footer__brand {
+    justify-self: start;
+  }
+
+  .p-footer__nav {
+    flex-wrap: nowrap;
+    gap: var(--space-6);
+    justify-self: start;
+  }
+
+  .p-footer__nav-list {
+    padding-inline-start: var(--space-2); // インデントも微縮
+  }
+
+  .p-footer__nav a {
+    font-size: var(--fs-xs); // リンクをワンサイズ下げて横幅を圧縮
+  }
+
+  .p-footer__sns {
+    flex-wrap: nowrap;
+    gap: var(--space-4);
+    place-self: start end;
+  }
+
+  .p-footer__sns a {
+    flex-direction: column;
+    gap: var(--space-1);
+    min-block-size: auto;
+    padding-block: var(--space-1);
+    font-size: var(--fs-xs);
+    line-height: 1.2;
+    text-align: center;
+  }
+}
+
+// 1024px以上: ロゴ(fit-content) | ナビ(左寄せ) | SNS(右寄せ)・全て上揃え + SNS 縦並び
+@include mq(xl) {
+  .p-footer__inner {
+    grid-template-columns: minmax(max-content, 12rem) 1fr auto;
+    align-items: start;
+  }
+
+  .p-footer__logo-line {
+    font-size: var(--fs-xl);
+  }
+
+  .p-footer__brand {
+    justify-self: start;
+    inline-size: fit-content;
+  }
+
+  .p-footer__nav {
+    flex-wrap: nowrap;
+    justify-self: start;
+  }
+
+  .p-footer__sns {
+    flex-wrap: nowrap;
+    gap: var(--space-4);
+    justify-self: end;
+  }
+
+  // SNS は本体 mq(xl) 踏襲で縦並び（アイコン上・テキスト下）
+  .p-footer__sns a {
+    flex-direction: column;
+    gap: var(--space-1);
+    min-block-size: auto;
+    padding-block: var(--space-1);
+    font-size: var(--fs-xs);
+    line-height: 1.2;
+    text-align: center;
+  }
+}

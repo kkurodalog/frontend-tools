@@ -1,0 +1,20 @@
+{
+  "/index.html": {
+    "title": "フロントエンド制作ツール集 | kuroda-tools",
+    "description": "Web制作で毎日使う実用ツールを一箇所に。画像圧縮・clamp計算など、ブラウザ内で完結する道具を順次公開しています。",
+    "ogImage": "/images/ogp.jpg",
+    "isPortalTop": true
+  },
+  "/image-compress/index.html": {
+    "title": "画像仕分け圧縮くん（準備中） | kuroda-tools",
+    "description": "画像の役割ごとに最適な圧縮を当てるツール。ブラウザ内で完結し画像を送信しません。現在準備中です。",
+    "ogImage": "/images/ogp.jpg",
+    "isPortalTop": false
+  },
+  "default": {
+    "title": "kuroda-tools",
+    "description": "フロントエンド制作者向け実用ツール集（kurodafolio.com/tools/）。",
+    "ogImage": "/images/ogp.jpg",
+    "isPortalTop": false
+  }
+}

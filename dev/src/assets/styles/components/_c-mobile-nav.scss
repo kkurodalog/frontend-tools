@@ -1,0 +1,206 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-mobile-nav（モバイルナビ / 円形展開型 / 本体 _c-mobile-nav.scss 移植）
+//   第1段階: .c-mobile-nav__bg が FAB 位置から円形に拡大（is-expanding）
+//   第2段階: .c-mobile-nav の各リンクがスタッガードでフェードイン（is-open）
+//   閉じる時は 1 段階・短時間（背景縮小とリンク非表示を同時 / is-closing）
+//   状態管理 = .is-open / .is-expanding / .is-closing（_drawer.js が同期）+ aria-hidden。
+//   transition は FOUC 抑止のため html.is-ready 後のみ有効化（_is-ready.js とセット）。
+//   768px 以上は非表示（ヘッダー横ナビが機能 / 切替境界統一）。
+// =====================================================================
+
+// ---- 第1段階: 円形展開背景（右下 FAB 中心を起点に円形拡大） ----
+.c-mobile-nav__bg {
+  position: fixed;
+  inset-block-end: calc(var(--fab-offset) + var(--fab-size) / 2);
+  // FAB ボタンの中心を起点に配置（end/bottom = オフセット + 半径）
+  inset-inline-end: calc(var(--fab-offset) + var(--fab-size) / 2);
+  z-index: var(--z-modal-backdrop); // FAB より下 / ナビ層より下
+  inline-size: 0;
+  block-size: 0;
+  pointer-events: none; // 背景自体はクリック不可
+  background-color: var(--color-nav-overlay);
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  transition: none; // FOUC: 初回 CSS 適用時のアニメを抑止
+  // 中心を右下に固定したまま拡大するため translate で補正
+  transform: translate(50%, 50%) scale(0);
+
+  // 第1段階: 画面全体を覆うまで拡大
+  &.is-expanding {
+    inline-size: 300vmax; // 画面対角の 2 倍以上で全面カバー
+    block-size: 300vmax;
+    opacity: 1;
+    transform: translate(50%, 50%) scale(1);
+  }
+
+  // 閉じる時: 縮小（1 段階・短時間 / リンク非表示と同時に進行）
+  &.is-closing {
+    inline-size: 300vmax;
+    block-size: 300vmax;
+    opacity: 0;
+    transform: translate(50%, 50%) scale(0);
+  }
+}
+
+html.is-ready .c-mobile-nav__bg {
+  transition:
+    transform var(--expand-transition-bg),
+    width 0s,
+    height 0s;
+}
+
+html.is-ready .c-mobile-nav__bg.is-closing {
+  transition:
+    transform var(--expand-close-bg),
+    opacity var(--expand-close-bg);
+}
+
+// ---- 第2段階: 展開ナビ層（全面・中央寄せ） ----
+.c-mobile-nav {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal); // 背景より上 / FAB は別途最前面化
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: none; // FOUC 抑止
+
+  &.is-open {
+    pointer-events: auto;
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+html.is-ready .c-mobile-nav {
+  transition:
+    opacity var(--expand-close-nav),
+    visibility var(--expand-close-nav);
+}
+
+html.is-ready .c-mobile-nav.is-open {
+  transition:
+    opacity var(--expand-transition-nav),
+    visibility var(--expand-transition-nav);
+}
+
+.c-mobile-nav__panel {
+  inline-size: min(86%, 360px);
+}
+
+.c-mobile-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+// 各リンク項目の初期状態（非表示 + 下方向にずれ / スタッガード対象）
+.c-mobile-nav__item {
+  opacity: 0;
+  transition: none; // FOUC 抑止
+  transition-delay: 0s; // 閉じる時は遅延なしで即フェードアウト
+  transform: translateY(30px);
+}
+
+html.is-ready .c-mobile-nav__item {
+  transition:
+    opacity var(--expand-close-nav),
+    transform var(--expand-close-nav);
+}
+
+html.is-ready .c-mobile-nav.is-open .c-mobile-nav__item {
+  transition:
+    opacity var(--expand-transition-nav),
+    transform var(--expand-transition-nav);
+}
+
+.c-mobile-nav.is-open .c-mobile-nav__item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// スタッガード遅延（本枠は 2 項目: ツール一覧 / お問い合わせ）
+.c-mobile-nav.is-open .c-mobile-nav__item:nth-child(1) {
+  transition-delay: calc(var(--expand-item-delay) * 1);
+}
+
+.c-mobile-nav.is-open .c-mobile-nav__item:nth-child(2) {
+  transition-delay: calc(var(--expand-item-delay) * 2);
+}
+
+// ナビ項目リンク（CTA ボタン c-btn--primary は :not で除外し装飾を侵食しない）
+// 背景は常に暗いダークオーバーレイ（90%）のため、テキストは白系で固定（--color-nav-text）。
+.c-mobile-nav__item a:not(.c-btn--primary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--touch-target-min);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-medium);
+  color: var(--color-nav-text);
+  text-decoration: none;
+  letter-spacing: var(--ls-wide);
+  transition: color var(--transition-base);
+
+  &:focus-visible {
+    color: var(--color-accent);
+  }
+}
+
+@media (any-hover: hover) and (pointer: fine) {
+  .c-mobile-nav__item a:not(.c-btn--primary):hover {
+    color: var(--color-accent);
+  }
+}
+
+.c-mobile-nav__item--contact {
+  margin-block-start: var(--space-4);
+}
+
+// ---- prefers-reduced-motion: 円形拡大・スタッガードを無効化し即時表示 ----
+@media (prefers-reduced-motion: reduce) {
+  html.is-ready .c-mobile-nav__bg,
+  html.is-ready .c-mobile-nav__bg.is-closing {
+    transition: opacity var(--transition-base);
+  }
+
+  .c-mobile-nav__bg.is-expanding,
+  .c-mobile-nav__bg.is-closing {
+    transform: none;
+  }
+
+  .c-mobile-nav__bg.is-expanding {
+    inset: 0;
+    inline-size: auto;
+    block-size: auto;
+  }
+
+  html.is-ready .c-mobile-nav__item {
+    transition: opacity var(--transition-base);
+  }
+
+  .c-mobile-nav__item {
+    transform: none;
+  }
+
+  .c-mobile-nav.is-open .c-mobile-nav__item {
+    transition-delay: 0s;
+    transform: none;
+  }
+}
+
+// ---- 768px 以上では非表示（JS でも開かない / 念のため CSS でも閉じる / 切替境界統一） ----
+@include mq(md) {
+  .c-mobile-nav,
+  .c-mobile-nav__bg {
+    display: none;
+  }
+}

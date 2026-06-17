@@ -371,11 +371,11 @@ mock 上で全箇所整合済み（ヘッダー＝「お問い合わせ」／CTA
 | ブレークポイント | 配置 |
 |---|---|
 | **768px未満** | **現状維持**（grid 縦積み＝上から ロゴ → ナビ → SNS）。**変更しない**（黒田さんOK済み） |
-| **768〜1023px** | **2カラム = 左[ロゴ＋ナビ縦積み] / 右[SNS]**。`grid-template-columns: 1fr auto` ＋ areas `"brand sns" / "nav sns"`。**`align-items: start`（上端揃え）**で左カラム最上部のロゴと右カラムの SNS が上端で揃う。SNS は `align-self: start` |
-| **1024px以上** | **3要素横並び・全て上揃え**。`grid-template-columns: auto 1fr auto`＋`align-items: start`。**ロゴ=`width: fit-content`（中身幅・auto 列）**／**ナビ=左寄せ（`justify-self: start`）**（旧 center から変更）／**SNS=右寄せ（`justify-self: end`）**。SNS は本体 mq(xl) 踏襲で縦並び（アイコン上・テキスト下） |
+| **768〜1023px** | **★Phase7 で 3カラム横並びに更新（mock・実装と整合）**。3要素（ロゴ／ナビ／SNS）を**上揃えで横並び**（＝1024+ と同じ並び方）。`grid-template-columns: minmax(max-content, 8rem) 1fr auto` ＋ `align-items: start`。幅が狭いため `column-gap` は `--space-6`（1024+ より詰める）。**ナビ＝左寄せ（`justify-self: start`）・改行禁止（`flex-wrap: nowrap`）＋グループ間 gap 詰め（`--space-6`）＋リンク `--fs-xs`**（横幅圧縮）。**SNS＝右端上揃え（`justify-self: end; align-self: start`）・`flex-wrap: nowrap`** で、各項目はアイコン＋テキストを縦並び（`--fs-xs`） |
+| **1024px以上** | **3要素横並び・全て上揃え**。`grid-template-columns: minmax(max-content, 12rem) 1fr auto`＋`align-items: start`。**ロゴ=`width: fit-content`（中身幅・列幅は minmax で確保しロゴ-ナビ間を広げる）**／**ナビ=左寄せ（`justify-self: start`・`flex-wrap: nowrap`）**（旧 center から変更）／**SNS=右寄せ（`justify-self: end`）**。SNS は本体 mq(xl) 踏襲で縦並び（アイコン上・テキスト下・`--fs-xs`） |
 
-- **設計意図**: 768〜1023px は横幅に余裕が出るが3カラム均等にはまだ狭いため、関連の強い「ロゴ＋ナビ（ブランド／回遊系）」を左に束ね、行動・外部リンクの SNS を右に独立させる。上端揃えにすることで、左カラムが2段（ロゴ＋ナビ）でも右の SNS が宙に浮かず、視線の起点（上端）が揃う。
-- 1024px 以上は本体フッターの3カラム思想を維持しつつ、黒田さん指示で**ロゴを fit-content**（余分な列幅を持たせない）・**ナビを左寄せ**（旧 center を是正＝左の塊として読ませる）・**SNS を右寄せ**に確定。
+- **設計意図（768〜1023px）**: ★当初（Phase6）は「3カラム均等にはまだ狭い」と判断し**2カラム＝左[ロゴ＋ナビ縦積み]/右[SNS]**（`1fr auto`・areas `"brand sns"/"nav sns"`）にしていたが、**Phase7 で 3カラム横並び（1024+ と同じ並び方）に更新**。3列を狭幅に収めるため、ロゴ列を `minmax(max-content, 8rem)`・`column-gap` を `--space-6` に詰め、ナビは `flex-wrap: nowrap`＋グループ間 gap 詰め＋リンク `--fs-xs` で横幅を圧縮、SNS は右端で `nowrap`＋縦並び（`--fs-xs`）として収めた。これで 768px〜1024+ で配置思想（ロゴ｜ナビ｜SNS の横並び・上端揃え）が連続し、ブレークポイント境界での見た目のジャンプがなくなる。
+- 1024px 以上は本体フッターの3カラム思想を維持しつつ、黒田さん指示で**ロゴを fit-content**（中身幅・列幅は `minmax(max-content, 12rem)` で確保しロゴ-ナビ間を広げる）・**ナビを左寄せ**（旧 center を是正＝左の塊として読ませる）・**SNS を右寄せ**に確定。
 
 ### 9-2. 修正2: 制作者カードのアバター拡大（本体トップ自己紹介円に合わせる）
 
@@ -412,6 +412,7 @@ mock 上で全箇所整合済み（ヘッダー＝「お問い合わせ」／CTA
 - 検証済み（Phase7）: ポータルトップの About的ひとこと（ヒーロー内 `.p-hero__intro`「作っているのは…制作実績はこちら」）を HTML/CSS とも削除した（mock ヒーローは H1＋リードのみに）。
 - 検証済み（Phase7）: ポータルトップにツール個別ページと同一の制作者カード（`.c-maker-card`・黒田こうすけ＋肩書＋説明＋Works/Skills の c-link-arrow）→ CTA セクション（`.p-cta`「制作のご依頼・ご相談も承っています」＋リード＋「制作のご相談」ボタン）を、同マークアップ/クラス/コピー/リンクで配置（共通partial想定）。カードは `<main>` 内末尾・CTA は `</main>` 後の full-bleed でツール個別ページと同じ並び順。
 - 検証済み（Phase7）: ツール一覧カード群（`.p-tools`）・ヘッダー・フッターは維持（差し替えは下部ファネルブロックの追加と About的ひとことの削除のみ）。tokens.css・本番 CSS（dev/src/）は不変更。
+- 検証済み（Phase7）: §9-1 の **768〜1023px 記述を mock（`concept-mock.html` L427-444）＝3カラム横並びの実態に同期**した。旧 Phase6 の 2カラム案（`1fr auto`・areas `"brand sns"/"nav sns"`）は、Phase7 で 3カラム横並び（`minmax(max-content, 8rem) 1fr auto`・`align-items: start`・`column-gap: --space-6`／ナビ `nowrap`＋gap詰め＋`--fs-xs`／SNS 右端上揃え縦並び `--fs-xs`）に更新済み。旧案からの変更経緯は §9-1 設計意図に注記として残置。あわせて 1024+ 記述の `grid-template-columns` を mock/実装の確定値 `minmax(max-content, 12rem) 1fr auto`（旧記述 `auto 1fr auto`）に整合。実装 `dev/src/assets/styles/projects/_p-footer.scss`（L166-206=768〜1023px／L209-245=1024+）が mock と一致することを照合（Reid 照合済みの実態と整合）。768未満（縦積み・変更なし）は確定形と一致。
 - 検証済み（Phase5）: フッター中央ナビを2グループ最終形に差し替えた（両ページ）。G1「このツール集について」＝カテゴリ「画像」のみ／G2「制作・運営」＝制作実績(/works/)・スキル・対応範囲(/skills/)・プロフィール(/about/)・制作のご相談(/contact/)。mock の `.p-footer__nav` を `concept-mock.html` の両フッター（ポータルトップ／ツールページ）で差し替え。
 - 検証済み（Phase5）: G1 から「お問い合わせ」「ツールトップ」「Home（本体）」を排除（ロゴが /tools/ を独占・/contact/ は G2 集約）。トップ2枚・内部語問題の解消を §8-1 に記録。
 - 検証済み（Phase5）: ★D ラベル文脈使い分け（ヘッダーCTA=「お問い合わせ」／制作者カード・CTAセクション・フッターG2=「制作のご相談」）が mock 全箇所で整合（ヘッダー L435/L548＝「お問い合わせ」／CTAセクション＝「制作のご相談」／フッターG2＝「制作のご相談」）。

@@ -1,0 +1,20 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-tool-panel（ツール本体エリアの器 / アプリ的「操作面」）
+//   card（radius-md）より一段大きい角丸（--tool-panel-radius = radius-lg）で
+//   「操作領域」を強調。中身（ドロップゾーン / プリセット / Before-After 等）は
+//   F3 で実装するため、現状はプレースホルダ文のみを内包する。
+// =====================================================================
+.c-tool-panel {
+  padding: var(--tool-panel-padding);
+  background-color: var(--color-bg-elevated);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--tool-panel-radius);
+}
+
+.c-tool-panel__placeholder {
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  color: var(--color-text-muted);
+}

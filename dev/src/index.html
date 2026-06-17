@@ -1,37 +1,37 @@
 <!doctype html>
 <html lang="ja">
-  {{> head pageTitle="フロントエンド制作ツール集 | kuroda-tools" pageDescription="Web制作で毎日使う実用ツールを一箇所に。画像圧縮・clamp計算など、ブラウザ内で完結する道具を順次公開しています。"}}
+  {{> head}}
 
   <body>
     {{> header}}
 
-    <main>
-      <section class="p-hero l-inner">
+    <main class="l-container">
+      <section class="p-hero">
         <h1 class="p-hero__title">フロントエンド制作ツール集</h1>
-        <p class="p-hero__lead">
-          Web制作の実作業で毎日使う道具を一箇所に。すべてブラウザ内で完結し、登録もインストールも不要です。
-        </p>
+        <p class="p-hero__lead">Web制作の実作業で毎日使う道具を一箇所に。すべてブラウザ内で完結し、登録もインストールも不要です。</p>
       </section>
 
-      <section class="p-tools l-inner" aria-label="公開ツール一覧">
+      <section class="p-tools" aria-label="公開ツール一覧">
         {{#if tools.length}}
-          <ul class="p-tools__list">
-            {{#each tools}}
-              <li>
-                <a class="c-tool-card" href="{{ this.url }}">
-                  <span class="c-tool-card__category">{{ this.category }}</span>
-                  <h2 class="c-tool-card__name">{{ this.name }}</h2>
-                  <p class="c-tool-card__tagline">{{ this.tagline }}</p>
-                </a>
-              </li>
-            {{/each}}
-          </ul>
+        <ul class="p-tools__list">
+          {{#each tools}}
+          <li>
+            <a class="c-tool-card" href="{{ this.url }}">
+              <span class="c-tool-card__category">{{ this.category }}</span>
+              <h2 class="c-tool-card__name">{{ this.name }}</h2>
+              <p class="c-tool-card__tagline">{{ this.tagline }}</p>
+            </a>
+          </li>
+          {{/each}}
+        </ul>
         {{else}}
-          <p class="p-tools__empty">ツールは順次公開予定です。</p>
+        <p class="p-tools__empty">ツールは順次公開予定です。</p>
         {{/if}}
       </section>
+
+      {{> maker-card makerId="maker-name-top"}}
     </main>
 
-    {{> footer}}
+    {{> cta ctaId="cta-title-top"}} {{> footer}} {{!-- モバイルナビ（円形展開型ハンバーガー / 768px 未満で表示） --}} {{> mobile-nav}}
   </body>
 </html>

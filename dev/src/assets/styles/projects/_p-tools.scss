@@ -1,0 +1,21 @@
+@use "../global" as *;
+
+// =====================================================================
+// Project: p-tools（ポータルトップのツールカードグリッド）
+//   auto-fill minmax(280px, 1fr) のグリッド。カード本体は c-tool-card（Component）。
+//   空状態（公開ツール0件）は __empty。
+// =====================================================================
+.p-tools {
+  padding-block: var(--space-4) var(--space-16);
+}
+
+.p-tools__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(rm(280), 1fr));
+  gap: var(--space-5);
+}
+
+.p-tools__empty {
+  font-size: var(--fs-base);
+  color: var(--color-text-muted);
+}

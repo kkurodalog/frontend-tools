@@ -1,0 +1,144 @@
+@use "../global" as *;
+
+// =====================================================================
+// Project: p-header（共通ヘッダー / 本体 _p-header.scss トーン準拠）
+//   sticky・半透明 + blur。中身: 2 行ロゴ / ナビ（案B 自立） / ダークトグル / お問い合わせ CTA。
+//   ロゴは 2 行とも fw-bold・同サイズ（差は line2=accent 色のみ）。
+//   横ナビ↔ハンバーガーの切替境界は 768px に統一（FAB / mobile-nav / _drawer.js matchMedia と一致）。
+// =====================================================================
+.p-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-header);
+  background-color: rgb(255 255 255 / 92%);
+  backdrop-filter: blur(8px);
+  border-block-end: var(--border-width-thin) solid var(--color-border);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+:root[data-color-scheme="dark"] .p-header {
+  background-color: rgb(15 22 32 / 92%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-scheme="light"]) .p-header {
+    background-color: rgb(15 22 32 / 92%);
+  }
+}
+
+.p-header__inner {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  max-inline-size: var(--container-max);
+  min-block-size: var(--header-height);
+  padding-inline: var(--container-padding-sp);
+  margin-inline: auto;
+}
+
+@include mq(md) {
+  .p-header__inner {
+    gap: var(--space-4);
+  }
+}
+
+// ---- ロゴ（2 行とも fw-bold + fs-lg(SP)/fs-xl(768+)、line2 のみ accent / hover opacity .7） ----
+.p-header__logo a {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0;
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  color: var(--color-text-base);
+  text-decoration: none;
+  letter-spacing: var(--ls-base);
+  transition: opacity var(--transition-base);
+
+  @include hover {
+    opacity: 0.7;
+  }
+}
+
+.p-header__logo-line {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-base);
+}
+
+.p-header__logo-line--2 {
+  color: var(--color-accent);
+}
+
+// ロゴサイズ変更境界 = 768px（黒田さん確定）
+@include mq(md) {
+  .p-header__logo-line {
+    font-size: var(--fs-xl);
+  }
+}
+
+// ---- ナビ（案B 自立: tools 内「ツール一覧」。本体 Works/Portfolio・カテゴリは出さない） ----
+.p-header__nav {
+  display: none;
+}
+
+// 横ナビの出現境界 = 768px（黒田さん確定 / FAB・mobile-nav と統一）
+@include mq(md) {
+  .p-header__nav {
+    display: flex;
+    gap: var(--space-6);
+    align-items: center;
+    margin-inline: auto var(--space-4);
+  }
+
+  .p-header__nav a {
+    display: inline-flex;
+    align-items: center;
+    padding-block: var(--space-2);
+    margin-block-start: 2px;
+    font-size: var(--fs-base);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    color: var(--color-text-base);
+    text-decoration: none;
+    white-space: nowrap;
+    border-block-end: var(--border-width-base) solid transparent;
+    transition:
+      color var(--transition-base),
+      border-color var(--transition-base);
+  }
+
+  .p-header__nav a:hover,
+  .p-header__nav a[aria-current="page"] {
+    color: var(--color-accent);
+    border-block-end-color: var(--color-accent);
+  }
+}
+
+// ---- お問い合わせ CTA（accent 固定地・白文字・ダーク時も固定で眩しさ回避） ----
+.p-header__contact {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--touch-target-min);
+  padding-inline: var(--space-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--color-fixed-white);
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: var(--color-accent-fixed);
+  border-radius: var(--radius-card);
+  transition: background-color var(--transition-base);
+
+  @include hover {
+    background-color: var(--color-accent-fixed-hover);
+  }
+}
+
+// お問い合わせボタンのサイズ変更境界 = 768px（黒田さん確定）
+@include mq(md) {
+  .p-header__contact {
+    font-size: var(--fs-base);
+  }
+}

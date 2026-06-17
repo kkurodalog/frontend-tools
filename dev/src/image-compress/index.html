@@ -1,25 +1,38 @@
 <!doctype html>
 <html lang="ja">
-  {{> head pageTitle="画像仕分け圧縮くん（準備中） | kuroda-tools" pageDescription="画像の役割ごとに最適な圧縮を当てるツール。ブラウザ内で完結し画像を送信しません。現在準備中です。"}}
+  {{> head}}
 
   <body>
     {{> header}}
 
-    <nav class="c-breadcrumb l-inner" aria-label="パンくず">
-      <a href="{{ site.home }}">Home</a> &gt;
-      <a href="/tools/">Tools</a> &gt;
-      <span>画像仕分け圧縮くん</span>
-    </nav>
+    <main class="l-container">
+      <nav class="c-breadcrumb" aria-label="パンくず">
+        <ol class="c-breadcrumb__list">
+          <li><a href="{{ site.home }}">Home</a></li>
+          <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
+          <li><a href="/tools/">Tools</a></li>
+          <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
+          <li><span aria-current="page">画像仕分け圧縮くん</span></li>
+        </ol>
+      </nav>
 
-    <main>
-      <section class="p-hero l-inner">
-        <h1 class="p-hero__title">画像仕分け圧縮くん</h1>
-        <p class="p-hero__lead">
-          このツールは現在準備中です（F3 で実装予定）。画像の種別ごとに最適な圧縮を当て、すべてブラウザ内で処理します。
-        </p>
+      <section class="p-tool-head">
+        <h1 class="p-tool-head__title">画像仕分け圧縮くん</h1>
+        <p class="p-tool-head__lead">Web表示用に画像を種別ごとに最適化。WebP / AVIF 対応・ブラウザ内完結で画像を送信しません。現在準備中です。</p>
       </section>
+
+      <section class="p-tool-body" aria-label="ツール本体エリア（器）">
+        <div class="c-tool-panel">
+          <p class="c-tool-panel__placeholder">
+            このツールは現在準備中です（F3 で本体 UI を実装予定）。ドロップゾーン・プリセット・Before/After 比較・ZIP
+            ダウンロードなどの操作面はここに載ります。
+          </p>
+        </div>
+      </section>
+
+      {{> maker-card makerId="maker-name"}}
     </main>
 
-    {{> footer}}
+    {{> cta ctaId="cta-title"}} {{> footer}} {{!-- モバイルナビ（円形展開型ハンバーガー / 768px 未満で表示） --}} {{> mobile-nav}}
   </body>
 </html>

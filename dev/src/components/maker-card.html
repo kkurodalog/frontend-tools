@@ -1,0 +1,17 @@
+<!-- 制作者カード（認知→信頼 / Works + Skills のみ / お問い合わせは下部 CTA に一本化）
+     ポータルトップ・全ツールページ下部に共通で配置（partial）。
+     呼び出し側で makerId を渡す（aria-labelledby のユニーク化）。 -->
+<section class="p-maker" aria-labelledby="{{ makerId }}">
+  <div class="c-maker-card">
+    <div class="c-maker-card__avatar" role="img" aria-label="制作者 黒田こうすけの顔写真"></div>
+    <div>
+      <p class="c-maker-card__name" id="{{ makerId }}">黒田 こうすけ</p>
+      <p class="c-maker-card__role">フロントエンドエンジニア / Web制作（LP・WordPress・静的サイト）</p>
+      <p class="c-maker-card__desc">このツールは kurodafolio.com が制作・運営しています。実案件で使っている道具をそのまま公開しています。</p>
+      <div class="c-maker-card__links">
+        <a class="c-link-arrow" href="{{ site.works }}">制作実績を見る</a>
+        <a class="c-link-arrow" href="{{ site.skills }}">対応できること（スキル）</a>
+      </div>
+    </div>
+  </div>
+</section>

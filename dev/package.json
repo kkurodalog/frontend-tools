@@ -2,25 +2,43 @@
   "name": "kuroda-tools",
   "version": "0.1.0",
   "description": "フロントエンド制作者向け実用ツール集（kurodafolio.com/tools/）",
-  "keywords": [
-    "vite",
-    "frontend-tools",
-    "image-compress",
-    "kurodafolio"
-  ],
+  "keywords": ["vite", "frontend-tools", "image-compress", "kurodafolio", "flocss", "scss", "handlebars"],
   "author": "kuroda",
   "license": "UNLICENSED",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "rimraf dist && vite build",
-    "preview": "vite preview"
+    "dev": "concurrently \"yarn watch:scss\" \"vite --host\"",
+    "watch:scss": "node bin/watch-scss-globs.js",
+    "build": "yarn format && rimraf dist && vite build",
+    "preview": "vite preview",
+    "format": "yarn run _lint-fix && yarn run _prettier-fix",
+    "_lint": "eslint --ext .js --ignore-path .gitignore . && stylelint \"**/*.{scss,css}\"",
+    "_prettier": "prettier --check \"**/*.{html,scss,js}\" --ignore-path .prettierignore",
+    "_lint-fix": "eslint --fix --ext .js --ignore-path .gitignore . && stylelint --fix \"**/*.{scss,css}\"",
+    "_prettier-fix": "prettier --write \"**/*.{html,scss,js}\" --ignore-path .prettierignore"
   },
   "devDependencies": {
-    "glob": "^10.4.5",
+    "autoprefixer": "^10.4.19",
+    "chokidar": "^3.6.0",
+    "concurrently": "^9.1.0",
+    "eslint": "8.56.0",
+    "eslint-config-prettier": "9.1.0",
+    "glob": "10.3.10",
+    "postcss": "^8.4.45",
+    "prettier": "3.2.4",
     "rimraf": "^6.0.1",
-    "vite": "^5.4.11",
-    "vite-plugin-handlebars": "^2.0.0"
+    "sass": "1.70.0",
+    "sharp": "^0.33.4",
+    "stylelint": "16.2.0",
+    "stylelint-config-recess-order": "4.4.0",
+    "stylelint-config-standard-scss": "13.0.0",
+    "vite": "5.0.13",
+    "vite-plugin-handlebars": "^2.0.0",
+    "vite-plugin-image-optimizer": "^1.1.8",
+    "vite-plugin-sass-glob-import": "^5.0.0"
+  },
+  "dependencies": {
+    "kiso.css": "^1.1.4"
   }
 }

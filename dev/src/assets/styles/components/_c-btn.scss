@@ -1,0 +1,63 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-btn（ボタン / 本体 c-btn--primary・large を実値継承）
+//   primary = accent 固定地 + 白固定文字（ダーク時も眩しさ回避で固定）。
+//   large = CTA 用の拡大寸法（min-block-size 56px）。
+//   block = 親幅いっぱい中央寄せ（モバイルナビ CTA 等）。
+//   outline は将来用に定義（本体トーン踏襲で保持）。
+// =====================================================================
+.c-btn--primary {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--touch-target-min);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-6);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--color-fixed-white);
+  text-decoration: none;
+  background-color: var(--color-accent-fixed);
+  border-radius: var(--radius-card);
+  transition: background-color var(--transition-base);
+
+  @include hover {
+    background-color: var(--color-accent-fixed-hover);
+  }
+}
+
+.c-btn--large {
+  min-block-size: rm(56);
+  padding-block: var(--space-4);
+  padding-inline: var(--space-8);
+  font-size: var(--fs-lg);
+}
+
+.c-btn--block {
+  display: flex;
+  justify-content: center;
+  inline-size: 100%;
+}
+
+.c-btn--outline {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--touch-target-min);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-6);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+  background-color: transparent;
+  border: var(--border-width-thin) solid var(--color-primary);
+  border-radius: var(--radius-card);
+  transition:
+    color var(--transition-base),
+    background-color var(--transition-base);
+
+  @include hover {
+    color: var(--color-text-inverse);
+    background-color: var(--color-primary);
+  }
+}

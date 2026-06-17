@@ -1,0 +1,382 @@
+@use "sass:math";
+
+// =====================================================================
+// SCSS variables（デザインカンプ幅・スケール基準）— テンプレ static-template 準拠
+//   fluid sizing（cal-clamp 等）の基準値。BP（_breakpoints.scss の $breakpoints）
+//   とは概念的に別物のため独立した SCSS 変数として定義する。
+// =====================================================================
+$design-width-sp: 375; // SP デザインカンプ幅
+$design-width-pc: 1440; // PC デザインカンプ幅
+
+// rm() の固定基準（16px）。--to-rem の分母として使用（テンプレ作法 / coding-rule §6）。
+@property --root-font-size {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 16px;
+}
+
+// ローカルの Noto Sans JP を優先するためのフォント宣言（テンプレ踏襲）
+@font-face {
+  font-family: "Local Noto Sans JP";
+  src: local("Noto Sans JP");
+}
+
+// =====================================================================
+// Design Tokens（kurodafolio.com 本体と世界観を完全統一 / Haru 設計言語を本番取り込み）
+//   出典: docs/_portal/design/tokens.css（本体 _variables.scss の実値を 1:1 継承）。
+//   ★編集スコープ: 値は本体の正本トークン。独自色を新規に作らない（世界観の純度を保つ）。
+//
+//   構成（本体二層構造を踏襲）:
+//     §1 共通トークン（テーマ非依存） / §4 Tools 固有 / §5 ファネル / §6 フッター
+//     §2 ライト色 / §3 ダーク色（prefers 追従 / color-scheme / reduced-motion）
+//
+//   画像参照（パイプライン経由 / base 二重付与の根絶）:
+//     CTA 背景・制作者カードアバターは src/assets/images/ に置き、本ファイル（global/）
+//     からの相対 url() で参照する。Vite がビルド時に fingerprint 付きで dist 展開し
+//     base(/tools/) を自動解決する（public/ 直置き + 絶対パスハードコードを廃止）。
+// =====================================================================
+
+// =====================================================================
+// §1. 共通トークン（テーマ非依存 / 本体 _variables.scss §1 を実値継承）
+// =====================================================================
+:root {
+  // ---- rm() 基準（テンプレ） ----
+  // 16px を基準として 1px あたりの rem を計算（font-size: rm(16); で使用）
+  --to-rem: calc(tan(atan2(1px, var(--root-font-size))) * 1rem);
+
+  // ---- Font Family（本体 §1） ----
+  --font-family-sans: "Noto Sans JP", -apple-system, blinkmacsystemfont, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  --font-family-en: "Inter", "Noto Sans JP", -apple-system, sans-serif;
+  --font-family-mono: "JetBrains Mono", "SFMono-Regular", menlo, monaco, consolas, monospace;
+
+  // body 既定（Local Noto Sans JP 優先 / テンプレの構造系トークン互換）
+  --base-font-family: "Local Noto Sans JP", "Noto Sans JP", sans-serif;
+
+  // ---- Font Size（Perfect Fourth 1.333 / 本体 §1） ----
+  --fs-xs: 0.75rem; // 12px
+  --fs-sm: 0.875rem; // 14px
+  --fs-base: 1rem; // 16px 本文
+  --fs-lg: 1.125rem; // 18px リード
+  --fs-xl: 1.333rem; // 21.3px H4
+  --fs-2xl: 1.777rem; // 28.4px H3
+  --fs-3xl: 2.369rem; // 37.9px H2
+  --fs-4xl: 3.157rem; // 50.5px H1 PC
+
+  // ---- Font Weight（本体 §1） ----
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  // ---- Line Height（本体 §1） ----
+  --lh-tight: 1.3;
+  --lh-base: 1.75;
+  --lh-relax: 1.85;
+
+  // ---- Letter Spacing（本体 §1） ----
+  --ls-tight: -0.01em;
+  --ls-base: 0;
+  --ls-wide: 0.04em;
+
+  // ---- Spacing 4px/8px グリッド（本体 §1） ----
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-28: 7rem;
+
+  // ---- Container（本体 §1 を継承 / Tools は本文幅をやや絞る） ----
+  --container-narrow: 800px;
+  --container-base: 1100px; // 本体トップと同幅。ポータル一覧で使用
+  --container-wide: 1200px;
+  --container-max: 1280px; // header / footer 最大幅（本体と同値）
+  --container-padding-pc: 2rem;
+  --container-padding-sp: 1rem;
+
+  // ---- Border Radius（本体 §1） ----
+  --radius-sm: 4px;
+  --radius-md: 8px; // カード標準（本体 work-card と同値）
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  // ---- Border Width（本体 §1） ----
+  --border-width-thin: 1px;
+  --border-width-base: 2px;
+
+  // ---- Shadow ライト基準（本体 §1） ----
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 4%);
+  --shadow-sm: 0 2px 8px rgb(15 40 73 / 6%);
+  --shadow-md: 0 4px 16px rgb(15 40 73 / 8%); // カード hover（本体 work-card と同値）
+  --shadow-lg: 0 8px 24px rgb(15 40 73 / 10%);
+
+  // ---- Transition（本体 §1） ----
+  --transition-zero: 0 ease-out;
+  --transition-fast: 150ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-slow: 300ms ease-out;
+
+  // ---- Z-index（本体 §1 / Tools は header/sticky + modal 層を使用） ----
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 500;
+  --z-header: 800;
+  --z-modal-backdrop: 900; // モバイルナビ円形背景
+  --z-modal: 1000; // モバイルナビ本体
+
+  // ---- フローティングハンバーガー FAB（本体実値継承 / SP・タブレットのみ表示） ----
+  --fab-size: 56px; // 円形ボタン直径
+  --fab-offset: 20px; // 画面端からのオフセット
+  --fab-shadow: 0 4px 12px rgb(0 0 0 / 40%); // base（ダーク時）影
+  --fab-shadow-hover: 0 6px 16px rgb(0 0 0 / 50%); // hover（ダーク時）影
+
+  // ---- モバイルナビ円形展開アニメ（本体実値継承 / _drawer.js と一致） ----
+  --expand-transition-bg: 0.5s cubic-bezier(0.4, 0, 0.2, 1); // 開く: 第1段階 円形背景の拡大
+  --expand-transition-nav: 0.4s ease; // 開く: 第2段階 リンクのフェードイン
+  --expand-item-delay: 0.08s; // スタッガード 1 項目あたりの遅延
+  --expand-close-bg: 0.22s cubic-bezier(0.4, 0, 0.2, 1); // 閉じる: 1 段階・短時間（背景縮小）
+  --expand-close-nav: 0.22s ease; // 閉じる: 1 段階・短時間（リンク非表示）
+
+  // ---- モバイルナビ配色（常時ダークオーバーレイ前提・テーマ非依存） ----
+  --color-nav-overlay: rgb(3 5 10 / 90%); // 円形展開背景（暗色 90%）
+  --color-nav-text: #fff; // ナビリンク文字（暗背景上で白固定）
+
+  // ---- Header Height（本体 §1） ----
+  --header-height: 64px;
+
+  // ---- Icon Size（本体 §1 / フッター SNS アイコン等） ----
+  --icon-size-base: 20px;
+
+  // ---- Touch Target / Focus（本体 §1 / WCAG 2.5.5） ----
+  --touch-target-min: 44px;
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+
+  // ---- Font assignment（本体 §2 の割り当てを共通化） ----
+  --font-heading: var(--font-family-en); // Inter Bold 優先（英字見出し＝本体トーン）
+  --font-body: var(--font-family-sans);
+
+  // ---- モード非依存の固定色（本体 §1 / accent 上の白前景・固定 accent 背景） ----
+  --color-fixed-white: #fff;
+  --color-accent-fixed: #2ba89c; // 常にライト accent（ボタン背景等）
+  --color-accent-fixed-hover: #239084;
+
+  // ---- ダーク切替トグル（本体 _c-color-toggle.scss 実値継承 / 64×32 トラック・22 サム・16 アイコン） ----
+  --toggle-track-w: 64px;
+  --toggle-track-h: 32px;
+  --toggle-thumb-size: 22px;
+  --toggle-thumb-offset: 3px; // サム左端オフセット（左右対称）
+  --toggle-icon-size: 16px;
+  --toggle-pad-inline: 6px;
+
+  // ---- c-link-arrow（本体 _c-link-arrow.scss 実値継承 / 「→」付きリンクの共通ホバー） ----
+  --link-arrow-shift: 3px; // hover/focus 時の矢印移動量（本体 translateX(3px)）
+  --link-arrow-gap: var(--space-1);
+
+  // =====================================================================
+  // §4. Tools 固有トークン（本体には無い・アプリ的 UI 差分 / すべて本体トークン派生）
+  // =====================================================================
+  --tool-section-gap: var(--space-12); // ツールページ内セクション間（読み物 §28 より狭い）
+  --tool-panel-padding: var(--space-6); // 操作パネル内パディング
+  --tool-panel-radius: var(--radius-lg); // 操作パネルは card より一段大きい角丸で「面」を強調
+
+  // ドロップゾーン（image-compress 等のファイル投入面 / F3 で本実装）
+  --dropzone-border: var(--border-width-base) dashed var(--color-border-strong);
+  --dropzone-border-active: var(--border-width-base) dashed var(--color-accent);
+  --dropzone-bg: var(--color-bg-alt);
+  --dropzone-bg-active: var(--color-accent-bg);
+
+  // フォーム入力（iOS ズーム回避で 16px 維持）
+  --field-bg: var(--color-bg-base);
+  --field-border: var(--border-width-thin) solid var(--color-border);
+  --field-border-focus: var(--border-width-thin) solid var(--color-accent);
+  --field-radius: var(--radius-sm);
+  --field-min-size: var(--fs-base);
+
+  // =====================================================================
+  // §5. 下部ファネルブロック（制作者カード / CTA）
+  // =====================================================================
+  // CTA 背景画像 = 本体 cta-bg を image-set で流用（WebP 優先 + PNG フォールバック）。
+  // 配置: src/public/images/ に置き /tools/images/ で serve（CSS 出力 /tools/assets/style/ から
+  //   ../../images/ ＝ /tools/images/ に解決 / base 二重付与なし）。
+  //   ※ style.scss は glob import で本ファイルを inline するため、Vite は相対 url() を rebase しない。
+  //     そのため fingerprint 対象の assets/ ではなく public/ に置いて base-relative で確実に解決させる。
+  --bg-cta-image: image-set(url("../../images/cta-bg.webp") type("image/webp"), url("../../images/cta-bg.png") type("image/png"));
+
+  // 制作者カード（認知→信頼ブロック / 本体 work-card 系の面を流用）
+  --maker-card-bg: var(--color-bg-alt);
+  --maker-card-radius: var(--radius-lg);
+  --maker-card-padding: var(--space-8);
+
+  // 制作者カードのアバター = 本体 profile.webp（顔写真 / src/public/images/ から /tools/images/ で serve）。
+  // 本体 _p-about-excerpt.scss 実値 = SP/タブレット 160px → PC(≥1024px) 200px。
+  --maker-avatar-image: url("../../images/profile.webp");
+  --maker-avatar-size: 160px; // SP/タブレット
+  --maker-avatar-size-pc: 200px; // PC ≥1024px
+
+  // =====================================================================
+  // §6. フッター（本体 _p-footer.scss 実値継承 / 常時ダーク固定面・テーマ非依存）
+  // =====================================================================
+  --footer-bg: #0a0e14; // 常時固定
+  --footer-text: #e6edf6; // 常時固定
+  --footer-logo-accent: #5dd9cb; // line2 Portfolio 色・ライト/ダーク統一
+  --footer-copyright-color: rgb(255 255 255 / 65%);
+  --footer-divider-color: rgb(255 255 255 / 15%);
+  --footer-link-opacity: 0.85;
+  --footer-pad-top: var(--space-12);
+  --footer-inner-gap: var(--space-8);
+  --footer-inner-pad-bottom: var(--space-8);
+  --footer-bottom-pad: var(--space-5);
+
+  @media screen and (width >= 768px) {
+    --header-height: 80px;
+  }
+}
+
+// =====================================================================
+// §2. b-tech-cool ライトモード（採用案・デフォルト / 本体 §2 を実値継承）
+//   キーカラー: チャコールネイビー #1A2B3C / アクセント: ティールグリーン #2BA89C
+// =====================================================================
+:root[data-theme="b-tech-cool"],
+:root:not([data-theme]) {
+  --color-primary: #1a2b3c;
+  --color-primary-hover: #2a3d52;
+  --color-primary-lighten: #3d5066;
+  --color-secondary: #4a5868;
+  --color-accent: #2ba89c;
+  --color-accent-hover: #239084;
+  --color-accent-bg: rgb(43 168 156 / 8%);
+  --color-accent-strong: #5b7fb8;
+  --color-bg-base: #fff;
+  --color-bg-alt: #f4f6f8;
+  --color-bg-section: #f4f6f8;
+  --color-bg-elevated: #fff;
+  --color-bg-code: #f0f3f6;
+  --color-border: #dde2e7;
+  --color-border-strong: #bfc6ce;
+  --color-text-base: #0f1620;
+  --color-text-muted: #586674;
+  --color-text-inverse: #fff;
+  --color-text-link: #5b7fb8;
+  --color-text-link-hover: #4a6fa8;
+  --color-success: #2a9d6e;
+  --color-warning: #d4923a;
+  --color-warning-bg: rgb(212 146 58 / 12%);
+  --color-error: #c4444a;
+  --color-error-bg: rgb(196 68 74 / 12%);
+  --color-info: #5b7fb8;
+  --color-focus-outline: #2ba89c;
+  --section-gap-pc: var(--space-28);
+  --section-gap-sp: var(--space-16);
+  --radius-card: var(--radius-md);
+  --lh-body: var(--lh-base);
+  --color-cta-overlay-light: rgb(15 22 32 / 70%);
+}
+
+// =====================================================================
+// §3. b-tech-cool ダークモード（本体 §3 を実値継承）
+//   発動: <html data-color-scheme="dark"> 明示 / prefers-color-scheme: dark 自動追従
+// =====================================================================
+:root[data-theme="b-tech-cool"][data-color-scheme="dark"],
+:root:not([data-theme])[data-color-scheme="dark"] {
+  --color-primary: #4a6fa8;
+  --color-primary-hover: #5b82bc;
+  --color-primary-lighten: #6f95c8;
+  --color-secondary: #8b97a3;
+  --color-accent: #5dd9cb;
+  --color-accent-hover: #7ae3d7;
+  --color-accent-bg: rgb(93 217 203 / 12%);
+  --color-accent-strong: #7ab4f0;
+  --color-bg-base: #03050a;
+  --color-bg-alt: #0a0e14;
+  --color-bg-section: #0a0e14;
+  --color-bg-elevated: #131922;
+  --color-bg-code: #0a0e14;
+  --color-border: #232e40;
+  --color-border-strong: #3d4d60;
+  --color-text-base: #e6edf6;
+  --color-text-muted: #a8b3be;
+  --color-text-inverse: #03050a;
+  --color-text-link: #7ab4f0;
+  --color-text-link-hover: #92c4f5;
+  --color-success: #5dd9a8;
+  --color-warning: #f0b065;
+  --color-warning-bg: rgb(240 176 101 / 14%);
+  --color-error: #e07480;
+  --color-error-bg: rgb(224 116 128 / 16%);
+  --color-info: #7ab4f0;
+  --color-focus-outline: #5dd9cb;
+  --color-cta-overlay-dark: rgb(3 5 10 / 70%);
+
+  // Shadow（ダーク時は弱める / 本体 §3 と同値）
+  --shadow-xs: none;
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 40%);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 50%);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 60%);
+}
+
+// prefers-color-scheme 自動追従（ユーザー未指定時のみ / 本体 §4 と同方式）
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="b-tech-cool"]:not([data-color-scheme="light"], [data-color-scheme="dark"]),
+  :root:not([data-theme], [data-color-scheme="light"], [data-color-scheme="dark"]) {
+    --color-primary: #4a6fa8;
+    --color-accent: #5dd9cb;
+    --color-accent-hover: #7ae3d7;
+    --color-accent-bg: rgb(93 217 203 / 12%);
+    --color-bg-base: #03050a;
+    --color-bg-alt: #0a0e14;
+    --color-bg-section: #0a0e14;
+    --color-bg-elevated: #131922;
+    --color-bg-code: #0a0e14;
+    --color-border: #232e40;
+    --color-border-strong: #3d4d60;
+    --color-text-base: #e6edf6;
+    --color-text-muted: #a8b3be;
+    --color-text-inverse: #03050a;
+    --color-text-link: #7ab4f0;
+    --color-text-link-hover: #92c4f5;
+    --color-success: #5dd9a8;
+    --color-warning: #f0b065;
+    --color-error: #e07480;
+    --color-info: #7ab4f0;
+    --color-focus-outline: #5dd9cb;
+    --color-cta-overlay-dark: rgb(3 5 10 / 70%);
+    --shadow-xs: none;
+    --shadow-sm: 0 2px 8px rgb(0 0 0 / 40%);
+    --shadow-md: 0 4px 16px rgb(0 0 0 / 50%);
+    --shadow-lg: 0 8px 24px rgb(0 0 0 / 60%);
+  }
+}
+
+// color-scheme（ブラウザ標準 UI のダーク化 / 本体 §5 と同方式）
+:root {
+  color-scheme: light;
+}
+
+:root[data-color-scheme="dark"] {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-scheme="light"]) {
+    color-scheme: dark;
+  }
+}
+
+// prefers-reduced-motion（本体 §6 と同方式 / 装飾 transition を 0ms 化）
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+    --transition-slow: 0ms;
+  }
+}

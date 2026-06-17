@@ -1,0 +1,52 @@
+@use "sass:math";
+@use "sass:map";
+@use "variables" as *;
+@use "breakpoints" as *;
+
+// クランプ関数（SP〜PC 全域で流動）
+// @param {number} $min - 最小値（px相当・unitless）
+// @param {number} $max - 最大値（px相当・unitless）
+// @param {number} $min-view-port - 最小ビューポート幅（デフォルト: SP デザインカンプ幅）
+// @param {number} $max-view-port - 最大ビューポート幅（デフォルト: PC デザインカンプ幅）
+// @return {clamp() value} - clamp() 値（min-rem, fluid (rem+vw), max-rem）
+@function cal-clamp($min, $max, $min-view-port: $design-width-sp, $max-view-port: $design-width-pc) {
+  $variable-part: calc(($max - $min) / ($max-view-port - $min-view-port));
+  $constant: calc(($max - $max-view-port * $variable-part) / var(--root-font-size));
+  $min-rem: calc($min / var(--root-font-size) * 1rem);
+  $max-rem: calc($max / var(--root-font-size) * 1rem);
+  $variable-rem: calc($constant * 1rem);
+  $variable-vw: calc(100 * $variable-part * 1vw);
+
+  @return clamp($min-rem, $variable-rem + $variable-vw, $max-rem);
+}
+
+// クランプ関数（タブレット〜PC で流動 / SP は min 固定）
+// @param {number} $min - 最小値（px相当・unitless）
+// @param {number} $max - 最大値（px相当・unitless）
+// @param {number} $min-view-port - 最小ビューポート幅（デフォルト: タブレット境界 BP md）
+// @param {number} $max-view-port - 最大ビューポート幅（デフォルト: PC デザインカンプ幅）
+// @return {clamp() value} - clamp() 値（min-rem, fluid (rem+vw), max-rem）
+@function cal-clamp-pc($min, $max, $min-view-port: map.get($breakpoints, md), $max-view-port: $design-width-pc) {
+  $variable-part: calc(($max - $min) / ($max-view-port - $min-view-port));
+  $constant: calc(($max - $max-view-port * $variable-part) / var(--root-font-size));
+  $min-rem: calc($min / var(--root-font-size) * 1rem);
+  $max-rem: calc($max / var(--root-font-size) * 1rem);
+  $variable-rem: calc($constant * 1rem);
+  $variable-vw: calc(100 * $variable-part * 1vw);
+
+  @return clamp($min-rem, $variable-rem + $variable-vw, $max-rem);
+}
+
+// 要素単位指定 rem
+// @param {number} $arg - 要素単位指定 rem
+// @return {number} - 要素単位指定 rem
+@function rm($arg) {
+  @return calc($arg * var(--to-rem));
+}
+
+// 要素単位指定 px
+// @param {number} $arg - 要素単位指定 px
+// @return {number} - 要素単位指定 px
+@function px($arg) {
+  @return calc($arg * 1px);
+}

@@ -1,0 +1,46 @@
+@use "../global" as *;
+
+// =====================================================================
+// Foundation: base（要素セレクタへの最小限の正規化）
+//   FLOCSS Foundation 層。kiso.css（_reset.scss が @import）の後に積む土台。
+//   色・フォント・行間はトークン（global/_variables.scss の :root CSS 変数）参照。
+// =====================================================================
+
+body {
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-base);
+  color: var(--color-text-base);
+  background-color: var(--color-bg-base);
+
+  // テーマ切替時のちらつき防止（背景・文字を滑らかに）
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+// キーボードフォーカスの可視化（A11y / 全インタラクティブ要素共通）。
+// マウスクリック由来の outline は出さず、キーボード操作時のみ accent リングを出す。
+:focus-visible {
+  outline: var(--focus-outline-width) solid var(--color-focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}

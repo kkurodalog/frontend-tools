@@ -1,0 +1,22 @@
+@use "../global" as *;
+
+// =====================================================================
+// Project: p-tool-head（ツールページのヘッダー = ツール名 H1 + リード）
+//   ツールページは縦リズムを締める（--tool-section-gap = space-12）。
+// =====================================================================
+.p-tool-head {
+  padding-block: var(--space-4) var(--tool-section-gap);
+}
+
+.p-tool-head__title {
+  margin-block-end: var(--space-3);
+  font-family: var(--font-heading);
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+}
+
+.p-tool-head__lead {
+  font-size: var(--fs-base);
+  color: var(--color-text-muted);
+}

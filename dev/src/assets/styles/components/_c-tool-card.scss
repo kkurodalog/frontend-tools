@@ -1,0 +1,63 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-tool-card（ツール一覧の全面リンクカード / 本体 work-card 準拠）
+//   bg-elevated 地・1px border・radius-md。初期は影なし（フラット基調）。
+//   hover = translateY(-2px) + shadow-md / active = 戻り + 影消し + transition-zero。
+//   全面リンクのため子テキスト色は base/muted で固定（hover で文字色を変えない）。
+// =====================================================================
+.c-tool-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  block-size: 100%;
+  padding: var(--space-5);
+  color: var(--color-text-base);
+  text-decoration: none;
+  background-color: var(--color-bg-elevated);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+
+  @include hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    box-shadow: var(--shadow-none);
+    transition: transform var(--transition-zero);
+    transform: translateY(0);
+  }
+}
+
+// カテゴリバッジ（pill）。既定 = ニュートラル枠。--accent でアクセント面。
+.c-tool-card__category {
+  align-self: flex-start;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.c-tool-card__category--accent {
+  color: var(--color-accent);
+  background-color: var(--color-accent-bg);
+  border-color: transparent;
+}
+
+.c-tool-card__name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+}
+
+.c-tool-card__tagline {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}

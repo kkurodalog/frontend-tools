@@ -1,0 +1,27 @@
+@use "../global" as *;
+
+// =====================================================================
+// Layout: l-container（中央寄せコンテナ）
+//   本文・ヘッダー・フッターの最大幅と左右パディングを担う。
+//   修飾子: --wide（1200px）/ --max（1280px = header/footer）。
+// =====================================================================
+.l-container {
+  inline-size: 100%;
+  max-inline-size: var(--container-base);
+  padding-inline: var(--container-padding-sp);
+  margin-inline: auto;
+}
+
+.l-container--wide {
+  max-inline-size: var(--container-wide);
+}
+
+.l-container--max {
+  max-inline-size: var(--container-max);
+}
+
+@include mq(md) {
+  .l-container {
+    padding-inline: var(--container-padding-pc);
+  }
+}

@@ -1,0 +1,78 @@
+@use "sass:map";
+@use "variables" as *;
+@use "breakpoints" as *;
+
+// =================================
+//  mq() — メディアクエリ mixin（min-width / Mobile First）
+// =================================
+//
+// 規範: coding-rule §5-2 / §5-2-1 (bareword 必須) / §5-2-3 (Mobile First)
+// 配置: coding-rule §5-1 / §5-2-4 / §16-9 — _mixins.scss 集約方針に基づき
+//       _breakpoints.scss から本ファイルへ移動。
+// 依存: _breakpoints.scss の $mediaqueries map（forward 順序: breakpoints → mixins）
+//
+// @param {string} $mediaquery - ブレークポイント名（xs / sm / md / lg / xl / xxl）
+//                                利用側は bareword 必須（"md" 等のクオート禁止）
+@mixin mq($mediaquery: md) {
+  @media #{map.get($mediaqueries, $mediaquery)} {
+    @content;
+  }
+}
+
+// =================================
+//  hover — hover 専用メディアクエリ mixin
+// =================================
+//
+// マウス・トラックパッド等の精密ポインタ環境のみで :hover を発火させる
+// （タッチ・ペン主体の環境での hover 誤発火を抑制）
+//
+// 規範: coding-rule §5-3 / §16-1 / §16-2
+// 採用根拠:
+// - W3C Media Queries Level 4 §6.2 any-hover / §6.3 pointer
+// - any-hover: hover で「いずれかの入力デバイスが hover 可能」を判定
+// - pointer: fine で「primary input が精密ポインタ」に限定
+//
+// 設計: :hover を mixin 内に内包（利用側で &:hover 不要）
+@mixin hover {
+  @media (any-hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+// =================================
+//  以下、保留中の旧 mixin 定義（コメントアウト保持）
+// =================================
+
+// Z-index管理
+// @mixin layer($name) {
+//   z-index: map.get($layer, $name);
+// }
+
+// =================================
+//  フォント情報の一括入力
+// =================================
+
+// Figma の時は、こちら ===============
+// @mixin font($size: null, $weight: null, $height: null, $spacing: null) {
+//   @if $size {
+//     font-size: max(calc($size / 16 * 1rem), calc($size * 0.8px));
+
+//     @include mq(sp) {
+//       font-size: calc($size / 16 * 1rem);
+//     }
+//   }
+
+//   @if $weight {
+//     font-weight: $weight;
+//   }
+
+//   @if $height {
+//     line-height: calc($height / $size);
+//   }
+
+//   @if $spacing {
+//     letter-spacing: calc($spacing / $size * 1em);
+//   }
+// }

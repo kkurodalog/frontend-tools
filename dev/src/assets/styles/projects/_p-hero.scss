@@ -1,0 +1,31 @@
+@use "../global" as *;
+
+// =====================================================================
+// Project: p-hero（ポータルトップの軽量ヒーロー）
+//   大判ビジュアルなし・テキスト主体。SP 中央寄せ・768以上で左寄せ（本体 c-section 挙動）。
+//   H1 は型スケール端点（fs-2xl→fs-4xl）で流動（手書き clamp / トークン参照保持 / coding-rule §5-5-6）。
+// =====================================================================
+.p-hero {
+  padding-block: var(--space-12) var(--space-8);
+  text-align: center;
+}
+
+@include mq(md) {
+  .p-hero {
+    text-align: start;
+  }
+}
+
+.p-hero__title {
+  margin-block-end: var(--space-3);
+  font-family: var(--font-heading);
+  // SP〜PC で fs-2xl(28.4px) → fs-4xl(50.5px) に流動（型スケール端点なので手書き clamp 許容）。
+  font-size: clamp(var(--fs-2xl), 5vw, var(--fs-4xl));
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+}
+
+.p-hero__lead {
+  font-size: var(--fs-lg);
+  color: var(--color-text-muted);
+}

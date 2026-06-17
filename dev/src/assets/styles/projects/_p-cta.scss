@@ -1,0 +1,74 @@
+@use "../global" as *;
+
+// =====================================================================
+// Project: p-cta（下部 CTA お問い合わせセクション / 本体 _p-cta.scss 実値継承）
+//   full-bleed: main（l-container）の外に置き、背景を viewport 全幅に。
+//   テキストのみ内側 __inner（container-wide）で中央・幅制約（PC で不自然に折り返さない）。
+//   背景の重ね順（本体準拠）: 背景色フォールバック → overlay 階調 → cta-bg 画像。
+//   見出し + リード + ボタンの 3 点構成（Phase6 でリード復活）。
+// =====================================================================
+.p-cta {
+  position: relative;
+  padding-block: var(--space-20);
+  margin-block-start: var(--tool-section-gap);
+  color: var(--color-text-inverse);
+  text-align: center;
+  background-color: var(--color-primary); // フォールバック
+  background-image: linear-gradient(var(--color-cta-overlay-light), var(--color-cta-overlay-light)), var(--bg-cta-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  isolation: isolate;
+}
+
+:root[data-color-scheme="dark"] .p-cta {
+  background-image: linear-gradient(var(--color-cta-overlay-dark), var(--color-cta-overlay-dark)), var(--bg-cta-image);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-scheme="light"]) .p-cta {
+    background-image: linear-gradient(var(--color-cta-overlay-dark), var(--color-cta-overlay-dark)), var(--bg-cta-image);
+  }
+}
+
+// テキストは内側コンテナで中央・幅制約（背景は全幅のまま）= title/lead に max-inline-size を付けない
+.p-cta__inner {
+  position: relative;
+  z-index: var(--z-raised);
+  max-inline-size: var(--container-wide);
+  padding-inline: var(--container-padding-sp);
+  margin-inline: auto;
+}
+
+@include mq(md) {
+  .p-cta__inner {
+    padding-inline: var(--container-padding-pc);
+  }
+}
+
+.p-cta__title {
+  margin-block-end: var(--space-4);
+  margin-inline: auto;
+  // 行長制限なし（本体 _p-cta.scss と同様）。外側 __inner（container-wide）で幅制約済みのため
+  // ch 指定の max-inline-size は PC で不自然な折り返しを生むだけで付けない。
+  font-family: var(--font-heading);
+  // 型スケール端点（fs-2xl→fs-3xl）で流動（手書き clamp / トークン参照保持 / coding-rule §5-5-6）。
+  font-size: clamp(var(--fs-2xl), 4vw, var(--fs-3xl));
+  line-height: var(--lh-tight);
+  color: var(--color-fixed-white);
+  letter-spacing: var(--ls-tight);
+}
+
+.p-cta__lead {
+  margin-block-end: var(--space-8);
+  margin-inline: auto;
+  // 行長制限なし（本体準拠 / __inner の container-wide で幅制約済み）。
+  font-size: var(--fs-lg);
+  line-height: var(--lh-base);
+  color: rgb(255 255 255 / 88%);
+}
+
+.p-cta__action {
+  display: flex;
+  justify-content: center;
+}

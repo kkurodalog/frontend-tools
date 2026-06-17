@@ -1,13 +1,56 @@
 <header class="p-header">
-  <div class="p-header__inner l-inner">
-    <a class="p-header__brand" href="/tools/">kuroda-tools</a>
-    <nav class="p-header__nav" aria-label="本体サイトへの導線">
-      <ul class="p-header__nav-list">
-        <li><a href="{{ site.home }}">Home</a></li>
-        <li><a href="{{ site.works }}">Works</a></li>
-        <li><a href="{{ site.about }}">About</a></li>
-        <li><a href="{{ site.contact }}">Contact</a></li>
-      </ul>
+  <div class="p-header__inner">
+    <p class="p-header__logo">
+      <a href="/tools/" aria-label="Frontend Tools トップへ">
+        <span class="p-header__logo-line p-header__logo-line--1">Frontend</span>
+        <span class="p-header__logo-line p-header__logo-line--2">Tools</span>
+      </a>
+    </p>
+    <nav class="p-header__nav" aria-label="ツールナビゲーション">
+      {{#if page.isPortalTop}}
+      <a href="/tools/" aria-current="page">ツール一覧</a>
+      {{else}}
+      <a href="/tools/">ツール一覧</a>
+      {{/if}} {{!-- 保留: 複数カテゴリ化までカテゴリ導線は出さない（黒田さん確定 2026-06-17）。 復帰時はナビに anchor を 1 つ追加し、href に
+      site.toolsCategoryImage（/tools/category/image/）を当て、 ラベルを「カテゴリ」にする。URL 階層の申し送りは vite.config.js の
+      site.toolsCategoryImage コメント参照。 --}}
     </nav>
+    <button type="button" class="c-color-toggle js-color-toggle" aria-label="カラーモードを切り替える" aria-pressed="false">
+      <svg
+        class="c-color-toggle__icon c-color-toggle__icon--sun"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m4.93 4.93 1.41 1.41" />
+        <path d="m17.66 17.66 1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="m6.34 17.66-1.41 1.41" />
+        <path d="m19.07 4.93-1.41 1.41" />
+      </svg>
+      <svg
+        class="c-color-toggle__icon c-color-toggle__icon--moon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </svg>
+    </button>
+    <a class="p-header__contact" href="{{ site.contact }}">お問い合わせ</a>
   </div>
 </header>

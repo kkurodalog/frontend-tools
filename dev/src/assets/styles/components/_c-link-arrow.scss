@@ -1,0 +1,37 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-link-arrow（「→」付きリンク / 本体 _c-link-arrow.scss 実値継承）
+//   color=accent / fw-medium / ::after に矢印「→」。hover・focus-visible で
+//   accent-hover ＋ 矢印 translateX(3px)。色はテーマ追従（--color-accent(-hover)）。
+//   HTML 側ラベルに手書きの「→」は置かない（::after が担う）。
+// =====================================================================
+.c-link-arrow {
+  position: relative;
+  display: inline-flex;
+  gap: var(--link-arrow-gap);
+  align-items: center;
+  font-weight: var(--fw-medium);
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-base);
+
+  &::after {
+    display: inline-block;
+    content: "→";
+    transition:
+      transform var(--transition-base),
+      color var(--transition-base);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent-hover);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    color: var(--color-accent-hover);
+    transform: translateX(var(--link-arrow-shift));
+  }
+}

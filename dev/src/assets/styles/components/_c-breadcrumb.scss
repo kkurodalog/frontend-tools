@@ -1,0 +1,41 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-breadcrumb（パンくず / 本体 _c-breadcrumb.scss 実値継承）
+//   ol ベース・区切り「›」・リンクは muted → hover accent・現在地は muted 非リンク。
+//
+//   ホバー transition（黒田さん確定 = (B) Tools 内統一）:
+//     本体パンくずは transition 未指定（即時切替）だが、Tools 内の他リンク
+//     （c-link-arrow / ヘッダーナビ）と体感を揃えるため
+//     transition: color var(--transition-base)（200ms）を付与する。
+// =====================================================================
+.c-breadcrumb {
+  padding-block: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.c-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.c-breadcrumb__list a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-base); // (B) Tools 内統一
+
+  @include hover {
+    color: var(--color-accent);
+  }
+}
+
+.c-breadcrumb__sep {
+  color: var(--color-border-strong);
+}
+
+.c-breadcrumb [aria-current="page"] {
+  color: var(--color-text-muted);
+}

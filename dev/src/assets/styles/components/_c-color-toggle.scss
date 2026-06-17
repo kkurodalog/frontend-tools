@@ -1,0 +1,98 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-color-toggle（ダーク/ライト切替トグル / 本体 _c-color-toggle.scss 実値継承）
+//   形状: 左右スライドのトラック型（64×32 トラック / 22 サム / 16 アイコン）。
+//
+//   状態管理（coding-rule 第9章 / WAI-ARIA 1:1 参照）:
+//     ON/OFF は button の aria-pressed="true|false" で表現し、CSS は
+//     [aria-pressed="true"] を直接参照する。JS（_theme-toggle.js）が現在の実効テーマ
+//     （明示値 + prefers-color-scheme 追従）から aria-pressed を初期同期するため、
+//     サム位置・アイコン色は aria-pressed のみで完結する。
+//
+//   FOUC: サムのスライド transition は html.is-ready 後のみ有効化（_is-ready.js とセット）。
+// =====================================================================
+.c-color-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: var(--toggle-track-w);
+  block-size: var(--toggle-track-h);
+  padding-inline: var(--toggle-pad-inline);
+  margin-inline-start: auto; // SP: トグル + Contact を右へ寄せる
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-alt);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+
+  @include hover {
+    border-color: var(--color-accent);
+  }
+
+  // サム（つまみ）: 既定は左寄せ（ライト） / aria-pressed="true"（ダーク）で右寄せ
+  &::before {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: var(--toggle-thumb-offset);
+    // サムはアイコン（z-index:2）の下に積む。本体はサム=背面 / アイコン=前面で、
+    // アイコンが常にサム上に来る（＝丸ボタン上に太陽/月が見える）。--z-base(=0) で背面へ。
+    z-index: var(--z-base);
+    inline-size: var(--toggle-thumb-size);
+    block-size: var(--toggle-thumb-size);
+    content: "";
+    background-color: var(--color-accent);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+    transition: none; // FOUC: 初回 CSS 適用時のサムスライドを抑止
+    transform: translateY(-50%);
+  }
+
+  &[aria-pressed="true"]::before {
+    inset-inline-start: calc(100% - var(--toggle-thumb-offset) - var(--toggle-thumb-size));
+  }
+}
+
+@include mq(md) {
+  .c-color-toggle {
+    // ナビ出現境界（768px）と統一: .p-header__nav 側の auto と二重に効く余白分配を抑止
+    margin-inline-start: 0;
+  }
+}
+
+// FOUC ゲート後にサムのスライド transition を有効化
+html.is-ready .c-color-toggle::before {
+  transition:
+    inset-inline-start var(--transition-base),
+    background-color var(--transition-base);
+}
+
+.c-color-toggle__icon {
+  position: relative;
+  z-index: var(--z-raised);
+  inline-size: var(--toggle-icon-size);
+  block-size: var(--toggle-icon-size);
+  pointer-events: none;
+  transition: color var(--transition-base);
+}
+
+// ライト時（既定）: 太陽=反転色（サム上で映える）/ 月=muted
+.c-color-toggle__icon--sun {
+  color: var(--color-text-inverse);
+}
+
+.c-color-toggle__icon--moon {
+  color: var(--color-text-muted);
+}
+
+// ダーク時（aria-pressed="true"）: 役割を反転
+.c-color-toggle[aria-pressed="true"] .c-color-toggle__icon--sun {
+  color: var(--color-text-muted);
+}
+
+.c-color-toggle[aria-pressed="true"] .c-color-toggle__icon--moon {
+  color: var(--color-text-inverse);
+}
