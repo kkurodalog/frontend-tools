@@ -9,7 +9,7 @@
       Frontend Tools — ポータルトップ OGP（kurodafolio.com/tools/ 用）
       担当: Cody（制作部）/ 2026-06-18
       ベース: 同フォルダ ogp.html（image-compress 等ツール用テンプレ）を流用。
-        HTML/CSS 構造・背景（bg.jpeg 青デジタル粒子）・全面 50% 黒幕・くっきり化
+        HTML/CSS 構造・背景（bg-desk.jpeg デスク写真）・全面 約85% 黒幕・くっきり化
         パイプライン（DSF3 + sharp lanczos3 + sharpen）は ogp.html と完全に同一。
         差分は <body data-*> の文言のみ（ポータルトップ A 案）。
 
@@ -48,8 +48,8 @@
   >
     <!-- 1200×630 の撮影対象。Playwright は #ogp-card を clip して PNG 化する -->
     <div class="ogp" id="ogp-card">
-      <!-- 背景写真（cover・フルブリード / 青デジタル粒子・image-compress と同一 bg.jpeg） -->
-      <img class="ogp__bg" src="bg.jpeg" alt="" />
+      <!-- 背景写真（cover・フルブリード / HTML&CSS本＋ノートPCのデスク写真 bg-desk.jpeg・image-compress と同一） -->
+      <img class="ogp__bg" src="bg-desk.jpeg" alt="" />
       <!-- 全面の半透明黒オーバーレイ（image-compress と同方式・同濃度） -->
       <div class="ogp__overlay" aria-hidden="true"></div>
 

@@ -1,12 +1,12 @@
 /* =====================================================================
    Frontend Tools — OGP テンプレCSS（本体 kurodafolio フォーマット版）
-   担当: Cody（制作部）/ 2026-06-18 改訂2
+   担当: Cody（制作部）/ 2026-06-18 改訂4
    正本フォーマット: kurodafolio/06_implementation/dev/ogp-template/ogp.html（黒田さん承認済み）
    仕様の正本: kurodafolio/08_release/pre-release/ogp-production-spec.md（T-1 × L-1）
 
    構図:
-     - 背景写真（青デジタル粒子 bg.jpeg）cover・フルブリード
-     - 全面の半透明黒オーバーレイ（rgba(0,0,0,0.5) / 黒田さん指示・背景が明るいため全体を黒幕で覆う）
+     - 背景写真（HTML&CSS本＋ノートPC デスク写真 bg-desk.jpeg・明るい）cover・フルブリード
+     - 全面の濃い半透明黒オーバーレイ（約 0.85 / 黒田さん指示・背景が明るいため強めに黒幕で覆う）
      - テキスト群は左寄せ縦並び・やや上寄せ（下に SNS情報帯セーフ余白を確保）
      - 文字くっきり化: 撮影を DSF3（3600×1890）→ sharp lanczos3 で 1200×630 へ高品質縮小
 
@@ -54,7 +54,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* 背景写真（cover・フルブリード / 青デジタル粒子 bg.jpeg） */
+/* 背景写真（cover・フルブリード / HTML&CSS本＋ノートPC デスク写真 bg-desk.jpeg） */
 .ogp__bg {
   position: absolute;
   inset: 0;
@@ -64,16 +64,17 @@ body {
   object-position: center;
 }
 
-/* 全面の半透明黒オーバーレイ（黒田さん指示: 背景が明るいので全体を黒で覆う）
-   基本は均一 rgba(0,0,0,0.5)。テキストは画面左に寄るため、左側だけ僅かに濃くして
-   可読性をさらに底上げする微グラデを重ねる（左 0.58 → 右 0.42・中心 0.5 相当の均一感は維持）。 */
+/* 全面の半透明黒オーバーレイ（黒田さん指示 2026-06-18 改訂4: 背景写真 bg-desk.jpeg が
+   かなり明るい/白いため、黒幕を約 0.85 まで増強して可読性を確保する）。
+   テキストは画面左に寄るため、左側だけ僅かに濃くする微グラデを残す（左 0.88 → 右 0.82・
+   中心が約 0.85 相当）。旧値は左 0.58→右 0.42（約 0.50）だった。 */
 .ogp__overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.58),
-    rgba(0, 0, 0, 0.42)
+    rgba(0, 0, 0, 0.88),
+    rgba(0, 0, 0, 0.82)
   );
 }
 
@@ -102,17 +103,19 @@ body {
   padding-top: 152px;
 }
 
-/* 画面ブランド pill（本体「Web Developer」位置 / クリアなスカイブルー枠・薄背景）
-   2026-06-18 改訂3（Haru 配色確定）: 旧 accent ティール #5dd9cb から、背景の青粒子に
-   調和する「クリアな青」へ変更。OGP の pill に閉じた上書き（tokens.css 本体や他用途の
-   accent は不変）。文字は枠より一段明るく＝枠が締まり文字が前に出る関係。 */
+/* 画面ブランド pill（本体「Web Developer」位置 / accent ティール枠・薄背景）
+   2026-06-18 改訂4（黒田さん指示）: 旧スカイブルー（青粒子背景向けの局所上書き）を破棄し、
+   本ポートフォリオの accent ティール #5dd9cb（tokens.css §3 ダーク --color-accent 実値）へ復帰。
+   OGP の pill に閉じた上書き（tokens.css 本体や他用途の accent は不変）。
+   旧スカイブルー時の関係「文字 > 枠（一段暗く）> ごく薄い半透明背景」をティールで再現し、
+   黒幕 0.85 上で可読・締まって見えるようにする。 */
 .ogp__pill {
   display: inline-flex;
   align-items: center;
   padding: 8px 22px;
-  color: #6cc6ff; /* 文字＝クリアなスカイブルー（黒幕上で可読） */
-  background: rgba(108, 198, 255, 0.08); /* ごく薄い青の半透明（暗部のムラに負けず安定） */
-  border: 1px solid #4ea8ff; /* 枠＝文字より一段暗く（枠が締まり文字が前に出る） */
+  color: #5dd9cb; /* 文字＝accent ティール（tokens.css ダーク --color-accent / 黒幕上で可読） */
+  background: rgba(93, 217, 203, 0.1); /* ごく薄いティールの半透明（暗部のムラに負けず安定） */
+  border: 1px solid #3bb3a6; /* 枠＝文字より一段暗いティール（枠が締まり文字が前に出る） */
   border-radius: var(--radius-pill);
   font-family: "Inter", var(--font-family-sans);
   font-size: 26px;

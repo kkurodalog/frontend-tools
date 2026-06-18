@@ -7,8 +7,8 @@
 
     <!-- ===================================================================
       Frontend Tools — OGP テンプレ（本体 kurodafolio と同一フォーマット）
-      担当: Cody（制作部）/ 2026-06-18 改訂2（背景=青デジタル粒子に差し替え /
-            オーバーレイを全面黒幕 50% に変更 / バッジ廃止→提供元プレーン白テキスト /
+      担当: Cody（制作部）/ 2026-06-18 改訂4（背景=HTML&CSS本＋ノートPC デスク写真 bg-desk.jpeg に差し替え /
+            背景が明るいためオーバーレイを全面黒幕 約85% に増強 / pill をスカイブルー→accent ティール #5dd9cb に復帰 /
             ツール名 82→72px / 撮影 DSF3 + sharp lanczos3 でくっきり化）
       正本フォーマット: kurodafolio/06_implementation/dev/ogp-template/（黒田さん承認済み）
         = 背景写真 + 左寄せ縦並びテキスト群 + 暗オーバーレイ + 上寄せ
@@ -17,7 +17,7 @@
         本体「Web Developer」pill 位置  → 「Frontend Tools」pill（画面ブランド・ティール）
         本体キャッチ（2行・白）位置      → ツール名（主役・大）＋ サブキャッチ（muted）
         本体「氏名 Kuroda Kosuke」位置   → 提供元「フロントエンド制作ツール集」（白・本体氏名と同サイズ）
-        ※背景は青デジタル粒子画像（bg.jpeg）。全面に半透明黒（rgba(0,0,0,0.5)）を被せて可読性を確保。
+        ※背景は HTML&CSS 本＋ノートPC のデスク写真（bg-desk.jpeg・明るい）。全面に濃い半透明黒（約 0.85）を被せて可読性を確保。
 
       ■ このテンプレの使い方（後続ツールへの横展開）
         新しいツールの OGP を作るときは <body data-*> の値だけを差し替えれば
@@ -59,8 +59,8 @@
   >
     <!-- 1200×630 の撮影対象。Playwright は #ogp-card を clip して PNG 化する -->
     <div class="ogp" id="ogp-card">
-      <!-- 背景写真（cover・フルブリード / 青デジタル粒子・案B） -->
-      <img class="ogp__bg" src="bg.jpeg" alt="" />
+      <!-- 背景写真（cover・フルブリード / HTML&CSS本＋ノートPCのデスク写真 bg-desk.jpeg・2026-06-18 改訂4 差し替え） -->
+      <img class="ogp__bg" src="bg-desk.jpeg" alt="" />
       <!-- 全面の半透明黒オーバーレイ（黒田さん指示: 背景が明るいので全体を黒で覆う） -->
       <div class="ogp__overlay" aria-hidden="true"></div>
 

@@ -1,6 +1,15 @@
 # OGP 生成手順（Frontend Tools / 本体フォーマット版・テンプレ第1号）
 
 担当: Cody（制作部）/ 作成 2026-06-18 → **同日改訂（案A ダーク独自背景版を破棄し、本体 kurodafolio と同一フォーマットに作り直し）**
+
+> **改訂4（2026-06-18 / 黒田さん指示）**: 背景を支給画像（HTML&CSS本＋ノートPC のデスク写真）に差し替え。
+> ① 背景 `bg.jpeg`（青デジタル粒子）→ `bg-desk.jpeg`（支給画像を 1.91:1 高解像度クロップ）に変更。両 OGP 参照を更新。
+> ② 背景が明るいためオーバーレイを約 0.50 → **約 0.85**（左 0.88→右 0.82）に増強（`ogp.css .ogp__overlay`・両 OGP 共通）。
+> ③ pill「Frontend Tools」をスカイブルー（旧・青粒子背景向けの局所上書き）→ **accent ティール `#5dd9cb`** に復帰
+>    （文字 #5dd9cb / 枠 #3bb3a6 一段暗いティール / 背景 rgba(93,217,203,0.10)・`ogp.css .ogp__pill`・両 OGP 共通）。
+>    pill 色変更は OGP テンプレ内に閉じる（tokens.css 本体・他用途の accent は不変）。
+> クロップ判断: 元 1920×1440 を top=0 で 1920×1008（1.9048:1）に切り出し。中央クロップ（top=216）だと「HTML&」が切れ、
+> top=0 だと HTML&CSS タイトル全体＋ノートPC＋ノート/鉛筆が画角に収まり、捨てるのは下部の空きデスク領域のみ。
 正本フォーマット: `kurodafolio/06_implementation/dev/ogp-template/`（黒田さん承認済み・背景写真＋左寄せ）
 正本仕様: `kurodafolio/08_release/pre-release/ogp-production-spec.md`（採用案 T-1 × L-1）
 このフォルダ: `docs/_portal/design/ogp-template/`
@@ -8,8 +17,11 @@
 ```
 ogp-template/
 ├─ ogp.html       … 1200×630 固定の枠（本体フォーマット）。tokens.css を <link>。<body data-*> で文言を差し替え
-├─ ogp.css        … OGP 専用レイアウト（背景写真 cover / 左濃→右透グラデ / 左寄せ縦並び・上寄せ）
-├─ bg.jpeg        … 背景写真（本体 src/assets/images/top.jpeg のコピー＝ブランド統一で本体流用）
+├─ ogp.css        … OGP 専用レイアウト（背景写真 cover / 左濃→右透グラデ約0.85 / 左寄せ縦並び・上寄せ）
+├─ bg-desk.jpeg   … 背景写真（現行・2026-06-18 改訂4）。支給画像（HTML&CSS本＋ノートPC のデスク写真・
+│                   元 1920×1440）を 1.91:1（1920×1008・top=0 で HTML&CSS タイトル＋ノートPC を画角に温存）に
+│                   sharp で高解像度クロップしたもの。両 OGP（ogp.html / ogp-portal.html）が参照する。
+├─ bg.jpeg        … 旧背景（青デジタル粒子・本体 top.jpeg 流用）。改訂4 で不参照（残置のみ）
 ├─ capture.mjs    … Playwright headless 撮影スクリプト（フォントロード完了を待って PNG 化）
 └─ generate.md    … 本書（生成手順・手動フォールバック）
 ```
@@ -26,24 +38,24 @@ ogp-template/
   軽量な JPEG が本来適切（PNG だと約940KB＝JPEGの約8倍重い）。テキストのキレは DSF3 撮影＋lanczos3 縮小＋
   sharpen＋q90 で確保（本体 kurodafolio OGP の JPEG q90＝80KB が実証済み）。本テンプレの全 OGP（ポータル
   トップ／image-compress／本体）を JPEG q90 に統一する。
-- フォーマットは本体 kurodafolio の OGP と同一（背景写真 `bg.jpeg` を cover で敷き、左濃→右透の
-  グラデを重ね、左寄せ縦並びのテキスト群を上寄せで配置）。accent ティールは `tokens.css`
-  （b-tech-cool ダーク値 #5dd9cb）を直リンクして継承。独自色は作らない。
+- フォーマットは本体 kurodafolio の OGP と同一（背景写真 `bg-desk.jpeg` を cover で敷き、左濃→右透の
+  グラデ約0.85 を重ね、左寄せ縦並びのテキスト群を上寄せで配置）。pill の accent ティールは `tokens.css`
+  （b-tech-cool ダーク値 #5dd9cb）の実値を踏襲する。
 - **後続ツールへの横展開**は `ogp.html` の `<body data-*>` 属性を差し替えるだけ（HTML/CSS 構造は触らない）。
-  背景写真を変えたい場合は `bg.jpeg` を差し替える（デフォルトは本体 top.jpeg 流用＝ブランド統一）。
+  背景写真を変えたい場合は背景 JPEG（現行 `bg-desk.jpeg`）を差し替える。
 
 ### 要素マッピング（本体フォーマット → frontend-tools）
 
 | 本体の位置 | data 属性 | 役割 | 例（image-compress） |
 |---|---|---|---|
-| pill「Web Developer」 | `data-pill` | 画面ブランド pill（ティール・通常固定） | `Frontend Tools` |
+| pill「Web Developer」 | `data-pill` | 画面ブランド pill（accent ティール #5dd9cb・通常固定） | `Frontend Tools` |
 | キャッチ（主役） | `data-tool-name` | ツール名（主見出し・Noto Sans JP 700・白・72px） | `画像仕分け圧縮くん` |
 | キャッチ（従） | `data-tagline` | 一言キャッチ（白 muted） | `種類別に選べる画像圧縮` |
 | 氏名「Kuroda Kosuke」 | `data-owner` | 提供元（白プレーン・本体氏名と同サイズ 30px/500/0.04em） | `フロントエンド制作ツール集` |
 
 > ツール OGP なので本体の「氏名」位置には**提供元テキスト**（全ツール共通＝フロントエンド制作ツール集）を
 > 置く。本体の「Kuroda Kosuke」と同じ font-size/weight/letter-spacing・色は白・バッジ枠なしのプレーンテキスト。
-> 背景は青デジタル粒子（bg.jpeg）に全面 50% 黒幕を被せて可読性を確保する（2026-06-18 改訂2）。
+> 背景はデスク写真（bg-desk.jpeg・明るい）に全面 約85% 黒幕を被せて可読性を確保する（2026-06-18 改訂4）。
 
 ---
 
@@ -139,7 +151,7 @@ Playwright / chromium が動かない場合でも、テンプレ（ogp.html / og
 ## 4. 自己チェック（生成後に必ず確認）
 
 - [ ] `file ogp.jpg` が `JPEG image data ... 1200x630`（progressive・q90）を返す
-- [ ] 背景写真（青デジタル粒子）が cover で全面に敷かれ、全面 50% 黒幕が乗っている（テキストのコントラスト確保）
+- [ ] 背景写真（デスク写真 bg-desk.jpeg）が cover で全面に敷かれ、全面 約85% 黒幕が乗っている（テキストのコントラスト確保）
 - [ ] pill（Frontend Tools）→ ツール名 → キャッチ → 提供元が**左寄せ縦並び・やや上寄せ**で、下端に SNS情報帯セーフ余白がある
 - [ ] ツール名・キャッチ・提供元の 3 要素が左右セーフゾーン（左右 120px）内（端切れなし）
 - [ ] 和文が Noto Sans JP の太字で写っている（フォールバック書体になっていない＝フォントロード成功）
@@ -152,12 +164,12 @@ Playwright / chromium が動かない場合でも、テンプレ（ogp.html / og
 ## 5. ポータルトップ OGP の生成記録（2026-06-18 / Cody）
 
 `kurodafolio.com/tools/`（フロントエンド制作ツール集の入口ページ）用 OGP。
-ツール個別 OGP と**同じテンプレ基盤・同じ背景（bg.jpeg 青デジタル粒子）・同じ全面
-50% 黒幕・同じくっきり化パイプライン**で作成（シリーズ統一）。差分は文言（A 案）のみ。
+ツール個別 OGP と**同じテンプレ基盤・同じ背景（bg-desk.jpeg デスク写真）・同じ全面
+約85% 黒幕・同じくっきり化パイプライン**で作成（シリーズ統一）。差分は文言（A 案）のみ。
 
 ### テンプレ（data-* 差し替えで再生成可能）
 
-- HTML: `ogp-portal.html`（`ogp.html` の複製。CSS は `ogp.css` を共有・`bg.jpeg` を共有）
+- HTML: `ogp-portal.html`（`ogp.html` の複製。CSS は `ogp.css` を共有・`bg-desk.jpeg` を共有）
 - ツール個別との違い: 「フロントエンド制作ツール集」を**主役（大・72px）**に昇格し、
   下段（本体氏名位置・30px）に**ドメイン表記**を置く。CSS 構造は触らない。
 
