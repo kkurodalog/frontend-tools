@@ -74,12 +74,17 @@
                     type="checkbox"
                     role="switch"
                     aria-labelledby="ic-auto-title ic-auto-label"
+                    aria-describedby="ic-auto-help"
                     data-ic-auto-toggle
                     checked
                   />
                   <span class="c-ic-toggle__switch" aria-hidden="true"></span>
                   <span class="c-ic-toggle__text" id="ic-auto-label">自動で推測する</span>
                 </label>
+                {{!-- 注意マイクロコピー: 自動判定は誤りうるため圧縮前に種別確認を促す（補足色・小さめ）。 input の aria-describedby から参照。 --}}
+                <p class="c-ic-toggleblock__help" id="ic-auto-help">
+                  自動判定はあくまで目安です。圧縮する前に、各画像の種別が合っているかご確認ください（種別はいつでも手動で変更できます）。
+                </p>
               </div>
             </div>
 

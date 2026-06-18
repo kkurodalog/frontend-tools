@@ -275,6 +275,16 @@
   flex-direction: column;
 }
 
+// 自動判定の注意マイクロコピー（圧縮前の種別確認を促す補足）。
+//   c-ic-fieldset__note と同じ視覚値（補足色・xs・行間確保）に揃える。
+//   トグルとの間に space-2 の余白を空けて「ラベルの説明」と分かる位置関係にする。
+.c-ic-toggleblock__help {
+  margin-block-start: var(--space-2);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-base);
+  color: var(--color-text-muted);
+}
+
 // ---- 自動推測トグル（スイッチ風 UI / spec §5） ----
 //   ネイティブ checkbox（role="switch"）を u-visually-hidden で隠し、
 //   トラック（c-ic-toggle__switch）＋つまみ（::before）で外観を描く。
