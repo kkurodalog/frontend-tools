@@ -1,4 +1,4 @@
-# kuroda-tools デザインコンセプト（Fd Phase1 / コンセプト〜概念モックアップ）
+# frontend-tools デザインコンセプト（Fd Phase1 / コンセプト〜概念モックアップ）
 
 担当: Haru（制作部 / デザインコンセプト・モックアップ・UI設計）
 作成日: 2026-06-16（Phase1）/ 2026-06-16 更新（Phase2 黒田さんレビュー反映）/ 2026-06-16 更新（Phase3 第2次レビュー反映）/ 2026-06-16 更新（Phase4 第3次レビュー反映）/ 2026-06-16 更新（Phase5 フッターナビ最終確定反映）/ 2026-06-16 更新（Phase6 黒田さん修正3点反映）
@@ -143,7 +143,7 @@
 | アクセント | 青 `#5b9dff`（本体に無い色） | ティールグリーン `#2ba89c`（本体 accent） |
 | フォント | Hiragino 先頭・見出しも同じ | 見出し Inter / 本文 Noto Sans JP / 数値 JetBrains Mono |
 | ダーク切替 | なし（固定） | ヘッダーに本体同等の切替トグルを設置 |
-| ロゴ表記 | `kuroda-tools`（小文字 1 行） | 本体トーンの 2 行ロゴ調（★要確認1 参照） |
+| ロゴ表記 | `frontend-tools`（小文字 1 行） | 本体トーンの 2 行ロゴ調（★要確認1 参照） |
 | カード hover | border-color が accent に変わるだけ | 本体 work-card と同じ translateY(-2px)+shadow-md。リンク下線も消す |
 | リンク下線 | `a:hover { text-decoration: underline }` 全体 | 本体は hover で下線を出さない方針。ナビ/カードは下線なしに |
 | 余白 | 場当たり的な rem 直値 | space スケール（4/8px グリッド）に乗せる |

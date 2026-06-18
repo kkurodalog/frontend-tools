@@ -6,7 +6,7 @@
 担当: Mado（制作部 / ディレクション・市場調査・SEO・情報設計）
 作成日: 2026-06-12
 ステータス: **正式化ドキュメント（コレクション全体の背骨）**
-配置: `tmp/tool-ideation/mado-collection-positioning.md`（F1初期化時に `kuroda-tools/docs/_portal/` へ移管）
+配置: `tmp/tool-ideation/mado-collection-positioning.md`（F1初期化時に `frontend-tools/docs/_portal/` へ移管）
 統合元: `mado-scope-decision.md`（特化 vs 汎用のSEO分析）/ `mado-publish-format.md`（ポータル型・1ドメイン評価集約）/ `mado-portfolio-link-design.md`（destination・回遊・営業ファネル）/ `mado-selfuse-dev-tools.md`（ツール候補と各々のフロント文脈）/ `plans/kuroda-tools-setup.md`（合意事項正本）
 
 > このドキュメントは、今後すべてのツールの**コピー・meta・スコープ判断**を貫く背骨である。新しいツール・新しい機能を検討するときは、まず §4（プロダクト整合の判断ヒューリスティック）に照らすこと。
@@ -203,7 +203,7 @@
 1. **新ツール検討時**: §4-4 のチェックリストで機能の用途整合を裁定し、§5 の表に1行追加する。
 2. **各ツールの 01_spec / 03_seo 作成時**: §4（機能スコープの正当化）と §6（キーワード2層・meta指針）を参照する。
 3. **コピー・metaのレビュー時**: §3 の鉄則（特化で検索リーチを縮めていないか）でチェックする。
-4. **移管**: F1初期化時に `kuroda-tools/docs/_portal/` へ移管し、`PLAN.md` から参照する。
+4. **移管**: F1初期化時に `frontend-tools/docs/_portal/` へ移管し、`PLAN.md` から参照する。
 
 ---
 

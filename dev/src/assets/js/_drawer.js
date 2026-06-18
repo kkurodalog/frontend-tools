@@ -1,5 +1,5 @@
 // =====================================================================
-// drawer — kuroda-tools SP/タブレット モバイルナビ（円形展開型 / FAB 連動）
+// drawer — frontend-tools SP/タブレット モバイルナビ（円形展開型 / FAB 連動）
 //   本体 kurodafolio _drawer.js を移植（挙動を完全再現）。
 //
 //   - 第1段階: FAB（.js-hamburger）クリックで円形背景（.js-mobile-nav-bg）が

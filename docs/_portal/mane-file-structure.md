@@ -15,7 +15,7 @@
 | 論点 | 結論 |
 |---|---|
 | ツール群の性質 | **公開自社プロダクト集（snippets-free に近いパターンA寄り）。kurodafolio のクライアント案件構造（A〜L・機密ドキュメント）とは性質が違う。** |
-| kurodafolio 配下に押し込むか | **押し込まない。`_self/` 直下に独立プロジェクト `kuroda-tools/` を新設する。** |
+| kurodafolio 配下に押し込むか | **押し込まない。`_self/` 直下に独立プロジェクト `frontend-tools/` を新設する。** |
 | ビルド/デプロイ結合 | **案イ（独立コードベース・独立ビルド → XServer の `/tools/` パスへデプロイ）を推奨。** 本体リポを汚さない意向に直接合致。 |
 | Git 運用 | **パターンA（独立 git リポ + my-virtual-team 除外）。** ただし公開度は要判断（後述★）。 |
 | フォルダ構成 | A〜L フルは重すぎ。**ツール向け軽量標準（plan / 各ツール = 1サブフォルダ）** を新設。 |
@@ -72,11 +72,11 @@
 
 | 観点 | 評価 |
 |---|---|
-| 実現方法 | `kuroda-tools/` を独立 Vite プロジェクトとして持ち、`base: "/tools/"` でビルド → `dist/` を XServer の `public_html/tools/` にアップロード（本体は `public_html/` 直下） |
+| 実現方法 | `frontend-tools/` を独立 Vite プロジェクトとして持ち、`base: "/tools/"` でビルド → `dist/` を XServer の `public_html/tools/` にアップロード（本体は `public_html/` 直下） |
 | リポ肥大化 | ◎ **kurodafolio は一切汚れない。** ツールのソース・依存・履歴が完全分離 |
 | ビルド独立性 | ◎ ツールだけ再ビルド・再デプロイできる。本体とリリースサイクルが独立 |
 | git運用 | ◎ snippets-free と同じパターンA（独立リポ）。プロダクト集として綺麗 |
-| 共通UI整合 | △ ナビ/フッターを本体と別管理になる → **共通ヘッダー/フッターの partial を `kuroda-tools/` 側にも持つ必要**。本体とのデザイン整合は手動同期（★Cody/Haru検証要）。ただしツールは「本体に戻す導線」が主目的で、本体と完全同一ナビである必要はない（むしろツール用に最適化した軽量ナビでよい） |
+| 共通UI整合 | △ ナビ/フッターを本体と別管理になる → **共通ヘッダー/フッターの partial を `frontend-tools/` 側にも持つ必要**。本体とのデザイン整合は手動同期（★Cody/Haru検証要）。ただしツールは「本体に戻す導線」が主目的で、本体と完全同一ナビである必要はない（むしろツール用に最適化した軽量ナビでよい） |
 | デプロイ運用 | △ 本体とツールで2回デプロイ作業が発生。ただし XServer のパス違いに別々に上げるだけで、相互に踏まない（本体=`/`、ツール=`/tools/`） |
 | 本体側の最小変更 | 本体リポには「ナビに Tools リンク追加 / トップに公開ツールセクション / フッターリンク」の**最小限の手**だけ入る（mado-portfolio-link-design 準拠）。これは避けられず、かつ軽微 |
 
@@ -100,7 +100,7 @@
 projects/_self/
 ├── snippets-free/                    （既存・パターンA公開成果物）
 ├── kurodafolio/                      （既存・パターンB案件構造 / ★一切触らない＝汚さない）
-└── kuroda-tools/                     ★新設（パターンA公開成果物 / 独立gitリポ）
+└── frontend-tools/                   ★新設（パターンA公開成果物 / 独立gitリポ）
     ├── .git/                         独立gitリポ（GitHub Public 想定 ※公開度は★要確認）
     ├── .gitignore                    （node_modules / dist 等）
     ├── README.md                     ツール集全体の説明
@@ -129,11 +129,11 @@ projects/_self/
 
 | plan | 置き場所 | 粒度 |
 |---|---|---|
-| ツール群**全体**の plan（ポータル戦略・URL設計・ロードマップ・命名規則・進捗テーブル） | `kuroda-tools/PLAN.md` | 1ファイルで全体を統括 |
-| 個別ツールの設計メモ | `kuroda-tools/docs/{slug}/` 配下（plan というより要件・設計） | ツール単位 |
+| ツール群**全体**の plan（ポータル戦略・URL設計・ロードマップ・命名規則・進捗テーブル） | `frontend-tools/PLAN.md` | 1ファイルで全体を統括 |
+| 個別ツールの設計メモ | `frontend-tools/docs/{slug}/` 配下（plan というより要件・設計） | ツール単位 |
 
 - **kurodafolio 案件の `plans/` や `PLAN.md` には入れない**（汚さない原則）。ツールは別プロジェクトなので plan も別管理。
-- my-virtual-team リポ直下の `plans/` は「フレームワーク/案件横断の設計」用。ツール群は独立プロダクトなので、plan はプロジェクト内（`kuroda-tools/PLAN.md`）に持つのが snippets-free との一貫性も保てる。
+- my-virtual-team リポ直下の `plans/` は「フレームワーク/案件横断の設計」用。ツール群は独立プロダクトなので、plan はプロジェクト内（`frontend-tools/PLAN.md`）に持つのが snippets-free との一貫性も保てる。
 - ★ただし「最初の1本だけ」は、まだプロジェクトフォルダを作る前の構想段階。**初回 plan は my-virtual-team の `plans/kuroda-tools-setup.md` に置き、`kuroda-tools/` 新設後に `kuroda-tools/PLAN.md` へ移管**するのが綺麗（今回の整理→plan化はこの初回 plan にあたる）。
 
 ### 3-3. 案件管理・設計ドキュメント（A〜L フルは重すぎ → ツール向け軽量標準）
@@ -141,7 +141,7 @@ projects/_self/
 クライアント案件用の A〜L（client_info / contract / wireframe / UAT / release/credentials …）はツールに不要。ツール1本ごとに以下の**軽量4点**だけ持てば十分:
 
 ```
-kuroda-tools/docs/{slug}/
+frontend-tools/docs/{slug}/
 ├── 00_overview.md      ツールの目的・対象ユーザー・検索意図・スコープ（何をやり何をやらないか）
 ├── 01_spec.md          機能要件・UI設計・技術選定（WASMライブラリ等）・入出力仕様
 ├── 02_qa.md            動作確認チェックリスト・ブラウザ対応・既知の制約
@@ -171,27 +171,27 @@ kuroda-tools/docs/{slug}/
 
 ### 4-1. `project_workspace_structure` メモリとの整合
 
-- メモリのパターンA（公開成果物 = 独立 git リポ + my-virtual-team 除外）に、ツール群 `kuroda-tools/` を**新規対象として追加**する形。snippets-free と同じ運用。
+- メモリのパターンA（公開成果物 = 独立 git リポ + my-virtual-team 除外）に、ツール群 `frontend-tools/` を**新規対象として追加**する形。snippets-free と同じ運用。
 - メモリのパターンB適用対象リスト（`frontend-tools-core（予定）/ vscode-frontend-tools（予定）`）と並ぶ「公開成果物」の一員。
-- `projects/_self/.gitignore` は現状 `*` → `!kurodafolio/` 例外。**`kuroda-tools/` は例外指定を足さない**（＝ `*` ルールで自動除外 = パターンA運用）。各成果物ディレクトリ内で `git init` するだけ。
+- `projects/_self/.gitignore` は現状 `*` → `!kurodafolio/` 例外。**`frontend-tools/` は例外指定を足さない**（＝ `*` ルールで自動除外 = パターンA運用）。各成果物ディレクトリ内で `git init` するだけ。
 
 ### 4-2. 「kurodafolio を汚さない」制約の自己確認
 
-- ✅ ツールのソース・plan・docs はすべて `kuroda-tools/`（kurodafolio の外）に置く。
+- ✅ ツールのソース・plan・docs はすべて `frontend-tools/`（kurodafolio の外）に置く。
 - ✅ kurodafolio の案件構造・`06_implementation/dev/`・`PLAN.md`・`plans/` は一切変更しない。
 - △ 本体リポ（kurodafolio/dev/）には「ナビに Tools リンク / トップに公開ツールセクション / フッターリンク」の**最小限の変更**は入る（mado-portfolio-link-design で確定済み・避けられない・軽微）。これは「汚す」というより「本体に正規の導線を1本通す」性質で、案件構造やビルドの肥大化は起きない。
 
 ### 4-3. `projects/CLAUDE.md` との整合
 
-- `projects/CLAUDE.md` の「パターンA: 公開成果物」の例示に `kuroda-tools/` を追加すべき（現状 snippets-free / frontend-tools-core / vscode-frontend-tools が列挙されている箇所）。
+- `projects/CLAUDE.md` の「パターンA: 公開成果物」の例示に `frontend-tools/` を追加すべき（現状 snippets-free / frontend-tools-core / vscode-frontend-tools が列挙されている箇所）。
 
 ### 4-4. メモリ更新の要否 → **必要**
 
 確定したら `project_workspace_structure.md` に以下を追記:
-1. **kuroda-tools の正規配置先**: `projects/_self/kuroda-tools/`・パターンA（独立 git リポ + my-virtual-team 除外）・公開先 `kurodafolio.com/tools/`。
+1. **frontend-tools の正規配置先**: `projects/_self/frontend-tools/`・パターンA（独立 git リポ + my-virtual-team 除外）・公開先 `kurodafolio.com/tools/`。
 2. **ビルド/デプロイ分離方針**: ツールは独立 Vite ビルド（`base:"/tools/"`）→ XServer `public_html/tools/` へデプロイ。kurodafolio 本体ビルドとは分離（案イ採用の経緯）。
 3. **本体側の最小変更**: 本体リポにはナビ/トップ/フッターの導線追加のみ入る。
-4. `projects/CLAUDE.md` のパターンA例示にも `kuroda-tools` を追記。
+4. `projects/CLAUDE.md` のパターンA例示にも `frontend-tools` を追記。
 
 また `project_portfolio_and_tools_plan_static.md`（J申し送りでツールに言及）とも突き合わせ、ツール配置確定を反映。
 
@@ -202,7 +202,7 @@ kuroda-tools/docs/{slug}/
 ### 推奨配置構造（要点）
 
 ```
-projects/_self/kuroda-tools/        ★新設・独立gitリポ・パターンA
+projects/_self/frontend-tools/      ★新設・独立gitリポ・パターンA
 ├── PLAN.md                         ツール群全体の plan
 ├── docs/{_portal, {slug}/...}      軽量管理ドキュメント（overview/spec/qa/seo の4点）
 └── dev/                            独立Viteプロジェクト（base:"/tools/" → XServer /tools/ へデプロイ）

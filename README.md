@@ -1,4 +1,4 @@
-# kuroda-tools
+# frontend-tools
 
 フロントエンド制作者向けの実用ツール集。黒田（[kurodafolio.com](https://kurodafolio.com)）が毎案件で使う道具を一箇所に揃え、**`kurodafolio.com/tools/`** にポータルとして公開する。
 
@@ -12,8 +12,8 @@
 ## ディレクトリ構成
 
 ```
-kuroda-tools/
-├── PLAN.md            ツール群全体の plan（plans/kuroda-tools-setup.md の移管先）
+frontend-tools/
+├── PLAN.md            ツール群全体の plan（旧 plans/kuroda-tools-setup.md の移管先）
 ├── README.md
 ├── docs/
 │   ├── _portal/       ポータル自体（一覧・ナビ・positioning・マネタイズ等）の設計・技術検証

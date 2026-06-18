@@ -1,5 +1,5 @@
 // =====================================================================
-// kuroda-tools — 本番 CSS エントリー（FLOCSS / SCSS / テンプレ static-template 準拠）
+// frontend-tools — 本番 CSS エントリー（FLOCSS / SCSS / テンプレ static-template 準拠）
 //   読み込み方式（FOUC 回避 / base 二重付与の根絶）:
 //     本ファイルは HTML <head> の <link rel="stylesheet" href="…style.scss"> から
 //     クリティカルパスで読まれる（Vite が dev では配信、build では bundle/hash して

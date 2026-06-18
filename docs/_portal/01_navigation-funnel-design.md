@@ -3,7 +3,7 @@
 担当: Mado（制作部 / ディレクション・市場調査・情報設計）
 作成日: 2026-06-16
 ステータス: **意思決定資料（黒田さん最終判断待ち）／F5「本体側導線追加」着手前の方針確定用**
-配置: `projects/_self/kuroda-tools/docs/_portal/01_navigation-funnel-design.md`
+配置: `projects/_self/frontend-tools/docs/_portal/01_navigation-funnel-design.md`
 位置づけ: 既存分析 `mado-portfolio-link-design.md`（本体側6箇所の導線マトリクス）の**発展形**。本ファイルは論点を「**ツールポータルを擬似トップとして自立させたとき、ツール側からどう本体へ営業ファネルを接続するか**」に絞り込み、黒田さんの起点案（ナビ自立＋お問い合わせ導線）を営業ファネル視点で評価し直す。
 
 前提資料: `PLAN.md` §2-4（works非混在・本体側6導線）／§2-8（フロント特化positioning）／§2-9（リード本命・ツールは営業資産/スキル証明への投資）／`mado-portfolio-link-design.md`（本体→tools 内部リンク・逆方向導線）／`mado-collection-positioning.md`（destination・主従）／`mado-monetization-placement.md`（リード≫広告）

@@ -6,7 +6,7 @@
 //   - トグルの ON/OFF は aria-pressed で表現し、CSS は [aria-pressed="true"] を参照
 // =====================================================================
 (function () {
-  var STORAGE_KEY = "kuroda-tools-color-scheme";
+  var STORAGE_KEY = "frontend-tools-color-scheme";
   var root = document.documentElement;
 
   // 初期化: 保存値があれば適用（未保存なら CSS の prefers 追従に任せる）

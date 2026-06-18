@@ -66,6 +66,14 @@ export default defineConfig(() => ({
   css: {
     devSourcemap: true,
   },
+  // Web Worker は ES モジュール形式で出力する。
+  //   image-compress の encode.worker.js は @jsquash/webp を dynamic import する
+  //   （コード分割を伴う）ため、既定の iife では
+  //   「UMD and IIFE output formats are not supported for code-splitting builds」で失敗する。
+  //   ES 形式にすることで Worker 内 dynamic import（WASM 遅延ロード）が成立する。
+  worker: {
+    format: "es",
+  },
   build: {
     minify: false,
     outDir: resolve(__dirname, "dist"),

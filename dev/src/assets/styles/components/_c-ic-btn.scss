@@ -1,0 +1,104 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-ic-btn（画像仕分け圧縮くん 内のボタン）
+//   本体トーン（accent 地・白文字 / outline / ghost）に準拠。
+//   操作面のボタンなのでツール内に閉じた命名にする（本体 c-btn とは別系統）。
+// =====================================================================
+.c-ic-btn {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--touch-target-min);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-5);
+  font-family: var(--font-heading);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  color: var(--color-text-base);
+  cursor: pointer;
+  background-color: transparent;
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    opacity var(--transition-base);
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--color-focus-outline);
+    outline-offset: var(--focus-outline-offset);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// primary: accent 地・白文字（本体 c-btn--primary と同思想・ダーク時も固定 accent）。
+.c-ic-btn--primary {
+  color: var(--color-fixed-white);
+  background-color: var(--color-accent-fixed);
+
+  @include hover {
+    background-color: var(--color-accent-fixed-hover);
+  }
+}
+
+// outline: primary 色の枠線。
+.c-ic-btn--outline {
+  color: var(--color-text-base);
+  border-color: var(--color-border-strong);
+
+  @include hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+}
+
+// ghost: 枠なし・控えめ（詳細設定トグル等）。
+.c-ic-btn--ghost {
+  padding-inline: var(--space-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
+
+  @include hover {
+    color: var(--color-accent);
+  }
+}
+
+// 種別を選択トグル: 文言の右にシェブロン。閉=右向き(▶)・開=下向き(▼)。
+//   aria-expanded で開閉を表し、その値で chevron を 90deg 回転（▶→▼）させる。
+.c-ic-toggle-type__chevron {
+  display: inline-flex;
+  align-items: center;
+  transition: transform var(--transition-base);
+}
+
+.c-ic-toggle-type[aria-expanded="true"] .c-ic-toggle-type__chevron {
+  transform: rotate(90deg);
+}
+
+// 開いている状態（▼ / aria-expanded="true"）はテキストに accent 色を保持する（FB-3）。
+//   閉じている状態（▶）は ghost の通常色（text-muted）のまま。両トグルで一貫させる。
+//   ghost のホバー accent より詳細度が高いので、ホバーが外れても開いている間は accent を維持する。
+.c-ic-toggle-type[aria-expanded="true"] {
+  color: var(--color-accent);
+}
+
+// dl: 小さめのダウンロードボタン（行カード内）。
+.c-ic-btn--dl {
+  padding-inline: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-base);
+  border-color: var(--color-border-strong);
+
+  @include hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+}

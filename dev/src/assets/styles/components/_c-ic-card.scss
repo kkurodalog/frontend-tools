@@ -1,0 +1,207 @@
+@use "../global" as *;
+
+// =====================================================================
+// Component: c-ic-card（画像 1 枚 = 1 行カード）
+//   サムネ（before のみ）＋ファイル名＋種別ラジオ（トグル開閉）＋容量・削減率（数値主導）。
+//   §7 言語不問: 容量・削減率は数値主導、種別はアイコン＋ラベル。
+// =====================================================================
+.c-ic-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+}
+
+.c-ic-card {
+  padding: var(--space-3);
+  background-color: var(--color-bg-elevated);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  &.is-done {
+    border-color: var(--color-success);
+  }
+
+  &.is-error {
+    border-color: var(--color-error);
+  }
+}
+
+.c-ic-card__main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.c-ic-card__thumb {
+  inline-size: rm(64);
+  block-size: rm(64);
+  object-fit: cover;
+  background-color: var(--color-bg-alt);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.c-ic-card__body {
+  display: flex;
+  flex: 1 1 rm(192);
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0; // 長いファイル名で flex がはみ出ないように
+}
+
+.c-ic-card__name {
+  overflow: hidden;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-base);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 現在選択中の種別を常時表示（ラジオ群を畳んでいても何が選ばれているか分かる / FB-5）。
+.c-ic-card__current {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.c-ic-card__current-type {
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+}
+
+// 現在の出力フォーマット表示（種別の右に「／ 形式: WebP・JPEG」）。
+.c-ic-card__current-fmt {
+  color: var(--color-text-muted);
+}
+
+// 自動推測の根拠（small / spec §5）。控えめに表示し、必ず手動で直せる旨は UI 全体で担保。
+//   精度は追わない設計のため、目立たせすぎず「推測です」と分かる弱い色で出す。
+.c-ic-card__reason {
+  display: block;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+// ---- 個別の種別変更（fieldset＋ラジオ・トグルで開閉） ----
+.c-ic-card__type {
+  padding: var(--space-3);
+  margin-block-start: var(--space-3);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.c-ic-card__type-legend {
+  padding-inline: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-muted);
+}
+
+.c-ic-card__advise {
+  display: flex;
+  gap: var(--space-1);
+  align-items: flex-start;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  margin-block-start: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  background-color: var(--color-warning-bg);
+  border-radius: var(--radius-sm);
+}
+
+// ヒントバナー（advise）のテキスト部。
+//   ★FB-1: アイコンと並ぶ flex 直下で、テキスト・<strong> が要素ごとに独立折返しして崩れていた。
+//     テキストを単一 span に閉じ、その span 内で1つの文として自然に折り返すようにする。
+//   アイコン（ic-icon）は縮まないように flex-shrink:0 で固定し、テキスト span が残り幅を占める。
+.c-ic-card__advise .ic-icon {
+  flex-shrink: 0;
+}
+
+.c-ic-card__hint-text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  line-height: 1.5;
+}
+
+// ---- 容量・削減率（数値主導 / 言語不問） ----
+.c-ic-card__sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-family: var(--font-family-mono);
+  font-size: var(--fs-sm);
+}
+
+.c-ic-card__before {
+  color: var(--color-text-muted);
+}
+
+.c-ic-card__arrow {
+  color: var(--color-text-muted);
+}
+
+.c-ic-card__after {
+  font-weight: var(--fw-bold);
+  color: var(--color-text-base);
+}
+
+// ---- 複数フォーマット出力（各形式の容量・削減率を並べる） ----
+.c-ic-card__outs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.c-ic-card__out {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: baseline;
+}
+
+.c-ic-card__ext {
+  padding-inline: var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.c-ic-card__rate {
+  padding-block: 0;
+  padding-inline: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  border-radius: var(--radius-pill);
+
+  &.is-good {
+    color: var(--color-success);
+    background-color: rgb(42 157 110 / 12%);
+  }
+
+  &.is-bad {
+    color: var(--color-warning);
+    background-color: var(--color-warning-bg);
+  }
+}
+
+.c-ic-card__err {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  font-family: var(--font-body);
+  color: var(--color-error);
+}
+
+// ---- アクション列 ----
+.c-ic-card__actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}

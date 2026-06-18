@@ -9,10 +9,36 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <title>{{ page.title }}</title>
   <meta name="description" content="{{ page.description }}" />
+  {{!-- ページ個別 SEO（page.seo がある場合のみフル出力）。OG/Twitter/canonical/robots はすべて絶対 URL。 page.seo
+  が無いページ（ポータルトップ等）は従来どおり最小の og:title/description/image のみを出す。 SEO 設計の正本:
+  docs/image-compress/03_seo.md（文言・値は同書から転記）。 --}} {{#if page.seo}}
+  <link rel="canonical" href="{{ page.seo.canonical }}" />
+  <meta name="robots" content="{{ page.seo.robots }}" />
+  {{!-- Open Graph（03_seo §4-3・すべて絶対 URL） --}}
+  <meta property="og:type" content="{{ page.seo.ogType }}" />
+  <meta property="og:url" content="{{ page.seo.ogUrl }}" />
+  <meta property="og:title" content="{{ page.seo.ogTitle }}" />
+  <meta property="og:description" content="{{ page.seo.ogDescription }}" />
+  <meta property="og:image" content="{{ page.seo.ogImage }}" />
+  <meta property="og:image:secure_url" content="{{ page.seo.ogImageSecureUrl }}" />
+  <meta property="og:image:width" content="{{ page.seo.ogImageWidth }}" />
+  <meta property="og:image:height" content="{{ page.seo.ogImageHeight }}" />
+  <meta property="og:image:alt" content="{{ page.seo.ogImageAlt }}" />
+  <meta property="og:site_name" content="{{ page.seo.ogSiteName }}" />
+  <meta property="og:locale" content="{{ page.seo.ogLocale }}" />
+  {{!-- Twitter Card（03_seo §4-3） --}}
+  <meta name="twitter:card" content="{{ page.seo.twitterCard }}" />
+  <meta name="twitter:title" content="{{ page.seo.twitterTitle }}" />
+  <meta name="twitter:description" content="{{ page.seo.twitterDescription }}" />
+  <meta name="twitter:image" content="{{ page.seo.twitterImage }}" />
+  <meta name="twitter:creator" content="{{ page.seo.twitterCreator }}" />
+  <meta name="twitter:site" content="{{ page.seo.twitterSite }}" />
+  {{else}}
   <meta property="og:title" content="{{ page.title }}" />
   <meta property="og:description" content="{{ page.description }}" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="{{ page.ogImage }}" />
+  {{/if}}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" />

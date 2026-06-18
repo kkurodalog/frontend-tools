@@ -17,22 +17,141 @@
       </nav>
 
       <section class="p-tool-head">
-        <h1 class="p-tool-head__title">画像仕分け圧縮くん</h1>
-        <p class="p-tool-head__lead">Web表示用に画像を種別ごとに最適化。WebP / AVIF 対応・ブラウザ内完結で画像を送信しません。現在準備中です。</p>
+        {{!-- H1: 03_seo §2-3 のとおり「ツール名＋一言説明」（title とは別の役割分担）。 --}}
+        <h1 class="p-tool-head__title">画像仕分け圧縮くん — 種類別に最適化する画像圧縮ツール</h1>
+        <p class="p-tool-head__lead">
+          画像の役割（背景・写真・イラスト・アイコン・スクショ）ごとに最適な圧縮を当てる WebP
+          圧縮ツール。すべてブラウザ内で処理するため、画像をサーバーに送信しません。
+        </p>
       </section>
 
       <section class="p-tool-body" aria-label="ツール本体エリア（器）">
         <div class="c-tool-panel">
-          <p class="c-tool-panel__placeholder">
-            このツールは現在準備中です（F3 で本体 UI を実装予定）。ドロップゾーン・プリセット・Before/After 比較・ZIP
-            ダウンロードなどの操作面はここに載ります。
-          </p>
+          <div class="c-ic" data-ic-root>
+            {{!-- 投入: ドロップゾーン ＋ ファイル選択（D&D 代替・A11y/モバイル必須） --}}
+            <div
+              class="c-ic-dropzone"
+              data-ic-dropzone
+              role="button"
+              tabindex="0"
+              aria-label="画像をドラッグ＆ドロップ、または Enter キーでファイルを選択"
+            >
+              <p class="c-ic-dropzone__lead">画像をここにドラッグ＆ドロップ</p>
+              <p class="c-ic-dropzone__sub">PNG / JPEG / WebP（一度に 30 枚・1 枚 25MB まで目安）</p>
+              <label class="c-ic-btn c-ic-btn--primary c-ic-dropzone__pick">
+                ファイルを選択
+                <input class="u-visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" multiple data-ic-file-input />
+              </label>
+            </div>
+
+            {{!-- 全体一括の種別選択（ラジオボタン）＋ 出力フォーマット（チェックボックス・複数可） --}} {{!-- 種別・フォーマットの選択肢は JS が
+            PRESETS / FORMAT_DEFS から生成する（一括＋個別で同一UI） --}}
+            <div class="c-ic-bulk" data-ic-bulk hidden>
+              <fieldset class="c-ic-fieldset" data-ic-bulk-type>
+                <legend class="c-ic-fieldset__legend">全部の種別を一括で選ぶ</legend>
+                <div class="c-ic-typegrid" data-ic-bulk-type-grid></div>
+              </fieldset>
+
+              {{!-- 自動推測トグル（Stage4 で実ロジック接続済み・初期値 ON / spec §5） --}}
+              <label class="c-ic-toggle">
+                <input type="checkbox" data-ic-auto-toggle checked />
+                <span>種別を自動で推測</span>
+              </label>
+
+              <p class="c-ic-bulk__hint c-ic-bulk__hint--plain">大きすぎる画像は、Web 表示に十分なサイズへ自動で縮小します。</p>
+
+              <fieldset class="c-ic-fieldset" data-ic-bulk-format>
+                <legend class="c-ic-fieldset__legend">出力フォーマット（複数選べます）</legend>
+                <div class="c-ic-formatgrid" data-ic-bulk-format-grid></div>
+                <p class="c-ic-fieldset__note">
+                  選んだ形式の数だけファイルを書き出し、一括ダウンロードの ZIP にまとめます。「準備中」は今後のアップデートで使えるようになります。
+                </p>
+              </fieldset>
+            </div>
+
+            {{!-- 通知（スキップ・降格メッセージ等） --}}
+            <p class="c-ic-notice" data-ic-notice role="status" aria-live="polite" hidden></p>
+
+            {{!-- 画像リスト（1枚=1行カード） --}}
+            <ul class="c-ic-list" data-ic-list></ul>
+
+            {{!-- 処理・進捗 --}}
+            <div class="c-ic-progress" data-ic-progress hidden>
+              <div class="c-ic-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="c-ic-progress__bar" data-ic-progress-bar></div>
+              </div>
+              <p class="c-ic-progress__text" data-ic-progress-text aria-live="polite"></p>
+            </div>
+
+            {{!-- アクション --}}
+            <div class="c-ic-actions">
+              <button type="button" class="c-ic-btn c-ic-btn--primary" data-ic-run disabled>圧縮する</button>
+              <button type="button" class="c-ic-btn c-ic-btn--outline" data-ic-zip disabled>一括ZIPダウンロード</button>
+            </div>
+          </div>
         </div>
       </section>
 
       {{> maker-card makerId="maker-name"}}
     </main>
 
-    {{> cta ctaId="cta-title"}} {{> footer}} {{!-- モバイルナビ（円形展開型ハンバーガー / 768px 未満で表示） --}} {{> mobile-nav}}
+    {{> cta ctaId="cta-title"}} {{> footer}} {{!-- モバイルナビ（円形展開型ハンバーガー / 768px 未満で表示） --}} {{> mobile-nav}} {{!--
+    このページ専用エントリー（WASM/Worker を含む image-compress 機能本体）。 base(/tools/) は Vite が解決する。 --}}
+    <script src="/assets/js/image-compress.js" type="module"></script>
+
+    {{!-- 構造化データ（JSON-LD）。03_seo §5-2 WebApplication ＋ §5-3 BreadcrumbList を正本どおり設置。 すべて絶対 URL。BreadcrumbList
+    の最終要素（現在ページ）は item を付けない（schema.org 推奨）。 パンくず表示ラベル（Home / Tools / 画像仕分け圧縮くん）と name を一致させている。
+    --}}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "画像仕分け圧縮くん",
+        "url": "https://kurodafolio.com/tools/image-compress/",
+        "description": "ブラウザ内で完結する無料の画像圧縮ツール。画像をサーバーに送信せず、背景・写真・スクショなど種類別に最適な圧縮方式を選べてWebP/AVIFに変換できます。",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web browser",
+        "browserRequirements": "Requires JavaScript and a modern browser supporting WebAssembly.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "JPY"
+        },
+        "inLanguage": "ja",
+        "isAccessibleForFree": true,
+        "author": {
+          "@type": "Person",
+          "name": "黒田こうすけ",
+          "alternateName": "Kuroda Kosuke",
+          "url": "https://kurodafolio.com",
+          "sameAs": ["https://twitter.com/kurodalog", "https://github.com/kkurodalog", "https://frontend-note.blog"]
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://kurodafolio.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Tools",
+            "item": "https://kurodafolio.com/tools/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "画像仕分け圧縮くん"
+          }
+        ]
+      }
+    </script>
   </body>
 </html>

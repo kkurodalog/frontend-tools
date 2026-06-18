@@ -1,5 +1,5 @@
 // =====================================================================
-// kuroda-tools — 全ページ共通の JS エントリー（テンプレ static-template の script.js 方式）
+// frontend-tools — 全ページ共通の JS エントリー（テンプレ static-template の script.js 方式）
 //   役割: 各機能モジュールを import するだけ。
 //   ★CSS は本ファイルから import しない。head.html が <link href="style.scss"> で
 //     クリティカルパスに乗せて読む（JS 遅延 import による FOUC を根絶）。

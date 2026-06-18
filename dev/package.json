@@ -1,8 +1,16 @@
 {
-  "name": "kuroda-tools",
+  "name": "frontend-tools",
   "version": "0.1.0",
   "description": "フロントエンド制作者向け実用ツール集（kurodafolio.com/tools/）",
-  "keywords": ["vite", "frontend-tools", "image-compress", "kurodafolio", "flocss", "scss", "handlebars"],
+  "keywords": [
+    "vite",
+    "frontend-tools",
+    "image-compress",
+    "kurodafolio",
+    "flocss",
+    "scss",
+    "handlebars"
+  ],
   "author": "kuroda",
   "license": "UNLICENSED",
   "private": true,
@@ -39,6 +47,10 @@
     "vite-plugin-sass-glob-import": "^5.0.0"
   },
   "dependencies": {
+    "@jsquash/avif": "^2.1.1",
+    "@jsquash/oxipng": "^2.3.0",
+    "@jsquash/webp": "^1.5.0",
+    "fflate": "^0.8.3",
     "kiso.css": "^1.1.4"
   }
 }
