@@ -38,9 +38,12 @@
   margin-inline: auto;
 }
 
+// 本体 .l-container と同じく md 以上で左右パディングを PC 値（2rem）へ。
+// これがないと PC でヘッダー両端が SP 値（1rem）のままで本体より広く見える。
 @include mq(md) {
   .p-header__inner {
     gap: var(--space-4);
+    padding-inline: var(--container-padding-pc);
   }
 }
 

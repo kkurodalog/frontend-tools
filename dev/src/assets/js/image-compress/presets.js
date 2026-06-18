@@ -4,9 +4,10 @@
 //   ★UI再設計（2026-06-17 / spec §0・§1-1・§4）:
 //     - 種別＝ラジオボタン（一括＋個別）。品質値・長辺px は内部固定（UI非表示）。
 //     - 出力フォーマット＝チェックボックス（複数選択可）。種別ごとの推奨フォーマットを既定チェック。
-//     - 実エンコードは段階稼働（§3-c）。WebP/keep=Stage1 / AVIF=Stage2 / PNG可逆・PNG減色=Stage3。
-//   ★Stage3: PNG 可逆（oxipng）を本実装。⑤⑥は推奨を PNG 可逆(oxipng) に戻し、Stage1 の
-//     WebP 可逆暫定を解消。④の PNG 経路は減色（256色）→ oxipng 可逆を通す（pngReduce フラグ）。
+//     - 全フォーマット（WebP/AVIF/PNG/JPEG）は実エンコード稼働済み（2026-06-18・段階稼働は撤去）。
+//   ★PNG: ⑤⑥は PNG 可逆(oxipng)。④の PNG 経路は減色（256色）→ oxipng 可逆を通す（pngReduce フラグ）。
+//   ★2026-06-18 既定チェック確定（黒田さん）: ①WebP / ②③AVIF+WebP+JPEG / ④WebP+PNG(減色) / ⑤⑥PNG(可逆)。
+//     ②③は AVIF を既定に含む＝種別選択時に「AVIFは時間がかかる」注記が標準表示・AVIF不可は WebP 降格で吸収。
 // =====================================================================
 
 // ④イラストの PNG 経路の減色色数（spec §1 / §3-d: 256色・実機調整）。
@@ -17,34 +18,28 @@ export const ILLUST_PNG_COLORS = 256;
 // 出力フォーマット識別子（チェックボックスの選択肢キー）。
 //   ※「種別」ではなく「出力形式」。種別が品質値・長辺px を内部で決め、フォーマットは出力する器を決める。
 export const FORMAT = {
-  WEBP: "webp", // WebP（非可逆/可逆 を種別側の lossless フラグで切替）— Stage1 稼働
-  AVIF: "avif", // AVIF — Stage2
-  PNG_LOSSLESS: "png-lossless", // PNG可逆（oxipng）/ ④は減色経路 — Stage3
-  KEEP_JPEG: "keep-jpeg", // 元形式（JPEG）穏やか最適化（D7・toBlob 0.82）— Stage1 稼働
+  WEBP: "webp", // WebP（非可逆/可逆 を種別側の lossless フラグで切替）
+  AVIF: "avif", // AVIF
+  PNG_LOSSLESS: "png-lossless", // PNG可逆（oxipng）/ ④は減色経路
+  KEEP_JPEG: "keep-jpeg", // 元形式（JPEG）穏やか最適化（D7・toBlob 0.82）
 };
 
 // =====================================================================
-// 出力フォーマット定義（チェックボックスUI・段階的有効化＝spec §3-c / §6-2）
-//   stage: 何 Stage で実エンコードが稼働するか（1=今稼働 / 2=AVIF / 3=PNG）。
-//   enabled: その Stage が現在稼働しているか（false なら disabled「準備中」でチェック不可）。
+// 出力フォーマット定義（チェックボックスUI）
+//   全フォーマット（WebP/AVIF/PNG/JPEG）は実エンコード稼働済み（2026-06-18）。
+//   段階的有効化（旧 spec §3-c の stage/enabled「準備中」disabled）は役目を終えたため撤去。
 //   ext / mime: 出力ファイルの拡張子・MIME（D10 のファイル名追従に使う）。
 // =====================================================================
 export const FORMAT_DEFS = {
-  [FORMAT.WEBP]: { key: FORMAT.WEBP, label: "WebP", ext: "webp", mime: "image/webp", stage: 1, enabled: true },
-  [FORMAT.AVIF]: { key: FORMAT.AVIF, label: "AVIF", ext: "avif", mime: "image/avif", stage: 2, enabled: true },
-  [FORMAT.PNG_LOSSLESS]: { key: FORMAT.PNG_LOSSLESS, label: "PNG", ext: "png", mime: "image/png", stage: 3, enabled: true },
-  // 元形式（JPEG）= D7。Stage1 稼働。ラベルは実挙動（JPEG 穏やか最適化）が分かる正直な文言にする。
-  [FORMAT.KEEP_JPEG]: { key: FORMAT.KEEP_JPEG, label: "JPEG", ext: "jpg", mime: "image/jpeg", stage: 1, enabled: true },
+  [FORMAT.WEBP]: { key: FORMAT.WEBP, label: "WebP", ext: "webp", mime: "image/webp" },
+  [FORMAT.AVIF]: { key: FORMAT.AVIF, label: "AVIF", ext: "avif", mime: "image/avif" },
+  [FORMAT.PNG_LOSSLESS]: { key: FORMAT.PNG_LOSSLESS, label: "PNG", ext: "png", mime: "image/png" },
+  // 元形式（JPEG）= D7。ラベルは実挙動（JPEG 穏やか最適化）が分かる正直な文言にする。
+  [FORMAT.KEEP_JPEG]: { key: FORMAT.KEEP_JPEG, label: "JPEG", ext: "jpg", mime: "image/jpeg" },
 };
 
 // チェックボックスに並べる順（左→右）。
 export const FORMAT_ORDER = [FORMAT.WEBP, FORMAT.AVIF, FORMAT.PNG_LOSSLESS, FORMAT.KEEP_JPEG];
-
-// 現在 Stage で実エンコード可能なフォーマットか（disabled 判定 / 降格判定に使う）。
-export function isFormatEnabled(formatKey) {
-  const def = FORMAT_DEFS[formatKey];
-  return Boolean(def && def.enabled);
-}
 
 // 6種別プリセット定義（01_spec §1 の確定表を実装定数として正確に落とす）。
 //   id: 種別キー / num: 表示用番号(①〜⑥) / label: 日本語ラベル(将来英語併記しやすいよう単独管理)
@@ -71,7 +66,9 @@ export const PRESETS = [
     num: "②",
     label: "写真（重要）",
     desc: "顔写真・人物・商品など、きれいに見せたい写真。画質を優先して圧縮します。",
-    recommendedFormats: [FORMAT.WEBP],
+    // ② 既定チェック=AVIF＋WebP＋JPEG（2026-06-18 黒田さん確定）。AVIF=最小容量・WebP=互換・JPEG=フォールバック。
+    //   AVIF不可環境では既存の WebP 自動降格が働く（WebP が既定にあるため実害なし／S-1・S-3）。
+    recommendedFormats: [FORMAT.AVIF, FORMAT.WEBP, FORMAT.KEEP_JPEG],
     quality: 85, // ② WebP q=85
     avifQuality: 63, // ② AVIF q=63（Stage2）
     maxEdge: 2560,
@@ -84,7 +81,8 @@ export const PRESETS = [
     num: "③",
     label: "写真（一般）",
     desc: "記事中の説明写真や風景など、ふつうの写真。画質と容量のバランスをとります。",
-    recommendedFormats: [FORMAT.WEBP],
+    // ③ 既定チェック=AVIF＋WebP＋JPEG（2026-06-18 黒田さん確定）。②と同方針（AVIF不可は WebP 降格で吸収）。
+    recommendedFormats: [FORMAT.AVIF, FORMAT.WEBP, FORMAT.KEEP_JPEG],
     quality: 72, // ③ WebP q=72
     avifQuality: 52, // ③ AVIF q=52（Stage2）
     maxEdge: 1600,
@@ -137,14 +135,10 @@ export const PRESET_MAP = Object.fromEntries(PRESETS.map(p => [p.id, p]));
 // 既定の選択種別（一括ラジオの初期選択）。
 export const DEFAULT_PRESET_ID = "photo";
 
-// 推奨フォーマットのうち「現 Stage で稼働しているもの」を返す（初期チェック状態の算出に使う）。
-//   Stage3 で PNG可逆(oxipng) が稼働したため、⑤⑥は推奨どおり PNG が初期チェックになる。
-//   フォールバックは保険（将来フォーマットを一時 disabled にした際の出力0件防止）として残す。
+// 種別の推奨フォーマットをそのまま初期チェック状態として返す（全フォーマット稼働済み）。
+//   ①WebP / ②③AVIF+WebP+JPEG / ④WebP+PNG(減色) / ⑤⑥PNG(可逆)（2026-06-18 確定）。
 export function initialCheckedFormats(preset) {
-  const enabledRecommended = preset.recommendedFormats.filter(isFormatEnabled);
-  if (enabledRecommended.length > 0) return enabledRecommended;
-  // 推奨が全て未稼働の保険 → WebP を初期チェックにフォールバック（必ず1件出力）。
-  return [FORMAT.WEBP];
+  return preset.recommendedFormats.slice();
 }
 
 // =====================================================================

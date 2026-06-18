@@ -20,8 +20,7 @@
         {{!-- H1: 03_seo §2-3 のとおり「ツール名＋一言説明」（title とは別の役割分担）。 --}}
         <h1 class="p-tool-head__title">画像仕分け圧縮くん — 種類別に最適化する画像圧縮ツール</h1>
         <p class="p-tool-head__lead">
-          画像の役割（背景・写真・イラスト・アイコン・スクショ）ごとに最適な圧縮を当てる WebP
-          圧縮ツール。すべてブラウザ内で処理するため、画像をサーバーに送信しません。
+          画像の役割（背景・写真・イラスト・アイコン・スクショ）ごとに最適な圧縮を当てる画像変換ツール。すべてブラウザ内で処理するため、画像をサーバーに送信しません。
         </p>
       </section>
 
@@ -52,21 +51,36 @@
                 <div class="c-ic-typegrid" data-ic-bulk-type-grid></div>
               </fieldset>
 
-              {{!-- 自動推測トグル（Stage4 で実ロジック接続済み・初期値 ON / spec §5） --}}
-              <label class="c-ic-toggle">
-                <input type="checkbox" data-ic-auto-toggle checked />
-                <span>種別を自動で推測</span>
-              </label>
-
-              <p class="c-ic-bulk__hint c-ic-bulk__hint--plain">大きすぎる画像は、Web 表示に十分なサイズへ自動で縮小します。</p>
+              <hr class="c-ic-divider" />
 
               <fieldset class="c-ic-fieldset" data-ic-bulk-format>
                 <legend class="c-ic-fieldset__legend">出力フォーマット（複数選べます）</legend>
                 <div class="c-ic-formatgrid" data-ic-bulk-format-grid></div>
-                <p class="c-ic-fieldset__note">
-                  選んだ形式の数だけファイルを書き出し、一括ダウンロードの ZIP にまとめます。「準備中」は今後のアップデートで使えるようになります。
-                </p>
+                <p class="c-ic-fieldset__note">選んだ形式の数だけファイルを書き出し、一括ダウンロードの ZIP にまとめます。</p>
               </fieldset>
+
+              <hr class="c-ic-divider" />
+
+              {{!-- 自動推測トグル（Stage4 で実ロジック接続済み・初期値 ON / spec §5） --}} {{!-- 上2つの fieldset と視覚的に揃えるため、
+              c-ic-fieldset__legend と同じ太字タイトルを先頭に置いたブロック（c-ic-toggleblock）で包む。 --}} {{!-- ネイティブ checkbox を
+              u-visually-hidden で隠し（Tab/Space・:checked を温存）、role="switch" でスイッチとして読み上げ。 c-ic-toggle__switch
+              は装飾（トラック＋つまみ）のため aria-hidden。スイッチのアクセシブルネームは可視ラベル c-ic-toggle__text を label
+              包含で紐付け、タイトルを aria-labelledby 併用で補強する。 --}}
+              <div class="c-ic-toggleblock">
+                <p class="c-ic-fieldset__legend" id="ic-auto-title">種別の自動判定</p>
+                <label class="c-ic-toggle">
+                  <input
+                    class="u-visually-hidden c-ic-toggle__input"
+                    type="checkbox"
+                    role="switch"
+                    aria-labelledby="ic-auto-title ic-auto-label"
+                    data-ic-auto-toggle
+                    checked
+                  />
+                  <span class="c-ic-toggle__switch" aria-hidden="true"></span>
+                  <span class="c-ic-toggle__text" id="ic-auto-label">自動で推測する</span>
+                </label>
+              </div>
             </div>
 
             {{!-- 通知（スキップ・降格メッセージ等） --}}

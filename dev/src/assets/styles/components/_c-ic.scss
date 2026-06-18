@@ -84,6 +84,18 @@
   border-radius: var(--radius-md);
 }
 
+// 3ブロック（種別一括 / 自動判定トグル / 出力フォーマット）の「間」に置く区切り線。
+//   HTML 側に <hr class="c-ic-divider"> を 2本（①↔② / ②↔③ の間）明示配置し、
+//   fieldset の border リセットと詳細度を競合させず独立要素として確実に描画する。
+//   上下余白は c-ic-bulk の gap(--space-4) が担うため margin は 0。1px は border 例外で rm() 不要。
+.c-ic-divider {
+  inline-size: 100%;
+  block-size: 0;
+  margin-block: 0;
+  border: none;
+  border-block-start: 1px solid var(--color-border);
+}
+
 // fieldset/legend（種別・フォーマット共通の枠）。
 .c-ic-fieldset {
   display: flex;
@@ -171,9 +183,9 @@
 }
 
 // 選択中（radio:checked）= accent 枠＋淡背景＋アイコン accent 化。
-//   既に選択済みでクリックしても状態が変わらないため、ポインターは出さず通常カーソルに戻す。
+//   選択済みでも再クリックでその種別の推奨フォーマットを当て直せる（手動カスタムを既定へ戻す）ため、
+//   未選択・選択済みとも cursor:pointer を維持して「押せる」外観にする（label 既定の pointer を踏襲）。
 .c-ic-typecard__radio:checked + .c-ic-typecard__label {
-  cursor: default;
   background-color: var(--color-accent-bg);
   border-color: var(--color-accent);
 
@@ -239,14 +251,6 @@
   color: var(--color-text-base);
 }
 
-.c-ic-fmtcard__soon {
-  padding-inline: var(--space-2);
-  font-size: var(--fs-xs);
-  color: var(--color-text-muted);
-  background-color: var(--color-bg-alt);
-  border-radius: var(--radius-pill);
-}
-
 // チェック時 = accent 枠＋✓ 表示。
 .c-ic-fmtcard__check:checked + .c-ic-fmtcard__label {
   border-color: var(--color-accent);
@@ -263,42 +267,83 @@
   outline-offset: var(--focus-outline-offset);
 }
 
-// 準備中（disabled）= 淡色・操作不可。
-.c-ic-fmtcard.is-soon .c-ic-fmtcard__label {
-  cursor: not-allowed;
-  opacity: 0.55;
+// ---- 自動推測ブロック（上2つの fieldset と視覚的に揃える / spec §5） ----
+//   c-ic-fieldset と同じ縦積み構造を踏襲。先頭の太字タイトルは c-ic-fieldset__legend を
+//   共有して「種別一括／出力フォーマット／自動推測」の3ブロックの見出しを同一の太さ・サイズに揃える。
+.c-ic-toggleblock {
+  display: flex;
+  flex-direction: column;
 }
 
-.c-ic-bulk__hint {
-  padding-block: var(--space-2);
-  padding-inline: var(--space-3);
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  background-color: var(--color-accent-bg);
-  border-radius: var(--radius-sm);
-
-  strong {
-    color: var(--color-text-base);
-  }
-}
-
-// 自動縮小の告知など、accent 強調を伴わない平易なヒント。
-.c-ic-bulk__hint--plain {
-  background-color: transparent;
-}
-
+// ---- 自動推測トグル（スイッチ風 UI / spec §5） ----
+//   ネイティブ checkbox（role="switch"）を u-visually-hidden で隠し、
+//   トラック（c-ic-toggle__switch）＋つまみ（::before）で外観を描く。
+//   ON: accent トラック＋つまみ右 / OFF: グレートラック＋つまみ左。
+//   状態は :checked を起点に CSS だけで完結（つまみ位置でも色だけに依存せず区別可能）。
 .c-ic-toggle {
   display: inline-flex;
   gap: var(--space-2);
   align-items: center;
+  inline-size: fit-content; // クリック領域をコンテンツ幅に収める（width:fit-content の論理プロパティ版）
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
   cursor: pointer; // Stage4 で自動推測ロジック接続済み（操作可能）
+
+  // ローカル寸法トークン（インライン用に小ぶり / ダーク切替トグルより一段小さい）。
+  --ic-switch-track-w: #{rm(40)};
+  --ic-switch-track-h: #{rm(22)};
+  --ic-switch-thumb-size: #{rm(16)};
+  --ic-switch-thumb-offset: #{rm(3)}; // つまみ左端オフセット（左右対称）
 
   // disabled 状態（将来トグルを一時無効化した場合の保険）。
   &:has(input:disabled) {
     cursor: not-allowed;
   }
+}
+
+// トラック（背景バー）。既定 = OFF（グレー・つまみ左）。
+.c-ic-toggle__switch {
+  position: relative;
+  flex-shrink: 0;
+  inline-size: var(--ic-switch-track-w);
+  block-size: var(--ic-switch-track-h);
+  background-color: var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transition-base);
+
+  // つまみ（丸）: 既定は左寄せ。
+  &::before {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: var(--ic-switch-thumb-offset);
+    inline-size: var(--ic-switch-thumb-size);
+    block-size: var(--ic-switch-thumb-size);
+    content: "";
+    background-color: var(--color-fixed-white);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+    transition: inset-inline-start var(--transition-base);
+    transform: translateY(-50%);
+  }
+}
+
+// ON（:checked）= accent トラック＋つまみ右。
+.c-ic-toggle__input:checked + .c-ic-toggle__switch {
+  background-color: var(--color-accent);
+
+  &::before {
+    inset-inline-start: calc(100% - var(--ic-switch-thumb-offset) - var(--ic-switch-thumb-size));
+  }
+}
+
+// キーボードフォーカス（visually-hidden な input の focus をトラックに映す）。
+.c-ic-toggle__input:focus-visible + .c-ic-toggle__switch {
+  outline: var(--focus-outline-width) solid var(--color-focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.c-ic-toggle__text {
+  color: var(--color-text-base);
 }
 
 // ---- 通知（スキップ・降格） ----

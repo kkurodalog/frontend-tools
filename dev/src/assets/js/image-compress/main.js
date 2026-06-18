@@ -19,7 +19,6 @@ import {
   FORMAT_ORDER,
   LIMITS,
   ILLUST_PNG_COLORS,
-  isFormatEnabled,
   initialCheckedFormats,
 } from "./presets.js";
 import { prepareRgba, readImageMeta } from "./image-ops.js";
@@ -133,37 +132,64 @@ function radioGroupHtml(groupName, selectedId, idPrefix) {
 function buildBulkType() {
   if (!dom.bulkTypeGrid) return;
   dom.bulkTypeGrid.innerHTML = radioGroupHtml("ic-bulk-type", bulkPresetId, "ic-bulk-type");
+  // ★種別ラジオは change と click を併用する（A11y: キーボード矢印キー対応のため）。
+  //   - change: 別種別への変更を担う通常経路。マウスクリック・キーボード矢印・Space すべて change を発火するので、
+  //     これで「通常選択＝推奨フォーマット再適用」を網羅する（矢印キーで選択を移しても効く）。
+  //   - click: 「同一種別の再クリック時のみ」再適用に限定する。再クリックでは change が発火しないため、
+  //     click 側で手動カスタムを既定へ戻す経路を補う。別種別へのクリックは change が拾うので click は何もしない（二重適用回避）。
+  //   判定は DOM の checked 状態ではなく、アプリが保持する適用済み種別 ID（bulkPresetId）と比較する。
   dom.bulkTypeGrid.addEventListener("change", e => {
     const radio = e.target.closest("[data-ic-type-radio]");
+    if (!radio || !radio.checked) return;
+    applyBulkType(radio.value); // 別種別への変更（マウス・キーボード矢印・Space 共通の通常経路）。
+  });
+  dom.bulkTypeGrid.addEventListener("click", e => {
+    const radio = resolveTypeRadioFromClick(e);
     if (!radio) return;
-    bulkPresetId = radio.value;
-    // 種別変更で推奨フォーマットに既定チェックを追従（spec §1-1）。一括＝全 item へ適用。
-    bulkFormats = initialCheckedFormats(PRESET_MAP[bulkPresetId]);
-    syncBulkFormatChecks();
-    items.forEach(item => applyBulkToItem(item, { fromBulkType: true }));
+    // bulkPresetId（更新前の適用済み種別）と一致＝同一種別の再クリック → 再適用。
+    //   異なる種別なら change が処理するので click は何もしない（二重適用しない）。
+    if (radio.value !== bulkPresetId) return;
+    applyBulkType(radio.value);
   });
 }
 
+// 一括の種別適用（change の通常選択／click の同一種別再クリック で共用）。
+//   選択種別の推奨フォーマットを再適用し、全カードへ反映する（spec §1-1 / 手動カスタムを既定へ戻す）。
+function applyBulkType(presetId) {
+  bulkPresetId = presetId;
+  bulkFormats = initialCheckedFormats(PRESET_MAP[bulkPresetId]);
+  syncBulkFormatChecks();
+  items.forEach(item => applyBulkToItem(item, { fromBulkType: true }));
+  updateActionState();
+}
+
+// 種別ラジオの click を「1ユーザー操作 = 1回」に正規化するヘルパ。
+//   <label for> をクリックするとブラウザが紐づく input にも click を合成発火させ、container には
+//   label 由来と input 由来の2つの click がバブリングする（＝二重処理の原因）。
+//   そこで「click の target が radio input そのもの（u-visually-hidden）であるときだけ」処理する。
+//   - label/説明文クリック → 合成された input click を1回だけ拾う（label 由来の click は無視）。
+//   - キーボード（Space）操作 → input に直接 click が出るのでこちらも拾える。
+//   これで再クリック含め毎回1回だけ「推奨フォーマット再適用」が走る（change は使わない＝二重発火しない）。
+function resolveTypeRadioFromClick(e) {
+  const radio = e.target.closest("[data-ic-type-radio]");
+  return radio || null;
+}
+
 // =====================================================================
-// 出力フォーマット チェックボックスUI（複数選択可 / spec §4-1-4・§3-c 段階的有効化）
-//   未稼働フォーマット（AVIF=Stage2 / PNG=Stage3）は disabled＋「準備中」でチェック不可。
+// 出力フォーマット チェックボックスUI（複数選択可 / spec §4-1-4）
+//   全フォーマット（WebP/AVIF/PNG/JPEG）稼働済みのため常に有効（disabled/「準備中」分岐は撤去）。
 // =====================================================================
 function formatGroupHtml(idPrefix, checkedFormats) {
   return FORMAT_ORDER.map(key => {
     const def = FORMAT_DEFS[key];
     const inputId = `${idPrefix}-${key}`;
-    const enabled = def.enabled;
-    const checked = enabled && checkedFormats.includes(key) ? "checked" : "";
-    const disabled = enabled ? "" : "disabled";
-    const stateClass = enabled ? "" : "is-soon";
-    const soon = enabled ? "" : `<span class="c-ic-fmtcard__soon">準備中</span>`;
+    const checked = checkedFormats.includes(key) ? "checked" : "";
     return `
-      <div class="c-ic-fmtcard ${stateClass}">
-        <input class="c-ic-fmtcard__check u-visually-hidden" type="checkbox" id="${inputId}" value="${key}" ${checked} ${disabled} data-ic-format-check />
+      <div class="c-ic-fmtcard">
+        <input class="c-ic-fmtcard__check u-visually-hidden" type="checkbox" id="${inputId}" value="${key}" ${checked} data-ic-format-check />
         <label class="c-ic-fmtcard__label" for="${inputId}">
           <span class="c-ic-fmtcard__check-box" aria-hidden="true">${iconSvg("check", { size: 14 })}</span>
           <span class="c-ic-fmtcard__ext">${def.label}</span>
-          ${soon}
         </label>
       </div>`;
   }).join("");
@@ -190,7 +216,6 @@ function buildBulkFormat() {
 function syncBulkFormatChecks() {
   if (!dom.bulkFormatGrid) return;
   dom.bulkFormatGrid.querySelectorAll("[data-ic-format-check]").forEach(check => {
-    if (check.disabled) return;
     check.checked = bulkFormats.includes(check.value);
   });
 }
@@ -246,8 +271,8 @@ function bindAutoToggle() {
   t.disabled = false; // Stage1 の「準備中」disabled を解除（実ロジック接続済み）。
   t.checked = autoInfer; // 初期値 ON。
   // ラベル文言の「（準備中）」を外す（HTML 側は準備中表示なので JS で正式文言に差し替え）。
-  const labelText = t.closest(".c-ic-toggle")?.querySelector("span");
-  if (labelText) labelText.textContent = "種別を自動で推測";
+  const labelText = t.closest(".c-ic-toggle")?.querySelector(".c-ic-toggle__text");
+  if (labelText) labelText.textContent = "自動で推測する";
   t.addEventListener("change", () => {
     autoInfer = t.checked;
     if (autoInfer) {
@@ -396,7 +421,6 @@ function updateReasonHint(item) {
 function syncItemFormatChecks(item) {
   if (!item.el) return;
   item.el.querySelectorAll("[data-ic-card-format] [data-ic-format-check]").forEach(check => {
-    if (check.disabled) return;
     check.checked = item.formats.includes(check.value);
   });
 }
@@ -483,6 +507,7 @@ function renderItem(item) {
         <button type="button" class="c-ic-btn c-ic-btn--ghost c-ic-toggle-type" data-ic-toggle-format aria-expanded="false"><span>出力形式</span><span class="c-ic-toggle-type__chevron" aria-hidden="true">${iconSvg("chevron", { size: 16 })}</span></button>
         <button type="button" class="c-ic-btn c-ic-btn--dl" data-ic-download disabled>${iconSvg("download", { size: 16 })}<span>DL</span></button>
       </div>
+      <button type="button" class="c-ic-card__delete" data-ic-delete aria-label="この画像を削除">${iconSvg("trash", { size: 18 })}</button>
     </div>
     <fieldset class="c-ic-card__type" data-ic-card-type hidden>
       <legend class="c-ic-card__type-legend">この画像の種別</legend>
@@ -527,9 +552,22 @@ function bindItemEvents(item) {
     });
   }
   if (typeFs) {
+    // ★一括グリッドと同様、change と click を併用（A11y: キーボード矢印キー対応）。
+    //   - change: 別種別への変更（マウス・キーボード矢印・Space 共通の通常経路）→ 推奨フォーマット再適用。
+    //   - click: 同一種別の再クリック時のみ再適用（更新前の item.presetId と一致するときだけ）。
+    //     別種別へのクリックは change が拾うので click は何もしない（二重適用回避）。
+    //   resolveTypeRadioFromClick で label/input の二重 click を1回に正規化する。
     typeFs.addEventListener("change", e => {
       const radio = e.target.closest("[data-ic-type-radio]");
-      if (radio) setItemPreset(item, radio.value);
+      if (radio && radio.checked) setItemPreset(item, radio.value);
+    });
+    typeFs.addEventListener("click", e => {
+      const radio = resolveTypeRadioFromClick(e);
+      if (!radio) return;
+      // item.presetId（更新前の適用済み種別）と一致＝同一種別の再クリック → 再適用。
+      //   異なる種別なら change が処理するので click は何もしない（二重適用しない）。
+      if (radio.value !== item.presetId) return;
+      setItemPreset(item, radio.value);
     });
   }
 
@@ -552,6 +590,47 @@ function bindItemEvents(item) {
 
   const dl = card.querySelector("[data-ic-download]");
   if (dl) dl.addEventListener("click", () => downloadItem(item));
+
+  // カード個別削除（即削除・確認なし）。処理中はクリックを無視する（実行中の安全側ガード）。
+  const del = card.querySelector("[data-ic-delete]");
+  if (del) del.addEventListener("click", () => removeItem(item));
+}
+
+// ---- カード個別削除（即削除・確認なし） ----
+//   ★メモリ解放（N-1 / リーク防止）: その item が握っている before サムネの Object URL（_thumbUrl）を
+//     確実に revoke する。結果（item.results）は ArrayBuffer であり Object URL/Blob は download 時に都度生成
+//     ＆ revoke 済みのため、ここで残存する result 由来の Object URL は無い（参照を断つため null 化する）。
+//     ImageBitmap は image-ops.js 内で生成直後に必ず close() 済み（item 上には保持しない）＝解放漏れなし。
+function removeItem(item) {
+  // 処理中はそのカードの削除を受け付けない（逐次実行のループ整合を壊さない・安全側 / §3-b）。
+  if (isProcessing) return;
+
+  // 1) before サムネの Object URL を解放（最大のリーク源）。
+  if (item._thumbUrl) {
+    URL.revokeObjectURL(item._thumbUrl);
+    item._thumbUrl = null;
+  }
+  // 2) 結果バッファ参照を断つ（GC 対象化。Object URL は download 時に生成・revoke 済みで残存しない）。
+  item.results = null;
+  item.error = null;
+
+  // 3) DOM 除去。
+  if (item.el && item.el.parentNode) item.el.parentNode.removeChild(item.el);
+  item.el = null;
+
+  // 4) items 配列から除去。
+  const idx = items.indexOf(item);
+  if (idx !== -1) items.splice(idx, 1);
+
+  // 5) 空状態の整合: 0枚なら一括パネルを隠し進捗をリセット、初期（ドロップゾーンのみ）の見た目へ戻す。
+  if (items.length === 0) {
+    if (dom.bulk) dom.bulk.hidden = true;
+    hideProgress();
+    if (dom.progressBar) dom.progressBar.style.inlineSize = "0%";
+    clearNotice();
+  }
+  // 圧縮ボタン・一括ZIPボタンの有効/無効を再判定（0枚なら両方 disabled になる）。
+  updateActionState();
 }
 
 // 個別カードのフォーマット個別上書き（FB-4）。一括を起点に、ユーザーのカード単位変更を尊重する。
@@ -623,7 +702,6 @@ function flushAvifDowngradeNotice() {
 
 // 1枚を「選ばれた全フォーマット」でエンコード（複数出力パイプライン）。
 //   各フォーマットを逐次に処理し、Result[] を返す。1フォーマット失敗時はそれだけスキップ。
-//   未稼働フォーマット（AVIF/PNG）は UI で disabled のため通常届かないが、念のため WebP 降格で保険。
 async function encodeItemFormats(item) {
   const preset = PRESET_MAP[item.presetId];
   const formats = (item.formats && item.formats.length ? item.formats : bulkFormats).filter(Boolean);
@@ -700,12 +778,6 @@ async function encodeOneFormat(item, preset, fmtKey, ensureRgba) {
     const reduceColors = preset.pngReduce ? ILLUST_PNG_COLORS : 0;
     const buffer = await encodePngInWorker({ rgba: rgbaCopy, width, height, reduceColors });
     return { buffer, ext: "png", mime: "image/png", format: FORMAT.PNG_LOSSLESS, lossless: true };
-  }
-
-  // 未稼働フォーマット（将来 disabled 化した場合の保険）→ WebP に降格して出力。
-  if (!isFormatEnabled(fmtKey)) {
-    showNotice(`${item.name}: ${FORMAT_DEFS[fmtKey]?.label ?? fmtKey} は準備中のため WebP で出力しました。`, "warning");
-    return await encodeWebpFallback(preset, ensureRgba);
   }
 
   // WebP（非可逆/可逆）= Canvas で前処理 → Worker で WASM エンコード。

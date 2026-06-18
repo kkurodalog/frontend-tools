@@ -25,9 +25,14 @@ function getWorker() {
     else entry.reject(new Error(error));
   });
   worker.addEventListener("error", event => {
-    // Worker 自体の致命エラー: 保留中すべてを reject（全体は main 側 try/catch で継続）。
+    // Worker 自体の致命エラー（WASM OOM 等）: 保留中すべてを reject（全体は main 側 try/catch で継続）。
     pending.forEach(entry => entry.reject(new Error(event.message || "Worker error")));
     pending.clear();
+    // ★S-3: 壊れた可能性のある worker を破棄して null 化する。
+    //   そのまま再利用すると以降の全エンコードが連鎖失敗しうるため、次回 getWorker() で
+    //   新しい worker を生成し直して回復可能にする（lazy 生成パターンに乗せる）。
+    if (worker) worker.terminate();
+    worker = null;
   });
   return worker;
 }

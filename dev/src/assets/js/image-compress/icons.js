@@ -28,6 +28,8 @@ const PATHS = {
   // 開閉トグル用シェブロン（既定で右向き ▶。開いたら CSS の transform で下向き ▼ に回す）
   chevron: '<path d="M9 6l6 6-6 6"/>',
   archive: '<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M9 12h6"/>',
+  // ゴミ箱（カード個別削除）＝蓋＋本体＋縦2本のライン。
+  trash: '<path d="M4 7h16M10 4h4M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M10 11v6M14 11v6"/>',
 };
 
 // アイコンキー → SVG 文字列。size は px、塗りは fill 系のみ filled で。

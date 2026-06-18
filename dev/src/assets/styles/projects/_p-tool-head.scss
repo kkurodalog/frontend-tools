@@ -11,7 +11,12 @@
 .p-tool-head__title {
   margin-block-end: var(--space-3);
   font-family: var(--font-heading);
-  font-size: var(--fs-3xl);
+  // ツールページ h1 は本体ヒーローより 1 段控えめにする（黒田さん実機判断 2026-06-18）。
+  // 型スケールを 1 段下げて fs-2xl → fs-3xl で流動（旧: fs-3xl → fs-4xl）。
+  // 端点がともに型スケールトークンのため手書き clamp() を採用（coding-rule §5-5-6）。
+  // vw 係数: max 到達 = 37.9px / 1024px × 100 = 3.70vw / min 到達 = 28.4px / 768px × 100 = 3.70vw（型スケールが等比のため両端同時着地）。
+  // h2 上限（CTA 見出し = clamp(fs-2xl, 4vw, fs-3xl) / 上限 fs-3xl）と同レンジだが、h1 は流動中域で常に h2 以上・他セクションに同居しないため逆転しない。
+  font-size: clamp(var(--fs-2xl), 3.7vw, var(--fs-3xl)); // 768px→1024px で流動（fs-2xl 28.4px → fs-3xl 37.9px）
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-tight);
 }

@@ -28,10 +28,42 @@
 }
 
 .c-ic-card__main {
+  position: relative; // 右下のゴミ箱（削除）ボタンの基準点。
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   align-items: flex-start;
+}
+
+// ---- カード個別削除ボタン（右下のゴミ箱 / 即削除・確認なし） ----
+.c-ic-card__delete {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--touch-target-min);
+  block-size: var(--touch-target-min);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background-color: transparent;
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+
+  @include hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--color-focus-outline);
+    outline-offset: var(--focus-outline-offset);
+  }
 }
 
 .c-ic-card__thumb {

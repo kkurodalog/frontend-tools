@@ -1,6 +1,6 @@
 {
   "/index.html": {
-    "title": "フロントエンド制作ツール集 | frontend-tools",
+    "title": "Frontend Tools｜フロントエンド制作ツール集｜kurodafolio",
     "description": "Web制作で毎日使う実用ツールを一箇所に。画像圧縮・clamp計算など、ブラウザ内で完結する道具を順次公開しています。",
     "ogImage": "/images/ogp.jpg",
     "isPortalTop": true
@@ -33,7 +33,7 @@
     }
   },
   "default": {
-    "title": "frontend-tools",
+    "title": "Frontend Tools｜kurodafolio",
     "description": "フロントエンド制作者向け実用ツール集（kurodafolio.com/tools/）。",
     "ogImage": "/images/ogp.jpg",
     "isPortalTop": false
