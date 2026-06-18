@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja" data-color-scheme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1.0" />
+    <title>OGP テンプレ（Frontend Tools / 本体フォーマット＝背景写真＋左寄せ）</title>
+
+    <!-- ===================================================================
+      Frontend Tools — OGP テンプレ（本体 kurodafolio と同一フォーマット）
+      担当: Cody（制作部）/ 2026-06-18 改訂2（背景=青デジタル粒子に差し替え /
+            オーバーレイを全面黒幕 50% に変更 / バッジ廃止→提供元プレーン白テキスト /
+            ツール名 82→72px / 撮影 DSF3 + sharp lanczos3 でくっきり化）
+      正本フォーマット: kurodafolio/06_implementation/dev/ogp-template/（黒田さん承認済み）
+        = 背景写真 + 左寄せ縦並びテキスト群 + 暗オーバーレイ + 上寄せ
+
+      ■ 本体フォーマットとの対応（要素マッピング）
+        本体「Web Developer」pill 位置  → 「Frontend Tools」pill（画面ブランド・ティール）
+        本体キャッチ（2行・白）位置      → ツール名（主役・大）＋ サブキャッチ（muted）
+        本体「氏名 Kuroda Kosuke」位置   → 提供元「フロントエンド制作ツール集」（白・本体氏名と同サイズ）
+        ※背景は青デジタル粒子画像（bg.jpeg）。全面に半透明黒（rgba(0,0,0,0.5)）を被せて可読性を確保。
+
+      ■ このテンプレの使い方（後続ツールへの横展開）
+        新しいツールの OGP を作るときは <body data-*> の値だけを差し替えれば
+        同じ構図・同じトークン色で OGP を量産できる（HTML/CSS の構造は触らない）。
+          data-pill      … 画面ブランド（全ツール共通＝Frontend Tools・通常は固定）
+          data-tool-name … ツール名（主役・Noto Sans JP 700）
+          data-tagline   … 一言キャッチ（サブコピー・muted）
+          data-owner     … 提供元（本体「氏名」位置 / 全ツール共通＝フロントエンド制作ツール集・通常は固定）
+
+      ■ フォント
+        本番サイト（dev/src/components/head.html）と同一の Google Fonts CDN を読む。
+        Noto Sans JP（和文主役）/ Inter（pill 英字）。
+        撮影時にフォントが乗らないと別物になるため、generate.md の手順で
+        document.fonts.ready の解決を待ってから撮影すること。
+
+      ■ サイズ
+        1200×630px 固定（OGP/Twitter Card 標準比 1.91:1）。
+        テキストは左寄せ・やや上寄せ。下部に SNS情報帯セーフ余白を確保（X のドメイン帯対策）。
+    ==================================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- 本番 head.html と同一の指定（Inter / Noto Sans JP の 400/500/700） -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    />
+
+    <!-- 本体トークン正本を直リンク（accent ティール等を tokens.css の実値で継承） -->
+    <link rel="stylesheet" href="../tokens.css" />
+    <!-- OGP 専用レイアウト（本体フォーマット＝背景写真＋左寄せ＋左濃右透グラデ＋上寄せ） -->
+    <link rel="stylesheet" href="ogp.css" />
+  </head>
+
+  <body
+    data-pill="Frontend Tools"
+    data-tool-name="画像仕分け圧縮くん"
+    data-tagline="種類別に選べる画像圧縮"
+  >
+    <!-- 1200×630 の撮影対象。Playwright は #ogp-card を clip して PNG 化する -->
+    <div class="ogp" id="ogp-card">
+      <!-- 背景写真（cover・フルブリード / 青デジタル粒子・案B） -->
+      <img class="ogp__bg" src="bg.jpeg" alt="" />
+      <!-- 全面の半透明黒オーバーレイ（黒田さん指示: 背景が明るいので全体を黒で覆う） -->
+      <div class="ogp__overlay" aria-hidden="true"></div>
+
+      <!-- テキスト群（左寄せ縦並び・上寄せ / 本体 .ogp__content と同構図） -->
+      <div class="ogp__content">
+        <!-- 画面ブランド pill（本体「Web Developer」位置 / ティール枠・薄背景） -->
+        <span class="ogp__pill" data-bind="pill">Frontend Tools</span>
+
+        <!-- 必須① ツール名（主役・Noto Sans JP 700 / 本体キャッチ位置の主役・72px） -->
+        <h1 class="ogp__title" data-bind="tool-name">画像仕分け圧縮くん</h1>
+
+        <!-- 必須② 一言キャッチ（muted / ツール名の直下） -->
+        <p class="ogp__tagline" data-bind="tagline">種類別に選べる画像圧縮</p>
+
+        <!-- 下段テキスト（提供元）は黒田さん指示で削除（2026-06-18 改訂）。
+             pill → ツール名 → サブキャッチの 3 要素構成に変更。残要素は上寄せ維持・
+             下に余白が増える分は許容（間延びしないため軽微調整不要と判断）。 -->
+      </div>
+    </div>
+
+    <!--
+      data-* → 各テキストノードへの差し込み。
+      テンプレ差し替えは <body> の data-* を変えるだけで全テキストが反映される。
+    -->
+    <script>
+      (function () {
+        var body = document.body;
+        var map = {
+          pill: body.dataset.pill,
+          "tool-name": body.dataset.toolName,
+          tagline: body.dataset.tagline,
+          owner: body.dataset.owner,
+        };
+        Object.keys(map).forEach(function (key) {
+          if (map[key] == null) return;
+          var el = document.querySelector('[data-bind="' + key + '"]');
+          if (el) el.textContent = map[key];
+        });
+      })();
+    </script>
+  </body>
+</html>

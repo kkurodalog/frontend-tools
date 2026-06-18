@@ -2,13 +2,34 @@
   "/index.html": {
     "title": "Frontend Tools｜フロントエンド制作ツール集｜kurodafolio",
     "description": "Web制作で毎日使う実用ツールを一箇所に。画像圧縮・clamp計算など、ブラウザ内で完結する道具を順次公開しています。",
-    "ogImage": "/images/ogp.jpg",
-    "isPortalTop": true
+    "ogImage": "https://kurodafolio.com/tools/images/ogp.jpg",
+    "isPortalTop": true,
+    "seo": {
+      "canonical": "https://kurodafolio.com/tools/",
+      "robots": "index, follow",
+      "ogType": "website",
+      "ogUrl": "https://kurodafolio.com/tools/",
+      "ogTitle": "Frontend Tools｜フロントエンド制作ツール集｜kurodafolio",
+      "ogDescription": "Web制作で毎日使う実用ツールを一箇所に。画像圧縮・clamp計算など、ブラウザ内で完結する道具を順次公開しています。",
+      "ogImage": "https://kurodafolio.com/tools/images/ogp.jpg",
+      "ogImageSecureUrl": "https://kurodafolio.com/tools/images/ogp.jpg",
+      "ogImageWidth": "1200",
+      "ogImageHeight": "630",
+      "ogImageAlt": "フロントエンド制作ツール集 — ブラウザだけで完結する制作補助ツール",
+      "ogSiteName": "kurodafolio",
+      "ogLocale": "ja_JP",
+      "twitterCard": "summary_large_image",
+      "twitterTitle": "Frontend Tools｜フロントエンド制作ツール集｜kurodafolio",
+      "twitterDescription": "Web制作で毎日使う実用ツールを一箇所に。画像圧縮・clamp計算など、ブラウザ内で完結する道具を順次公開しています。",
+      "twitterImage": "https://kurodafolio.com/tools/images/ogp.jpg",
+      "twitterCreator": "@kurodalog",
+      "twitterSite": "@kurodalog"
+    }
   },
   "/image-compress/index.html": {
     "title": "画像圧縮 webp/avif｜種類別に選べる無料オンラインツール｜kurodafolio",
     "description": "ブラウザ内で完結する無料の画像圧縮ツール。画像をサーバーに送信しないので安心です。背景・写真・スクショなど種類別に最適な圧縮方式を選べて、WebPやAVIFにも変換できます。ドラッグ＆ドロップですぐ使えます。",
-    "ogImage": "https://kurodafolio.com/tools/image-compress/ogp.png",
+    "ogImage": "https://kurodafolio.com/tools/image-compress/ogp.jpg",
     "isPortalTop": false,
     "seo": {
       "canonical": "https://kurodafolio.com/tools/image-compress/",
@@ -17,8 +38,8 @@
       "ogUrl": "https://kurodafolio.com/tools/image-compress/",
       "ogTitle": "画像圧縮 webp/avif｜種類別に選べる無料オンラインツール｜kurodafolio",
       "ogDescription": "ブラウザ内で完結する無料の画像圧縮ツール。画像をサーバーに送信しないので安心。背景・写真・スクショなど種類別に最適な圧縮方式を選べて、WebPやAVIFにも変換できます。",
-      "ogImage": "https://kurodafolio.com/tools/image-compress/ogp.png",
-      "ogImageSecureUrl": "https://kurodafolio.com/tools/image-compress/ogp.png",
+      "ogImage": "https://kurodafolio.com/tools/image-compress/ogp.jpg",
+      "ogImageSecureUrl": "https://kurodafolio.com/tools/image-compress/ogp.jpg",
       "ogImageWidth": "1200",
       "ogImageHeight": "630",
       "ogImageAlt": "画像仕分け圧縮くん — 種類別に最適化する画像圧縮ツール",
@@ -27,7 +48,7 @@
       "twitterCard": "summary_large_image",
       "twitterTitle": "画像圧縮 webp/avif｜種類別に選べる無料オンラインツール｜kurodafolio",
       "twitterDescription": "ブラウザ内で完結する無料の画像圧縮ツール。画像をサーバーに送信しないので安心。種類別に最適な圧縮方式を選べてWebP/AVIFにも変換できます。",
-      "twitterImage": "https://kurodafolio.com/tools/image-compress/ogp.png",
+      "twitterImage": "https://kurodafolio.com/tools/image-compress/ogp.jpg",
       "twitterCreator": "@kurodalog",
       "twitterSite": "@kurodalog"
     }
@@ -35,7 +56,7 @@
   "default": {
     "title": "Frontend Tools｜kurodafolio",
     "description": "フロントエンド制作者向け実用ツール集（kurodafolio.com/tools/）。",
-    "ogImage": "/images/ogp.jpg",
+    "ogImage": "https://kurodafolio.com/tools/images/ogp.jpg",
     "isPortalTop": false
   }
 }

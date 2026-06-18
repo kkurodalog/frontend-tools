@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja" data-color-scheme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1.0" />
+    <title>OGP テンプレ（Frontend Tools ポータルトップ / 本体フォーマット）</title>
+
+    <!-- ===================================================================
+      Frontend Tools — ポータルトップ OGP（kurodafolio.com/tools/ 用）
+      担当: Cody（制作部）/ 2026-06-18
+      ベース: 同フォルダ ogp.html（image-compress 等ツール用テンプレ）を流用。
+        HTML/CSS 構造・背景（bg.jpeg 青デジタル粒子）・全面 50% 黒幕・くっきり化
+        パイプライン（DSF3 + sharp lanczos3 + sharpen）は ogp.html と完全に同一。
+        差分は <body data-*> の文言のみ（ポータルトップ A 案）。
+
+      ■ ポータルトップ A 案（黒田さん確定 2026-06-18）の要素マッピング
+        pill「Frontend Tools」（ティール）              → data-pill
+        主役（白大・72px）「フロントエンド制作ツール集」   → data-tool-name
+        サブ（白 muted）「ブラウザだけで完結する制作補助ツール」→ data-tagline
+        下段（白 30px）「kurodafolio.com/tools」（ドメイン）  → data-owner
+
+      ■ ツール用テンプレ（ogp.html）との違い
+        ツール用は「氏名位置=提供元（フロントエンド制作ツール集・固定）」だったが、
+        ポータルトップでは「フロントエンド制作ツール集」を主役（大）に昇格させ、
+        下段（本体氏名位置・30px）にはドメイン表記を置く。CSS は共有（ogp.css）。
+
+      ■ フォント / サイズ / 撮影
+        ogp.html と同一（Noto Sans JP / Inter・1200×630・document.fonts.ready 待ち）。
+    ==================================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    />
+
+    <!-- 本体トークン正本を直リンク（accent ティール等を tokens.css の実値で継承） -->
+    <link rel="stylesheet" href="../tokens.css" />
+    <!-- OGP 専用レイアウト（ツール用 ogp.html と共有） -->
+    <link rel="stylesheet" href="ogp.css" />
+  </head>
+
+  <body
+    data-pill="Frontend Tools"
+    data-tool-name="フロントエンド制作ツール集"
+    data-tagline="ブラウザだけで完結する制作補助ツール"
+  >
+    <!-- 1200×630 の撮影対象。Playwright は #ogp-card を clip して PNG 化する -->
+    <div class="ogp" id="ogp-card">
+      <!-- 背景写真（cover・フルブリード / 青デジタル粒子・image-compress と同一 bg.jpeg） -->
+      <img class="ogp__bg" src="bg.jpeg" alt="" />
+      <!-- 全面の半透明黒オーバーレイ（image-compress と同方式・同濃度） -->
+      <div class="ogp__overlay" aria-hidden="true"></div>
+
+      <!-- テキスト群（左寄せ縦並び・上寄せ / ツール用と同構図） -->
+      <div class="ogp__content">
+        <!-- 画面ブランド pill（ティール枠・薄背景） -->
+        <span class="ogp__pill" data-bind="pill">Frontend Tools</span>
+
+        <!-- 主役（Noto Sans JP 700 / 白・72px） -->
+        <h1 class="ogp__title" data-bind="tool-name">フロントエンド制作ツール集</h1>
+
+        <!-- サブキャッチ（白 muted） -->
+        <p class="ogp__tagline" data-bind="tagline">ブラウザだけで完結する制作補助ツール</p>
+
+        <!-- 下段ドメイン表記（kurodafolio.com/tools）は黒田さん指示で削除（2026-06-18 改訂）。
+             pill → 主役 → サブキャッチの 3 要素構成に変更。残要素は上寄せ維持・
+             下に余白が増える分は許容。 -->
+      </div>
+    </div>
+
+    <!--
+      data-* → 各テキストノードへの差し込み（ogp.html と同一スクリプト）。
+      テンプレ差し替えは <body> の data-* を変えるだけで全テキストが反映される。
+    -->
+    <script>
+      (function () {
+        var body = document.body;
+        var map = {
+          pill: body.dataset.pill,
+          "tool-name": body.dataset.toolName,
+          tagline: body.dataset.tagline,
+          owner: body.dataset.owner,
+        };
+        Object.keys(map).forEach(function (key) {
+          if (map[key] == null) return;
+          var el = document.querySelector('[data-bind="' + key + '"]');
+          if (el) el.textContent = map[key];
+        });
+      })();
+    </script>
+  </body>
+</html>

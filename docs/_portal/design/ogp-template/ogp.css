@@ -1,0 +1,160 @@
+/* =====================================================================
+   Frontend Tools — OGP テンプレCSS（本体 kurodafolio フォーマット版）
+   担当: Cody（制作部）/ 2026-06-18 改訂2
+   正本フォーマット: kurodafolio/06_implementation/dev/ogp-template/ogp.html（黒田さん承認済み）
+   仕様の正本: kurodafolio/08_release/pre-release/ogp-production-spec.md（T-1 × L-1）
+
+   構図:
+     - 背景写真（青デジタル粒子 bg.jpeg）cover・フルブリード
+     - 全面の半透明黒オーバーレイ（rgba(0,0,0,0.5) / 黒田さん指示・背景が明るいため全体を黒幕で覆う）
+     - テキスト群は左寄せ縦並び・やや上寄せ（下に SNS情報帯セーフ余白を確保）
+     - 文字くっきり化: 撮影を DSF3（3600×1890）→ sharp lanczos3 で 1200×630 へ高品質縮小
+
+   配色:
+     accent ティール = var(--color-accent)（dark: #5dd9cb）… tokens.css の実値を継承。
+     <html data-color-scheme="dark"> 指定により tokens.css §3 ダーク値が発火する。
+     白・muted・グラデのチャコールは本体 OGP の固定値を踏襲（写真上で確実に発色させるため
+     テーマ変数ではなく本体 spec の実数値を使う＝本体 ogp.html と 1:1）。
+
+   サイズは OGP 固定画像なので rem ではなく px 実寸で設計。
+   ===================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 1200px;
+  height: 630px;
+}
+
+body {
+  /* OGP プレビュー用。Playwright は #ogp-card を clip するので影響しない */
+  font-family: var(--font-family-sans); /* Noto Sans JP 主役 */
+}
+
+/* ---------------------------------------------------------------------
+   撮影対象カード（1200×630 固定）
+   --------------------------------------------------------------------- */
+.ogp {
+  position: relative;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  /* 本体 ogp.html と同じフォントスタック（JP=ヒラギノ系 / ラテン=SF系 clean）。
+     和文主役は Noto Sans JP（CDN ロード）。 */
+  font-family: "Inter", "Helvetica Neue", "Noto Sans JP", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", sans-serif;
+  /* くっきり化: アンチエイリアス + 字形優先レンダリングでエッジを締める */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 背景写真（cover・フルブリード / 青デジタル粒子 bg.jpeg） */
+.ogp__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* 全面の半透明黒オーバーレイ（黒田さん指示: 背景が明るいので全体を黒で覆う）
+   基本は均一 rgba(0,0,0,0.5)。テキストは画面左に寄るため、左側だけ僅かに濃くして
+   可読性をさらに底上げする微グラデを重ねる（左 0.58 → 右 0.42・中心 0.5 相当の均一感は維持）。 */
+.ogp__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.58),
+    rgba(0, 0, 0, 0.42)
+  );
+}
+
+/* ---------------------------------------------------------------------
+   テキスト群コンテナ（左寄せ縦並び・やや上寄せ）
+     - 左右マージン 120px（SNSセーフゾーン）
+     - 上寄せ（flex-start + padding-top）で下端に SNS情報帯セーフ余白を確保
+     - PADDING_TOP を変えるだけで縦オフセットを調整可能（調整ポイント）
+   --------------------------------------------------------------------- */
+.ogp__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-left: 120px;
+  padding-right: 120px;
+  /* ↓ 縦位置の調整ポイント（黒田さん指示 2026-06-18: 本体 OGP と同じ「真ん中より少し上」へ揃える）。
+     本テンプレは下段テキスト削除済みで pill→主役→サブ の3要素＝ブロックが短い（高さ ≈216px）。
+     本体（pill→キャッチ2行→氏名 / 高さ ≈301px・padding-top 110px・ブロック中心 ≈260px）より
+     要素ブロックが短いため、同じ padding-top では中心が上にずれる。
+     ブロック中心を本体と同じ ≈260px（=キャンバス中心315pxの少し上）に合わせるには
+     top ≈ 260 − 216/2 = 152px。旧 84px（中心 ≈192px＝上寄りすぎ）から下方向へ移動。
+     ※ツール/ポータルとも同一の3要素・同一ブロック高のため、この共有値で両OGPの見え方が揃う。 */
+  padding-top: 152px;
+}
+
+/* 画面ブランド pill（本体「Web Developer」位置 / クリアなスカイブルー枠・薄背景）
+   2026-06-18 改訂3（Haru 配色確定）: 旧 accent ティール #5dd9cb から、背景の青粒子に
+   調和する「クリアな青」へ変更。OGP の pill に閉じた上書き（tokens.css 本体や他用途の
+   accent は不変）。文字は枠より一段明るく＝枠が締まり文字が前に出る関係。 */
+.ogp__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 22px;
+  color: #6cc6ff; /* 文字＝クリアなスカイブルー（黒幕上で可読） */
+  background: rgba(108, 198, 255, 0.08); /* ごく薄い青の半透明（暗部のムラに負けず安定） */
+  border: 1px solid #4ea8ff; /* 枠＝文字より一段暗く（枠が締まり文字が前に出る） */
+  border-radius: var(--radius-pill);
+  font-family: "Inter", var(--font-family-sans);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* 必須① ツール名（主役・Noto Sans JP 700 / 本体キャッチ位置の主役を大きく） */
+.ogp__title {
+  margin-top: 30px;
+  font-family: var(--font-family-sans); /* Noto Sans JP 主役 */
+  color: #ffffff;
+  font-size: 72px; /* 主役感は保ちつつ一段下げる（旧 82px → 72px・黒田さん指示） */
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: 0.01em;
+  /* 端切れ防止: セーフゾーン（中央 960px）内に収める */
+  max-width: 100%;
+  word-break: keep-all;
+}
+
+/* 必須② 一言キャッチ（muted / ツール名の直下・本体キャッチ2行目の役割の縮小版） */
+.ogp__tagline {
+  margin-top: 22px;
+  font-family: var(--font-family-sans);
+  color: rgba(255, 255, 255, 0.82); /* 白の muted（写真上で確実に出る固定値） */
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+/* 必須③ 提供元テキスト（本体「氏名 Kuroda Kosuke」位置 / 本体 ogp.css .ogp__name と一致）
+   本体氏名 = font-size:30px / font-weight:500 / letter-spacing:0.04em / color:#fff（バッジ枠なし）。
+   黒田さん指示「大きさは本体の Kuroda Kosuke と同じ・色は白・枠なし」を満たす。 */
+.ogp__owner {
+  margin-top: 40px;
+  font-family: var(--font-family-sans);
+  color: #ffffff;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}

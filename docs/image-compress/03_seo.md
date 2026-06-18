@@ -110,8 +110,8 @@
 <meta property="og:url" content="https://kurodafolio.com/tools/image-compress/">
 <meta property="og:title" content="画像圧縮 webp/avif｜種類別に選べる無料オンラインツール｜kurodafolio">
 <meta property="og:description" content="ブラウザ内で完結する無料の画像圧縮ツール。画像をサーバーに送信しないので安心。背景・写真・スクショなど種類別に最適な圧縮方式を選べて、WebPやAVIFにも変換できます。">
-<meta property="og:image" content="https://kurodafolio.com/tools/image-compress/ogp.png">
-<meta property="og:image:secure_url" content="https://kurodafolio.com/tools/image-compress/ogp.png">
+<meta property="og:image" content="https://kurodafolio.com/tools/image-compress/ogp.jpg">
+<meta property="og:image:secure_url" content="https://kurodafolio.com/tools/image-compress/ogp.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="画像仕分け圧縮くん — 種類別に最適化する画像圧縮ツール">
@@ -122,7 +122,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="画像圧縮 webp/avif｜種類別に選べる無料オンラインツール｜kurodafolio">
 <meta name="twitter:description" content="ブラウザ内で完結する無料の画像圧縮ツール。画像をサーバーに送信しないので安心。種類別に最適な圧縮方式を選べてWebP/AVIFにも変換できます。">
-<meta name="twitter:image" content="https://kurodafolio.com/tools/image-compress/ogp.png">
+<meta name="twitter:image" content="https://kurodafolio.com/tools/image-compress/ogp.jpg">
 <meta name="twitter:creator" content="@kurodalog">
 <meta name="twitter:site" content="@kurodalog">
 ```
@@ -131,13 +131,13 @@
 - Twitter は `summary_large_image`（大きい画像カード）でツールの世界観を伝える。
 - **✅確定**: `twitter:creator` / `twitter:site` = `@kurodalog`（黒田さん確定 / 2026-06-17）。本体ポートフォリオで運用しているXアカウントに統一。シェア時に投稿の帰属が `@kurodalog` に紐づく。
 
-### 4-4. OG画像（ogp.png）仕様（制作指示）
+### 4-4. OG画像（ogp.jpg）仕様（制作指示）
 
 - サイズ: **1200 × 630px**（OGP標準比率）。
-- 配置パス: `https://kurodafolio.com/tools/image-compress/ogp.png`（=ツールページと同階層に置き、絶対URLで参照）。
+- 配置パス: `https://kurodafolio.com/tools/image-compress/ogp.jpg`（=ツールページと同階層に置き、絶対URLで参照）。
 - デザイン方針: ツール名「画像仕分け圧縮くん」＋一言キャッチ「種類別に選べる画像圧縮」＋「ブラウザ内完結・送信しない」バッジ。本体 kurodafolio の世界観（b-tech-cool / `docs/_portal/design/design-concept.md` のトークン）と統一。
 - ★文字は左右上下に安全マージン（SNSサムネで端が切れるため、重要要素は中央寄せ）。
-- 形式: 軽量化のため最終的にこのツール自身で圧縮した PNG/WebP を用いてもよいが、**SNSクローラ互換のため `og:image` 拡張子は PNG または JPEG を推奨**（一部クローラが WebP 未対応のため）。よって `ogp.png` で確定。
+- 形式: **JPEG q90（mozjpeg）／`ogp.jpg` で確定**（黒田さん確定・2026-06-18）。写真背景（青デジタル粒子）＋テキスト合成で**写真主体**のため、軽量な JPEG が本来適切（PNG だと約940KB＝JPEGの約8倍重い）。テキストのキレは **DSF3 撮影＋lanczos3 縮小＋sharpen＋q90** で確保（本体 kurodafolio OGP の JPEG q90＝80KB が実証済み）。SNSクローラ互換も JPEG は PNG と同等に問題なし（WebP のみ一部クローラ未対応のため不採用）。
 
 ---
 
@@ -321,7 +321,7 @@ Web制作で困っていることはありませんか
 - [ ] `<title>` を §2-2 の文言で記述（静的サイトなので空欄運用にしない）
 - [ ] `<meta name="description">` を §3-2 の文言で記述
 - [ ] OGメタ（§4-3）を**すべて絶対URL**で記述（og:image / og:url / canonical）
-- [ ] OG画像 `ogp.png`（1200×630）を同階層に配置
+- [ ] OG画像 `ogp.jpg`（1200×630・JPEG q90）を同階層に配置
 - [ ] WebApplication JSON-LD（§5-2）設置・price:0 / isAccessibleForFree:true
 - [ ] BreadcrumbList JSON-LD（§5-3）設置・最終要素に item なし
 - [ ] `<link rel="canonical">` 自己参照（絶対URL）
