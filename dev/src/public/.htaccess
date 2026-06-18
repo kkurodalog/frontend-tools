@@ -1,0 +1,66 @@
+# =====================================================================
+# kurodafolio.com/tools/ 配下 .htaccess（提示のみ / 本番反映は黒田さんが FTP で配置）
+# 配置先: public_html/tools/.htaccess（このサブディレクトリ配下にのみ効く）
+#
+# 目的:
+#   (1) WASM の MIME 型を application/wasm に確定する【必須】
+#       画像仕分け圧縮くんは AVIF/WebP/oxipng を WebAssembly で動かす。
+#       .wasm が application/wasm で返らないと WebAssembly の streaming 読み込みが失敗し、
+#       ツールが動かない（docs/_portal/00_tech-verification.md §②-D）。
+#   (2) ハッシュ付き静的アセットへの長期キャッシュ付与（再訪問の高速化）。
+#       方針は本体 kurodafolio.com の htaccess-cache-snippet.conf と同思想。
+#
+# 安全性（リバーシブル）:
+#   HTML には長期キャッシュを掛けない（公開更新が即時反映されなくなるため）。
+#   ハッシュ付きアセット（style.xxxx.css / index.xxxx.js / webp_enc-xxxx.wasm 等）のみ長期キャッシュ。
+#   万一不具合が出たら本ファイルを削除すれば即座に元の挙動へ戻る（= /tools/ フォルダごと消せば公開前へ戻る）。
+#
+# 前提: Apache の mod_mime / mod_expires / mod_headers が有効（XServer は標準で有効）。
+# =====================================================================
+
+# ---- (1) WASM MIME（必須） ----
+<IfModule mod_mime.c>
+  AddType application/wasm .wasm
+</IfModule>
+
+# ---- (2-a) Expires（mod_expires / 本体スニペット準拠） ----
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # WASM（ビルドでハッシュ付与され内容変更時はファイル名が変わるため長期キャッシュ可）
+  ExpiresByType application/wasm           "access plus 1 year"
+
+  # 画像（ハッシュ付与・内容変更でファイル名が変わるため長期キャッシュ可）
+  ExpiresByType image/webp                 "access plus 1 year"
+  ExpiresByType image/jpeg                 "access plus 1 year"
+  ExpiresByType image/png                  "access plus 1 year"
+  ExpiresByType image/svg+xml              "access plus 1 year"
+  ExpiresByType image/x-icon               "access plus 1 year"
+  ExpiresByType image/vnd.microsoft.icon   "access plus 1 year"
+
+  # CSS / JS（ハッシュ付きファイル名 = 内容変更で URL 変化するため長期キャッシュ可）
+  ExpiresByType text/css                   "access plus 1 year"
+  ExpiresByType application/javascript     "access plus 1 year"
+  ExpiresByType text/javascript            "access plus 1 year"
+
+  # フォント
+  ExpiresByType font/woff2                 "access plus 1 year"
+  ExpiresByType font/woff                  "access plus 1 year"
+  ExpiresByType application/font-woff      "access plus 1 year"
+
+  # HTML は短め（更新を素早く反映 / 長期キャッシュにしない）
+  ExpiresByType text/html                  "access plus 0 seconds"
+</IfModule>
+
+# ---- (2-b) Cache-Control（mod_headers / immutable 付与・本体スニペット準拠） ----
+<IfModule mod_headers.c>
+  # ハッシュ付きアセット（wasm を含む）は immutable で再検証もスキップ
+  <FilesMatch "\.(wasm|webp|jpe?g|png|svg|ico|css|js|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # HTML は毎回サーバへ確認（公開更新を即反映）
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
