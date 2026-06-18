@@ -1,10 +1,13 @@
 @use "../global" as *;
 
 // =====================================================================
-// Component: c-tool-card（ツール一覧の全面リンクカード / 本体 work-card 準拠）
-//   bg-elevated 地・1px border・radius-md。初期は影なし（フラット基調）。
-//   hover = translateY(-2px) + shadow-md / active = 戻り + 影消し + transition-zero。
-//   全面リンクのため子テキスト色は base/muted で固定（hover で文字色を変えない）。
+// Component: c-tool-card（ツール一覧の全面リンクカード / 本体 c-work-card に統一・F5-3）
+//   構成順: picture(thumb) → name(title 相当) → tagline(text 相当) → tags(下端)。
+//   視覚値の正本 = kurodafolio _c-work-card.scss（top works プレビューと同一挙動）:
+//     初期 = 影なし / hover = translateY(-2px)+shadow-md / active = 戻り+影消し+transition-zero。
+//   全面リンクのため子テキスト色は base/muted で固定（foundation a:hover の色変化を打ち消し）。
+//   block-size:100% は維持: 本カードは <li>(p-tools__list grid item) 内の <a> のため、
+//     カードを行高いっぱいに伸ばし、__tags の margin-block-start:auto を下端揃えで効かせる。
 // =====================================================================
 .c-tool-card {
   display: flex;
@@ -12,7 +15,7 @@
   gap: var(--space-3);
   block-size: 100%;
   padding: var(--space-5);
-  color: var(--color-text-base);
+  color: var(--color-text-base); // foundation a:hover の色変化を打ち消し
   text-decoration: none;
   background-color: var(--color-bg-elevated);
   border: var(--border-width-thin) solid var(--color-border);
@@ -27,37 +30,40 @@
   }
 
   &:active {
-    box-shadow: var(--shadow-none);
+    box-shadow: var(--shadow-none) !important;
     transition: transform var(--transition-zero);
     transform: translateY(0);
   }
 }
 
-// カテゴリバッジ（pill）。既定 = ニュートラル枠。--accent でアクセント面。
-.c-tool-card__category {
-  align-self: flex-start;
-  padding-block: var(--space-1);
-  padding-inline: var(--space-3);
-  font-size: var(--fs-xs);
-  color: var(--color-text-muted);
-  border: var(--border-width-thin) solid var(--color-border);
-  border-radius: var(--radius-pill);
-}
-
-.c-tool-card__category--accent {
-  color: var(--color-accent);
-  background-color: var(--color-accent-bg);
-  border-color: transparent;
+// サムネ = 表示寸法相当の <picture>（webp + jpg フェールセーフ）。16:9 枠に
+//   object-fit:cover でクロップ（height は aspect-ratio で確定 / width/height 属性で CLS 回避）。
+.c-tool-card__thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background-color: var(--color-bg-code);
+  border-radius: var(--radius-md);
 }
 
 .c-tool-card__name {
+  margin-block-start: var(--space-3); // サムネと name の間隔（c-work-card__title 準拠）
   font-family: var(--font-heading);
   font-size: var(--fs-lg);
   font-weight: var(--fw-bold);
-  line-height: var(--lh-tight);
+  color: var(--color-text-base); // hover で色を変えない
 }
 
 .c-tool-card__tagline {
   font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  line-height: var(--lh-base);
+  color: var(--color-text-muted); // hover で色を変えない
+}
+
+// 下端タグ行（c-work-card__tags と同形）。c-badge×N を tools.json の tags から出力。
+.c-tool-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: auto;
 }

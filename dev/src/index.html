@@ -16,10 +16,30 @@
         <ul class="p-tools__list">
           {{#each tools}}
           <li>
+            {{!-- 構成順は本体 c-work-card に統一: picture(thumb) → name → tagline → tags(下端)。 サムネは slug
+            由来のデータ駆動パス（/images/tools-{{slug}}.webp を base が /tools/images/ に解決）。 webp 優先 + jpg フォールバック / 16:9 を
+            object-fit:cover でクロップ / width・height で CLS 回避。 --}}
             <a class="c-tool-card" href="{{ this.url }}">
-              <span class="c-tool-card__category">{{ this.category }}</span>
+              <picture>
+                <source srcset="/images/tools-{{ this.slug }}.webp" type="image/webp" />
+                <img
+                  class="c-tool-card__thumb"
+                  src="/images/tools-{{ this.slug }}.jpg"
+                  alt="{{ this.name }}のサムネイル"
+                  width="640"
+                  height="360"
+                  loading="lazy"
+                />
+              </picture>
               <h2 class="c-tool-card__name">{{ this.name }}</h2>
               <p class="c-tool-card__tagline">{{ this.tagline }}</p>
+              {{#if this.tags.length}}
+              <div class="c-tool-card__tags">
+                {{#each this.tags}}
+                <span class="c-badge">{{ this }}</span>
+                {{/each}}
+              </div>
+              {{/if}}
             </a>
           </li>
           {{/each}}

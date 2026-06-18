@@ -1,0 +1,29 @@
+@use "../global" as *;
+
+// =====================================================================
+// c-badge — タグ/バッジ（本体 kurodafolio _c-badge.scss を 1:1 コピー移植 / F5-3）
+// 視覚値の正本: kurodafolio _mock-base.css .mb-badge（L870-887）。
+// frontend-tools のトークンは本体 1:1 継承のため値はそのまま効く。
+// 用途: c-tool-card 下端のタグ行（c-work-card と同形）に span.c-badge×N で出す。
+// =====================================================================
+
+.c-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content; // テキスト幅に追従（flex/grid 親内でも stretch せず内容幅を維持）
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
+  letter-spacing: var(--ls-wide);
+  background-color: var(--color-bg-alt);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.c-badge--accent {
+  color: var(--color-accent);
+  background-color: var(--color-accent-bg);
+  border-color: var(--color-accent);
+}

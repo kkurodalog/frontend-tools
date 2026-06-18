@@ -160,8 +160,9 @@
 - **ヒーロー**: 大判ビジュアルなし。`--container-base 1100px` 内、上下 `--space-12`〜`16`。H1 は `--fs-3xl`〜`4xl`、リードは `--fs-lg` muted。SP 中央寄せ・md 左寄せ（本体 c-section 挙動を踏襲）。
 - **About的ひとことは廃止（Phase7）**: 旧案ではヒーロー内に「About的ひとこと（`.p-hero__intro`）」を 1〜2 行置いていたが、**Phase7（黒田さん指示）で廃止し、認知→信頼→行動はツール個別ページと同一の「制作者カード → CTA セクション」に一本化**。ポータルトップもツールカードグリッドの下に**ツール個別ページと同じ partial（同マークアップ/クラス/コピー/リンク）の制作者カード→CTA**を配置する（§5-1）。ポータルトップでは**ツール完了時CTA は置かない**（行動導線は下部の制作者カード＋CTAセクションに集約）。
 - **カードグリッド**: `repeat(auto-fill, minmax(280px, 1fr))`、gap `--space-5`。各カードは本体 work-card 準拠（bg-elevated / 1px border / radius-md / hover translateY+shadow-md・全面リンク）。
-- **カード内**: 上にカテゴリバッジ（pill・accent-bg 地に accent 文字 or muted）→ ツール名（H2・`--fs-lg`・見出しフォント）→ タグライン（`--fs-sm` muted）。`status: published` のみ表示。将来「準備中」を出すなら別バッジ（warning 系）。
-- **あしらい**: フラット基調。accent は「カテゴリバッジ・hover の焦点・カード内の細い天面ライン（任意）」だけに点で効かせる。面で塗らない（静けさ重視）。
+- **カード内（Phase8 更新 / 2026-06-18 — 本体 work-card に統一）**: **サムネ画像（16:9 `<picture>`・webp+jpg フォールバック・`object-fit: cover`・`width/height` 属性で CLS 回避・`alt`・`loading="lazy"`）→ ツール名（`__name`・H2・`--fs-lg`・見出しフォント・base 色）→ タグライン（`__tagline`・`--fs-sm` muted）→ 下端タグ行（`__tags` > `c-badge`×N・`tools.json` の `tags` 配列を出力・`margin-block-start: auto` で下端揃え）**。構成順・font/余白/色・hover/active 挙動は本体 `c-work-card` と同値。`status: published` のみ表示。将来「準備中」を出すなら別バッジ（warning 系）。
+  - **旧仕様からの変更**: Phase7 までは「上部カテゴリバッジ（pill・`__category`）→ ツール名 → タグライン」（サムネなし・下端タグ行なし）だったが、黒田さん指示「ポートフォリオ側カード（c-work-card）の見せ方（画像・テキスト・タグ）が良いのでツール集側（c-tool-card）を統一したい」を受け、**上部カテゴリ pill（`__category`）を廃止**し、サムネ＋下端 `c-badge` タグ行を持つ本体 work-card 同構成に変更（Cody 実装 / Reid 評価ゲート合格 / 2026-06-18）。`c-badge` は kurodafolio から frontend-tools に移植・新設。
+- **あしらい**: フラット基調。accent は「`c-badge`（タグ）・hover の焦点・カード内の細い天面ライン（任意）」だけに点で効かせる。面で塗らない（静けさ重視）。
 
 ### 3-2. ツールページの共通枠 `/tools/{slug}/`（器）
 
@@ -191,7 +192,7 @@ Phase1 の ★要確認1〜2 はレビューで確定済み。確定内容を以
 | **ダーク切替トグル** | 本体 `c-color-toggle` と同一（§1-7(b)・スライドトラック型・sun/moon SVG・寸法）を設置 | tokens `--toggle-*` ＋ mock |
 | **パンくず** | 本体 works 詳細と同一（§1-7(c)・ol/`›`）。`Home › Tools › {ツール名}` | concept-mock `c-breadcrumb` |
 | **下部 CTA セクション** | 本体 `p-cta` と同一（§1-7(d)・背景画像 + overlay・白文字中央）。**文章は黒田さん指定テキストに置換**（§5-2） | tokens `--bg-cta-image`/`--color-cta-overlay-*` ＋ mock |
-| カテゴリバッジ色（旧★3） | 据え置き（(a) ニュートラル主 / (b) accent 比較を併記のまま。F2 で最終確定でよい） | mock 既存 |
+| ~~カテゴリバッジ色（旧★3）~~ | ~~据え置き（(a) ニュートラル主 / (b) accent 比較を併記のまま。F2 で最終確定でよい）~~ | **Phase8（2026-06-18）で論点消滅**: 上部カテゴリ pill（`__category`）廃止に伴いカテゴリバッジ自体が無くなった（§3-1 / §8 参照）。下端タグは `c-badge`（accent 変種運用）に置換 |
 
 ---
 
@@ -407,8 +408,48 @@ mock 上で全箇所整合済み（ヘッダー＝「お問い合わせ」／CTA
 - **配置順**: ツール一覧カード群（`.p-tools`）は維持し、その**下**に制作者カード（`<main>` 内末尾）→ CTA（`</main>` の後・full-bleed）→ フッター。ツール個別ページと同じ並び順。
 - **不変更**: ヘッダー・ツール一覧カード群・フッター・他 BP・tokens.css・本番 CSS（dev/src/）は触っていない（既存の `.c-maker-card`/`.p-cta` 定義をそのまま流用）。
 
+---
+
+## 11. Phase8 黒田さん指示: ツールカードを本体 c-work-card に統一（実装反映 / 2026-06-18）
+
+ポータルトップのツールカード（`c-tool-card`）を、本体ポートフォリオの作品カード（`c-work-card`）の見せ方に統一した。**これは概念モック段階ではなく F5-3 で本番実装（`dev/src/`）に反映済み**の確定変更（Cody 実装 / Reid 評価ゲート合格）。本節は design-concept 正本を実装の確定仕様に同期するための記録。
+
+### 11-1. 変更内容
+
+| # | 黒田さん指示 | 確定内容 | 反映先 |
+|---|---|---|---|
+| 1 | ツールカードを本体カードに統一 | ポートフォリオ側カード（`c-work-card`）の見せ方（画像・テキスト・タグ）が良いので、ツール集側（`c-tool-card`）をそれに統一 | `dev/src/index.html`・`_c-tool-card.scss`・`_c-badge.scss`（新規） |
+
+### 11-2. 確定した新仕様（旧 §3-1 §163 から変更）
+
+- **構成順**: サムネ画像（`<picture>`）→ ツール名（`__name`）→ タグライン（`__tagline`）→ 下端タグ行（`__tags` > `c-badge`×N）。＝本体 `c-work-card` と同一構成。
+- **サムネ**: 16:9（`aspect-ratio:16/9; object-fit:cover`）・`<picture>`（webp + jpg フォールバック）・`width/height` 属性で CLS 回避・`alt`・`loading="lazy"`。画像パスは `tools.json` の slug 由来（`/images/tools-{slug}.webp` ＋ `.jpg` / `public/` 配置・root-absolute 参照）。
+- **上部カテゴリ pill（`__category` / `__category--accent`）は廃止**（CSS 残骸も src/dist とも grep 0 件で消滅確認済み）。
+- **タグ**: `tools.json` の `tags` 配列を下端（`margin-block-start: auto`）に `c-badge`×N で出力。`{{#if tags.length}}` ガードで tags なしでも崩れない。
+- **`c-badge`**: kurodafolio から frontend-tools `components/_c-badge.scss` に移植・新設（`.c-badge` / `.c-badge--accent`。`--warning` 変種＝仮想案件マーカーは未使用のため除外）。
+- **hover/active・font/余白/色**: 本体 `c-work-card` と同値（§6-2(f) の実値どおり・本変更でも維持）。`block-size:100%` は `<li>` グリッドアイテム内の `<a>` を行高いっぱいに伸ばし下端タグ揃えを効かせるため追加。
+
+### 11-3. 旧仕様との対応（経緯トレース用）
+
+| 項目 | 旧（Phase7 まで） | 新（Phase8 / 2026-06-18 確定） |
+|---|---|---|
+| 構成順 | 上部カテゴリ pill → 名 → tagline | サムネ(16:9) → 名 → tagline → 下端タグ |
+| サムネ画像 | なし | あり（16:9 `<picture>`・lazy・CLS 回避） |
+| カテゴリ pill | あり（`__category`） | **廃止** |
+| タグ | なし | 下端 `c-badge`×N（`tags` 配列） |
+
+### 11-4. 出典
+
+- Cody 実装ノート: `docs/_portal/_f5-3-cody-card-unify-note.md`
+- Reid 合格レポート: `docs/_portal/_f5-3-reid-card-unify-review.md`
+- 実コード: `dev/src/index.html`・`dev/src/assets/styles/components/_c-tool-card.scss`・`_c-badge.scss`
+
 ## 検証済み
 
+- 検証済み（Phase8）: §3-1（§163）のツールカード内構成記述を新仕様（サムネ16:9→名→tagline→下端 `c-badge` タグ／上部カテゴリ pill 廃止）に書き換え、旧記述（上部 pill・サムネなし・下端タグなし）は本文から除去（取り消し線で経緯のみ残置・§4 確定事項表）。実装の実態（Cody ノート / Reid 合格レポート）と一致。
+- 検証済み（Phase8）: §4 Phase2 確定事項表の「カテゴリバッジ色（旧★3）」行を取り消し線＋論点消滅注記に更新（pill 廃止に伴いカテゴリバッジ自体が消滅）。§3-1 あしらいの accent 適用先記述も「カテゴリバッジ」→「`c-badge`（タグ）」に整合更新。
+- 検証済み（Phase8）: §11 を新設し、変更日（2026-06-18）・変更理由（黒田さん指示で c-work-card に統一・Cody 実装/Reid 合格）・新仕様詳細・旧仕様対応表・出典パスを記録（後から経緯が辿れる）。
+- 検証済み（Phase8）: 周辺の体裁・記法・粒度（Phase 見出し＋確定事項表＋出典併記＋検証済みブロック）を踏襲し、無関係な箇所（§5〜§10・tokens・モック記述）は不変更。
 - 検証済み（Phase7）: ポータルトップの About的ひとこと（ヒーロー内 `.p-hero__intro`「作っているのは…制作実績はこちら」）を HTML/CSS とも削除した（mock ヒーローは H1＋リードのみに）。
 - 検証済み（Phase7）: ポータルトップにツール個別ページと同一の制作者カード（`.c-maker-card`・黒田こうすけ＋肩書＋説明＋Works/Skills の c-link-arrow）→ CTA セクション（`.p-cta`「制作のご依頼・ご相談も承っています」＋リード＋「制作のご相談」ボタン）を、同マークアップ/クラス/コピー/リンクで配置（共通partial想定）。カードは `<main>` 内末尾・CTA は `</main>` 後の full-bleed でツール個別ページと同じ並び順。
 - 検証済み（Phase7）: ツール一覧カード群（`.p-tools`）・ヘッダー・フッターは維持（差し替えは下部ファネルブロックの追加と About的ひとことの削除のみ）。tokens.css・本番 CSS（dev/src/）は不変更。
