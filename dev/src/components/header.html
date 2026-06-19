@@ -11,7 +11,9 @@
       <a href="/tools/" aria-current="page">ツール一覧</a>
       {{else}}
       <a href="/tools/">ツール一覧</a>
-      {{/if}} {{!-- 保留: 複数カテゴリ化までカテゴリ導線は出さない（黒田さん確定 2026-06-17）。 復帰時はナビに anchor を 1 つ追加し、href に
+      {{/if}}
+      <a href="{{ site.about }}">制作者について</a>
+      {{!-- 保留: 複数カテゴリ化までカテゴリ導線は出さない（黒田さん確定 2026-06-17）。 復帰時はナビに anchor を 1 つ追加し、href に
       site.toolsCategoryImage（/tools/category/image/）を当て、 ラベルを「カテゴリ」にする。URL 階層の申し送りは vite.config.js の
       site.toolsCategoryImage コメント参照。 --}}
     </nav>

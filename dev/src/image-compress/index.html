@@ -8,9 +8,9 @@
     <main class="l-container">
       <nav class="c-breadcrumb" aria-label="パンくず">
         <ol class="c-breadcrumb__list">
-          <li><a href="{{ site.home }}">Home</a></li>
+          <li><a href="{{ site.home }}">制作者ポートフォリオ</a></li>
           <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
-          <li><a href="/tools/">Tools</a></li>
+          <li><a href="/tools/">ツール一覧</a></li>
           <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
           <li><span aria-current="page">画像仕分け圧縮くん</span></li>
         </ol>
@@ -119,8 +119,8 @@
     <script src="/assets/js/image-compress.js" type="module"></script>
 
     {{!-- 構造化データ（JSON-LD）。03_seo §5-2 WebApplication ＋ §5-3 BreadcrumbList を正本どおり設置。 すべて絶対 URL。BreadcrumbList
-    の最終要素（現在ページ）は item を付けない（schema.org 推奨）。 パンくず表示ラベル（Home / Tools / 画像仕分け圧縮くん）と name を一致させている。
-    --}}
+    の最終要素（現在ページ）は item を付けない（schema.org 推奨）。 パンくず表示ラベル（制作者ポートフォリオ / ツール一覧 / 画像仕分け圧縮くん）と
+    name を一致させている。 --}}
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -155,13 +155,13 @@
           {
             "@type": "ListItem",
             "position": 1,
-            "name": "Home",
+            "name": "制作者ポートフォリオ",
             "item": "https://kurodafolio.com/"
           },
           {
             "@type": "ListItem",
             "position": 2,
-            "name": "Tools",
+            "name": "ツール一覧",
             "item": "https://kurodafolio.com/tools/"
           },
           {

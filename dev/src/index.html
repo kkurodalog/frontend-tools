@@ -6,6 +6,14 @@
     {{> header}}
 
     <main class="l-container">
+      <nav class="c-breadcrumb" aria-label="パンくず">
+        <ol class="c-breadcrumb__list">
+          <li><a href="{{ site.home }}">制作者ポートフォリオ</a></li>
+          <li class="c-breadcrumb__sep" aria-hidden="true">›</li>
+          <li><span aria-current="page">ツール一覧</span></li>
+        </ol>
+      </nav>
+
       <section class="p-hero">
         <h1 class="p-hero__title">フロントエンド制作ツール集</h1>
         <p class="p-hero__lead">Web制作の実作業で毎日使う道具を一箇所に。すべてブラウザ内で完結し、登録もインストールも不要です。</p>
@@ -52,6 +60,27 @@
       {{> maker-card makerId="maker-name-top"}}
     </main>
 
-    {{> cta ctaId="cta-title-top"}} {{> footer}} {{!-- モバイルナビ（円形展開型ハンバーガー / 768px 未満で表示） --}} {{> mobile-nav}}
+    {{> cta ctaId="cta-title-top"}} {{> footer}} {{!-- モバイルナビ（円形展開型ハンバーガー / 768px 未満で表示） --}} {{> mobile-nav}} {{!--
+    構造化データ（JSON-LD）: BreadcrumbList。すべて絶対 URL。 最終要素（現在ページ＝ツール一覧）は item を付けない（schema.org 推奨）。
+    パンくず表示ラベル（制作者ポートフォリオ / ツール一覧）と name を一致させている。 --}}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "制作者ポートフォリオ",
+            "item": "https://kurodafolio.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "ツール一覧"
+          }
+        ]
+      }
+    </script>
   </body>
 </html>

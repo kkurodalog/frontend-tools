@@ -2,8 +2,8 @@
 本線 → ×）。形状・X 化アニメは c-hamburger-fab に集約。 - 挙動: FAB クリック → 円形ダーク背景がボタン位置から広がる（第1段階 /
 .c-mobile-nav__bg.is-expanding） → ナビリンクがスタッガードでフェードイン（第2段階 / .c-mobile-nav.is-open）。閉じる時は逆順。 - aria:
 button[aria-expanded][aria-controls] / nav[aria-hidden] / bg[aria-hidden] - 768px 以上は CSS で FAB / nav とも非表示（768px 以上はヘッダー横ナビが機能
-/ 切替境界統一）。 - 内部ナビ = ツール一覧 + お問い合わせ（カテゴリは出さない / 黒田さん確定 2026-06-17・ヘッダー横ナビと同一）。 --}} {{!--
-円形展開背景（右下 FAB 位置から円形に広がる / 第1段階） --}}
+/ 切替境界統一）。 - 内部ナビ = ツール一覧 + 制作者について + お問い合わせ（カテゴリは出さない / 黒田さん確定 2026-06-17・ヘッダー横ナビと同一）。
+--}} {{!-- 円形展開背景（右下 FAB 位置から円形に広がる / 第1段階） --}}
 <div class="c-mobile-nav__bg js-mobile-nav-bg" aria-hidden="true"></div>
 
 {{!-- 展開型ナビ（第2段階: リンクがスタッガードでフェードイン） --}}
@@ -17,6 +17,7 @@ button[aria-expanded][aria-controls] / nav[aria-hidden] / bg[aria-hidden] - 768p
         <a href="/tools/">ツール一覧</a>
         {{/if}}
       </li>
+      <li class="c-mobile-nav__item"><a href="{{ site.about }}">制作者について</a></li>
       <li class="c-mobile-nav__item c-mobile-nav__item--contact">
         <a href="{{ site.contact }}" class="c-btn--primary c-btn--block">お問い合わせ</a>
       </li>
