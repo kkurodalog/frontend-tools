@@ -3,9 +3,12 @@
 // =====================================================================
 // Component: c-tool-card（ツール一覧の全面リンクカード / 本体 c-work-card に統一・F5-3）
 //   構成順: picture(thumb) → name(title 相当) → tagline(text 相当) → tags(下端)。
-//   視覚値の正本 = kurodafolio _c-work-card.scss（top works プレビューと同一挙動）:
-//     初期 = 影なし / hover = translateY(-2px)+shadow-md / active = 戻り+影消し+transition-zero。
-//   全面リンクのため子テキスト色は base/muted で固定（foundation a:hover の色変化を打ち消し）。
+//   視覚値の正本 = kurodafolio _c-work-card.scss と同一挙動:
+//     hover = サムネ画像のみ scale(1.06) ズーム（画像ズームのみ）。
+//     name・タグの色は hover で変えない。カード自体の浮き（translateY）・影（box-shadow）
+//     なし / クリック（:active）の視覚フィードバックなし。
+//     ズームは <picture> ラッパーの overflow:hidden でクロップ。
+//   全面リンクのため name・本文（tagline）色は base/muted 固定（foundation a:hover の色変化を打ち消し）。
 //   block-size:100% は維持: 本カードは <li>(p-tools__list grid item) 内の <a> のため、
 //     カードを行高いっぱいに伸ばし、__tags の margin-block-start:auto を下端揃えで効かせる。
 // =====================================================================
@@ -20,20 +23,21 @@
   background-color: var(--color-bg-elevated);
   border: var(--border-width-thin) solid var(--color-border);
   border-radius: var(--radius-md);
-  transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
 
+  // hover = 画像ズームのみ（name・タグの色は変えない / カードの浮き・影なし / クリックフィードバックなし）。
   @include hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    .c-tool-card__thumb {
+      transform: scale(1.06);
+    }
   }
+}
 
-  &:active {
-    box-shadow: var(--shadow-none) !important;
-    transition: transform var(--transition-zero);
-    transform: translateY(0);
-  }
+// サムネラッパー（<picture> bare 要素）: overflow:hidden でズームをクロップし、
+//   角丸（radius）をラッパー側に持たせて scale 時も角丸を保つ（img 側 radius は廃止）。
+.c-tool-card > picture {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-md);
 }
 
 // サムネ = 表示寸法相当の <picture>（webp + jpg フェールセーフ）。16:9 枠に
@@ -43,7 +47,7 @@
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background-color: var(--color-bg-code);
-  border-radius: var(--radius-md);
+  transition: transform var(--transition-base); // hover ズーム用
 }
 
 .c-tool-card__name {
@@ -51,7 +55,7 @@
   font-family: var(--font-heading);
   font-size: var(--fs-lg);
   font-weight: var(--fw-bold);
-  color: var(--color-text-base); // hover で色を変えない
+  color: var(--color-text-base); // hover で色を変えない（base 固定）
 }
 
 .c-tool-card__tagline {
@@ -66,4 +70,11 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-block-start: auto;
+}
+
+// a11y: モーション低減設定ではサムネのズーム（transform）を無効化。
+@media (prefers-reduced-motion: reduce) {
+  .c-tool-card:hover .c-tool-card__thumb {
+    transform: none;
+  }
 }
