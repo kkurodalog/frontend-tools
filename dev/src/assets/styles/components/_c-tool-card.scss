@@ -1,13 +1,13 @@
 @use "../global" as *;
 
 // =====================================================================
-// Component: c-tool-card（ツール一覧の全面リンクカード / 本体 c-work-card に統一・F5-3）
-//   構成順: picture(thumb) → name(title 相当) → tagline(text 相当) → tags(下端)。
-//   視覚値の正本 = kurodafolio _c-work-card.scss と同一挙動:
-//     hover = サムネ画像のみ scale(1.06) ズーム（画像ズームのみ）。
-//     name・タグの色は hover で変えない。カード自体の浮き（translateY）・影（box-shadow）
-//     なし / クリック（:active）の視覚フィードバックなし。
-//     ズームは <picture> ラッパーの overflow:hidden でクロップ。
+// Component: c-tool-card（ツール一覧の全面リンクカード / テキストのみ・2026-06-23 黒田さん確定）
+//   構成順: name(title 相当) → tagline(text 相当) → tags(下端揃え)。
+//   サムネ（picture/thumb・hover ズーム）は廃止（2026-06-23）。トップの世界観に合わせ画像を外し、
+//   テキストのみのカードにした。カード自体の浮き（translateY）・影なし / クリック視覚フィードバックなし。
+//   hover アクション（2026-06-23 追加）: 画像が無いため、カード内テキスト（name/tagline/tags）の
+//     opacity をわずかに下げる（0.7）フェードで「押せる」フィードバックを与える。color は変えない
+//     （foundation a:hover 色変化の打ち消し方針は維持・足すのは opacity のみ）。
 //   全面リンクのため name・本文（tagline）色は base/muted 固定（foundation a:hover の色変化を打ち消し）。
 //   block-size:100% は維持: 本カードは <li>(p-tools__list grid item) 内の <a> のため、
 //     カードを行高いっぱいに伸ばし、__tags の margin-block-start:auto を下端揃えで効かせる。
@@ -15,66 +15,50 @@
 .c-tool-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2); // テキストのみ: name→tagline 間を引き締める（旧 space-3 はサムネ込み構成向け）
   block-size: 100%;
-  padding: var(--space-5);
+  padding: var(--space-6); // テキストのみで余白が痩せないよう一段広く（旧 space-5）
   color: var(--color-text-base); // foundation a:hover の色変化を打ち消し
   text-decoration: none;
   background-color: var(--color-bg-elevated);
   border: var(--border-width-thin) solid var(--color-border);
   border-radius: var(--radius-md);
 
-  // hover = 画像ズームのみ（name・タグの色は変えない / カードの浮き・影なし / クリックフィードバックなし）。
+  // hover = カード内テキストをわずかに透明化（画像なしカードの「押せる」フィードバック）。
+  // color は変えず opacity のみ。離すと各要素の transition で戻る。
   @include hover {
-    .c-tool-card__thumb {
-      transform: scale(1.06);
+    .c-tool-card__name,
+    .c-tool-card__tagline,
+    .c-tool-card__tags {
+      opacity: 0.7;
     }
   }
 }
 
-// サムネラッパー（<picture> bare 要素）: overflow:hidden でズームをクロップし、
-//   角丸（radius）をラッパー側に持たせて scale 時も角丸を保つ（img 側 radius は廃止）。
-.c-tool-card > picture {
-  display: block;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-}
-
-// サムネ = 表示寸法相当の <picture>（webp + jpg フェールセーフ）。16:9 枠に
-//   object-fit:cover でクロップ（height は aspect-ratio で確定 / width/height 属性で CLS 回避）。
-.c-tool-card__thumb {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  background-color: var(--color-bg-code);
-  transition: transform var(--transition-base); // hover ズーム用
-}
-
 .c-tool-card__name {
-  margin-block-start: var(--space-3); // サムネと name の間隔（c-work-card__title 準拠）
+  // サムネ廃止に伴い name が先頭要素になったため、旧「サムネと name の間隔」用の
+  // margin-block-start は除去（先頭の余白は padding に委ねる）。
   font-family: var(--font-heading);
   font-size: var(--fs-lg);
   font-weight: var(--fw-bold);
   color: var(--color-text-base); // hover で色を変えない（base 固定）
+  transition: opacity var(--transition-base); // hover フェード用（戻りもスムーズに）
 }
 
 .c-tool-card__tagline {
   font-size: var(--fs-sm);
   line-height: var(--lh-base);
   color: var(--color-text-muted); // hover で色を変えない
+  transition: opacity var(--transition-base); // hover フェード用
 }
 
 // 下端タグ行（c-work-card__tags と同形）。c-badge×N を tools.json の tags から出力。
+// margin-block-start:auto で block-size:100% のカード下端に揃える（複数カードの tags 行が揃う）。
 .c-tool-card__tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  padding-block-start: var(--space-3); // tagline と tags 行の最小間隔（カードが1行で詰まったとき用）
   margin-block-start: auto;
-}
-
-// a11y: モーション低減設定ではサムネのズーム（transform）を無効化。
-@media (prefers-reduced-motion: reduce) {
-  .c-tool-card:hover .c-tool-card__thumb {
-    transform: none;
-  }
+  transition: opacity var(--transition-base); // hover フェード用
 }
