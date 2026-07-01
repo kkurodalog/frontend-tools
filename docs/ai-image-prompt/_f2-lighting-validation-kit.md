@@ -22,10 +22,10 @@
 各検証題で、L0〜L3を通して**この土台は一字一句変えない**。光の語だけを段階ごとに追記する。
 土台に含めるのは「写真宣言＋具体被写体＋構図＋最低限の質感」のみ（知識ベース §3-A）。**光に関する語は土台に一切入れない**（L0を純粋な対照群にするため）。
 
-| 検証題 | 被写体（黒田さん軸＝Web制作で使う実写） | Web用途の想定 |
-|---|---|---|
-| **題A** | 人物ヒーロー系（30代の男性フリーランサーがノートPCの前で自然な表情） | サービスサイト/LPのヒーロー・人物セクション |
-| **題B** | 室内・物・空間系（木製デスクの上のコーヒーカップと観葉植物のある作業デスク） | 制作実績/ブログのアイキャッチ・背景・装飾 |
+| 検証題        | 被写体（黒田さん軸＝Web制作で使う実写）                                      | Web用途の想定                               |
+| ------------- | ---------------------------------------------------------------------------- | ------------------------------------------- |
+| **題A** | 人物ヒーロー系（30代の男性フリーランサーがノートPCの前で自然な表情）         | サービスサイト/LPのヒーロー・人物セクション |
+| **題B** | 室内・物・空間系（木製デスクの上のコーヒーカップと観葉植物のある作業デスク） | 制作実績/ブログのアイキャッチ・背景・装飾   |
 
 > 注: 題Aで「30代男性」「自然な表情」は被写体記述として固定に含む（人物の有無で土台が変わらないように）。人物リアリティ語（毛穴/非対称等）は今回は**入れない**（光の検証に集中するため。それは段2/7の別検証で扱う）。
 
@@ -38,11 +38,13 @@
 ### 題A / L0 — 光指定なし（ベースライン＝AI任せ＝S2が出やすい対照群）
 
 **日本語版**
+
 ```text
 写真、実写、30代の男性フリーランサーがノートパソコンの前に座り、自然な表情をしている。木製のデスクのある室内。被写体を画面の左1/3に配置した三分割構図。浅い被写界深度で背景は柔らかくボケている。35mmレンズで撮影した写真。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in front of a laptop with a natural expression. Indoor room with a wooden desk. Rule of thirds composition with the subject positioned at the left third. Shallow depth of field, softly blurred background. Shot on a 35mm lens.
 ```
@@ -50,11 +52,13 @@ RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in 
 ### 題A / L1 — 光の方向のみ明示
 
 **日本語版**
+
 ```text
 写真、実写、30代の男性フリーランサーがノートパソコンの前に座り、自然な表情をしている。木製のデスクのある室内。被写体を画面の左1/3に配置した三分割構図。浅い被写界深度で背景は柔らかくボケている。35mmレンズで撮影した写真。左側からの光、右側にできる影。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in front of a laptop with a natural expression. Indoor room with a wooden desk. Rule of thirds composition with the subject positioned at the left third. Shallow depth of field, softly blurred background. Shot on a 35mm lens. Light coming from the left, shadows falling on the right side.
 ```
@@ -62,11 +66,13 @@ RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in 
 ### 題A / L2 — 方向＋時間帯/天候
 
 **日本語版**
+
 ```text
 写真、実写、30代の男性フリーランサーがノートパソコンの前に座り、自然な表情をしている。木製のデスクのある室内。被写体を画面の左1/3に配置した三分割構図。浅い被写界深度で背景は柔らかくボケている。35mmレンズで撮影した写真。左の窓から差し込むゴールデンアワーの夕日、右側にできる影。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in front of a laptop with a natural expression. Indoor room with a wooden desk. Rule of thirds composition with the subject positioned at the left third. Shallow depth of field, softly blurred background. Shot on a 35mm lens. Golden hour sunlight streaming in through a window on the left, shadows falling on the right side.
 ```
@@ -74,11 +80,13 @@ RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in 
 ### 題A / L3 — 方向＋時間帯/天候＋硬軟（知識ベースの3点セット＝フル）
 
 **日本語版**
+
 ```text
 写真、実写、30代の男性フリーランサーがノートパソコンの前に座り、自然な表情をしている。木製のデスクのある室内。被写体を画面の左1/3に配置した三分割構図。浅い被写界深度で背景は柔らかくボケている。35mmレンズで撮影した写真。左の窓から差し込むゴールデンアワーの夕日、右側にできる柔らかい影、被写体の輪郭にわずかなリムライト。柔らかく拡散した自然光。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in front of a laptop with a natural expression. Indoor room with a wooden desk. Rule of thirds composition with the subject positioned at the left third. Shallow depth of field, softly blurred background. Shot on a 35mm lens. Golden hour sunlight streaming in through a window on the left, soft shadows on the right side, subtle rim light on the subject's outline. Soft diffused natural light.
 ```
@@ -92,11 +100,13 @@ RAW photo, photorealistic, a man in his 30s working as a freelancer, sitting in 
 ### 題B / L0 — 光指定なし（ベースライン＝AI任せ＝S2が出やすい対照群）
 
 **日本語版**
+
 ```text
 写真、実写、木製のデスクの上に置かれたコーヒーカップと、横にある観葉植物。作業デスクの様子。カップを画面の右1/3に配置した三分割構図。浅い被写界深度で奥はボケている。50mmレンズで撮影した写真。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant beside it. A working desk scene. Rule of thirds composition with the cup positioned at the right third. Shallow depth of field, blurred background. Shot on a 50mm lens.
 ```
@@ -104,11 +114,13 @@ RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant bes
 ### 題B / L1 — 光の方向のみ明示
 
 **日本語版**
+
 ```text
 写真、実写、木製のデスクの上に置かれたコーヒーカップと、横にある観葉植物。作業デスクの様子。カップを画面の右1/3に配置した三分割構図。浅い被写界深度で奥はボケている。50mmレンズで撮影した写真。左側からの光、右側にできる影。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant beside it. A working desk scene. Rule of thirds composition with the cup positioned at the right third. Shallow depth of field, blurred background. Shot on a 50mm lens. Light coming from the left, shadows falling on the right side.
 ```
@@ -116,11 +128,13 @@ RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant bes
 ### 題B / L2 — 方向＋時間帯/天候
 
 **日本語版**
+
 ```text
 写真、実写、木製のデスクの上に置かれたコーヒーカップと、横にある観葉植物。作業デスクの様子。カップを画面の右1/3に配置した三分割構図。浅い被写界深度で奥はボケている。50mmレンズで撮影した写真。左の窓から差し込む午前の柔らかな自然光、右側にできる影。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant beside it. A working desk scene. Rule of thirds composition with the cup positioned at the right third. Shallow depth of field, blurred background. Shot on a 50mm lens. Soft morning daylight coming through a window on the left, shadows falling on the right side.
 ```
@@ -128,11 +142,13 @@ RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant bes
 ### 題B / L3 — 方向＋時間帯/天候＋硬軟（知識ベースの3点セット＝フル）
 
 **日本語版**
+
 ```text
 写真、実写、木製のデスクの上に置かれたコーヒーカップと、横にある観葉植物。作業デスクの様子。カップを画面の右1/3に配置した三分割構図。浅い被写界深度で奥はボケている。50mmレンズで撮影した写真。左の窓から差し込む午前の柔らかな自然光、右側にできる柔らかい影、カップのふちにわずかなハイライト。柔らかく拡散した光。
 ```
 
 **English**
+
 ```text
 RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant beside it. A working desk scene. Rule of thirds composition with the cup positioned at the right third. Shallow depth of field, blurred background. Shot on a 50mm lens. Soft morning daylight coming through a window on the left, soft shadows on the right side, a subtle highlight on the rim of the cup. Soft diffused light.
 ```
@@ -143,21 +159,21 @@ RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant bes
 
 各段階の出力画像を、以下のチェックリストで見る。**目的はAI臭 S2「平板/均一ライティング」が消えたかを具体的に見ること**。各項目を「はい/いいえ/どちらとも」で判定。
 
-| # | チェック項目（S2が消えたか） | 見るポイント |
-|---|---|---|
-| C1 | **影の方向が一貫しているか** | 被写体・小物・地面の影がすべて同じ方向（指定した側）に落ちているか。バラバラなら光が効いていない |
-| C2 | **光源が1つに見えるか** | 複数方向から均等に当たった「のっぺり」でなく、主光源が1方向にあると感じられるか |
-| C3 | **フラット＝のっぺり均一でないか** | 画面全体が同じ明るさでベタっとせず、明部と暗部のグラデーション（陰影）があるか |
-| C4 | **自然光/室内光に見えるか** | 指定した時間帯/天候（ゴールデンアワー/午前の自然光等）の色味・柔らかさが出ているか。蛍光灯みたいな無機質さでないか |
-| C5 | **硬軟が反映されているか（L3で特に）** | 「柔らかい影」「拡散光」を指定した結果、影の縁がボケて柔らかいか。逆にカチッと硬い影になっていないか |
-| C6 | **"いかにもAI"感が減ったか（総合）** | 一目で「AI生成だな」と分かる平板さが、段階を上げて減ったと感じるか |
+| #  | チェック項目（S2が消えたか）                 | 見るポイント                                                                                                       |
+| -- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| C1 | **影の方向が一貫しているか**           | 被写体・小物・地面の影がすべて同じ方向（指定した側）に落ちているか。バラバラなら光が効いていない                   |
+| C2 | **光源が1つに見えるか**                | 複数方向から均等に当たった「のっぺり」でなく、主光源が1方向にあると感じられるか                                    |
+| C3 | **フラット＝のっぺり均一でないか**     | 画面全体が同じ明るさでベタっとせず、明部と暗部のグラデーション（陰影）があるか                                     |
+| C4 | **自然光/室内光に見えるか**            | 指定した時間帯/天候（ゴールデンアワー/午前の自然光等）の色味・柔らかさが出ているか。蛍光灯みたいな無機質さでないか |
+| C5 | **硬軟が反映されているか（L3で特に）** | 「柔らかい影」「拡散光」を指定した結果、影の縁がボケて柔らかいか。逆にカチッと硬い影になっていないか               |
+| C6 | **"いかにもAI"感が減ったか（総合）**   | 一目で「AI生成だな」と分かる平板さが、段階を上げて減ったと感じるか                                                 |
 
 ### 段階間の比較メモ（自由記述・どの段階が最も自然だったか）
 
-| 検証題 | L0（なし） | L1（方向） | L2（＋時間帯/天候） | L3（フル3点） |
-|---|---|---|---|---|
-| 題A（人物） |  |  |  |  |
-| 題B（物・空間） |  |  |  |  |
+| 検証題          | L0（なし）                                                                                                                                                       | L1（方向）                                                                              | L2（＋時間帯/天候）                                                        | L3（フル3点）                                                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 題A（人物）     | 悪くない。AI臭さも少なめ。順位的にはL1が一番よくて、L0とL3が同率で次点という感じ。複数の画像を生成した時に、品質にややばらつきはあるがいい画像もあるという印象。 | L0~L3の中では最も良い。AI臭さが少ない。影の方向も統一されているし、のっぺり感も少ない。 | 悪い。光の加減が強いためかAIらしさを感じてしまう。                         | 悪くはない。L2に光の拡散を追加したことで光の加減が弱まり、AI臭さは減った印象。しかしAIが作った画像という印象は拭えない。 |
+| 題B（物・空間） | 前提として、題Bに関してはL0〜L3で品質に大きく差はない。                                                                                                          | L0にメモの通り。強いて評価すれば、L1とL3が同率で最もAI臭さが少ない。                    | L0にメモの通り。強いて評価すれば、光が強く見えて若干のAIっぽさを感じる。。 | L0にメモの通り。強いて評価すれば、L1とL3が同率で最もAI臭さが少ない。                                                     |
 
 > 記入例: 各セルに「S2残る／少し改善／自然」等の所感や、C1〜C6で気づいた点を短くメモ。
 
@@ -186,27 +202,36 @@ RAW photo, photorealistic, a coffee cup on a wooden desk with a potted plant bes
 
 ### 6-A. どの段階が効いたか（題ごと）
 
-| 検証題 | 使ったAI | 最も自然だった段階 | L0比でS2が消えたと感じた段階 | 一言所感 |
-|---|---|---|---|---|
-| 題A（人物） |  |  |  |  |
-| 題B（物・空間） |  |  |  |  |
-| （任意）2つ目AIで題A |  |  |  |  |
-| （任意）2つ目AIで題B |  |  |  |  |
+| 検証題               | 使ったAI    | 最も自然だった段階 | L0比でS2が消えたと感じた段階 | 一言所感                                                                                                               |
+| -------------------- | ----------- | ------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 題A（人物）          | Google Flow | L1。次点でL3       | L1                           | L1とL3は両方良いが、写真としての方向性が違う印象。L1は室内での自然な印象、L3は窓からの強目の光を受けつつも自然な印象。 |
+| 題B（物・空間）      | Google Flow | L1とL3が同順位     | L1。ただし誤差の範囲。       | L0~L3のプロンプトであまり差は見られなかった。                                                                          |
+| （任意）2つ目AIで題A |             |                    |                              |                                                                                                                        |
+| （任意）2つ目AIで題B |             |                    |                              |                                                                                                                        |
 
 ### 6-B. 効いた指定 / 効かなかった指定 / 意外に効いた語
 
-| 区分 | 具体的な語・指定 | 所見 |
-|---|---|---|
-| **効いた指定**（プリセット採用候補） |  |  |
-| **効かなかった指定**（外す候補） |  |  |
-| **意外に効いた語**（追加候補） |  |  |
+| 区分                                       | 具体的な語・指定 | 所見                                     |
+| ------------------------------------------ | ---------------- | ---------------------------------------- |
+| **効いた指定**（プリセット採用候補） | L1、L3           | L3は、L2によるAI感を消してくれるイメージ |
+| **効かなかった指定**（外す候補）     | L2               | AI感が増す                               |
+| **意外に効いた語**（追加候補）       | 特に無し         | 特に無し                                 |
 
-### 6-C. spec への申し送り（黒田さん→Mado）
+### 6-C. spec への申し送り（黒田さん→Mado / 2026-06-24 黒田さん検証＝Google Flow/Imagen 4・チーフ転記＝黒田さん合意済）
 
-- **光プリセットの確定型**（必須に入れる段階＝L1/L2/L3 のどこまで）:
-- **質問フローで聞くべき粒度**（方向だけ聞く / 時間帯も聞く / 硬軟まで聞く）:
-- **横展開の指示**（次に縦スライス検証する次カテゴリ＝質感 or 構図 or 人物）:
+- **光プリセットの確定型**:
+  - **必須コア＝光の方向＋落ちる影**（L1相当）。これだけでS2「平板/均一ライティング」が大きく消える＝最小で効く。
+  - **加える＝影の硬軟「柔らかい影／拡散光」**（L3の硬軟要素）。AI感を抑える方向に効く。
+  - **時間帯/天候（ゴールデンアワー等）は任意・既定オフ**。**単独で入れるとAI感が増す（逆効果＝L2）**。使う場合は必ず硬軟とセットにする（L3でL2のAI感が打ち消される挙動）。
+- **質問フローで聞くべき粒度**:
+  - 「**光の方向**」は必ず聞く（コア）。
+  - 「**影の柔らかさ（柔/硬）**」を聞く。
+  - 「**時間帯/天候**」は任意の深掘り扱い（既定オフ・"単独だと過剰演出になりやすい"と注記）。
+- **横展開の指示**: 次に縦スライス検証するカテゴリ＝**質感**（film grain・自然なノイズ・被写界深度等／知識ベース §3-C・§3-D＝黒田さん軸＝実写化の核）。光の確定型を固定ベースに含めた上で質感だけを段階変化させる。
 - **その他気づき**:
+  - **机上リサーチと実機が食い違った重要点**: 知識ベースは光を「方向＋時間帯/天候＋硬軟」の3点セット推奨だったが、実機では**時間帯/天候(L2)単独が逆効果**だった。縦スライス検証をやった甲斐があった（机上仕様→実機書き換えの再発防止が機能）。
+  - **被写体差**: 物・空間（題B）は光の効果が見えにくく、人物（題A）は光の効きが明確。spec では被写体タイプで光の効きの説明を変える余地あり。
+  - **確度の注記**: 単一モデル（Imagen 4 / Google Flow）・少数枚・主観評価のため確度は中程度。複数モデルでの再確認は今後の任意課題。
 
 > この §6-C が埋まれば、Mado は確定した「効く型」だけを spec（01_spec.md）の光プリセットに落とし、残り8カテゴリへ同じ縦スライス手法で展開する。
 
